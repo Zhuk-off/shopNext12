@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
+import LocationContacts from './locationContacts';
+import Promotions from './promotions';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -11,6 +13,7 @@ const Header = () => {
   return (
     <header className="bg-white shadow">
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+      <LocationContacts />
         <nav className="relative flex items-center justify-between sm:h-10 lg:justify-start">
           <div className="flex items-center flex-grow flex-shrink-0 lg:flex-grow-0">
             <Link href="/">
@@ -49,6 +52,7 @@ const Header = () => {
               Контакты
             </Link>
           </div>
+
           <div className="-mr-2 flex items-center md:hidden">
             <button
               type="button"
@@ -74,6 +78,7 @@ const Header = () => {
             </button>
           </div>
         </nav>
+        <Promotions/>
       </div>
 
       <div className="hidden md:hidden">
@@ -104,7 +109,7 @@ const Header = () => {
           </Link>
         </div>
       </div>
-      
+      src\icons
     </header>
   );
 };
