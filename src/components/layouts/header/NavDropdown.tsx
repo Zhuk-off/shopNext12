@@ -1,8 +1,21 @@
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, createContext } from 'react';
+import MainMenu, { ISubmenu } from './categoryComponents/mainMenu';
+import SubMenu from './categoryComponents/subMenu';
+
+interface Data {
+  subMenuItems: ISubmenu[];
+  setSubMenuItems: (data: ISubmenu[]) => void;
+}
+
+export const DataContext = createContext<Data>({
+  subMenuItems: [],
+  setSubMenuItems: () => [],
+});
 
 const NavDropdown = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
+  const [subMenuItems, setSubMenuItems] = useState<ISubmenu[]>([]);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -17,33 +30,17 @@ const NavDropdown = () => {
         Каталог
       </button>
       {isOpen && (
-        <div className="fixed left-0 top-28 z-50 w-full bg-white shadow-lg">
-          <ul className="container mx-auto max-w-7xl px-2 py-2 sm:px-6 lg:px-8">
-            <li className="mb-2">
-              <Link
-                href="/"
-                className="font-medium text-gray-700 hover:text-gray-900"
-              >
-                Home
-              </Link>
-            </li>
-            <li className="mb-2">
-              <Link
-                href="/"
-                className="font-medium text-gray-700 hover:text-gray-900"
-              >
-                About
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/"
-                className="font-medium text-gray-700 hover:text-gray-900"
-              >
-                Contact
-              </Link>
-            </li>
-          </ul>
+        <div className="h-screen-minus-112px fixed left-0 top-28 z-50 w-full bg-white shadow-lg overflow-hidden overflow-y-scroll">
+          <DataContext.Provider value={{ subMenuItems, setSubMenuItems }}>
+            <div className="container mx-auto flex max-w-7xl px-2 py-2 sm:px-6 lg:px-8">
+              <div className="max-w-xs border-r border-gray-400 p-3">
+                <MainMenu />
+              </div>
+              <div className="p-3">
+                <SubMenu />
+              </div>
+            </div>
+          </DataContext.Provider>
         </div>
       )}
     </div>

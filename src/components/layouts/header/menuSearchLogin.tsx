@@ -19,9 +19,8 @@ const NavMenu = () => {
           />
         </Link>
       </div>
-      <div className="hidden md:ml-10 md:flex md:space-x-8 md:pr-4 items-center">
-
-      <NavDropdown />
+      <div className="hidden items-center md:ml-10 md:flex md:space-x-8 md:pr-4">
+        <NavDropdown />
 
         <Link
           href="/sale"

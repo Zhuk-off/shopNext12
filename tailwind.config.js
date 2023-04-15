@@ -6,7 +6,7 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx}',
     './src/**/*.{js,ts,jsx,tsx}',
   ],
-  plugins: [require("tw-elements/dist/plugin.cjs")],
+  plugins: [require('tw-elements/dist/plugin.cjs')],
   theme: {
     extend: {
       backgroundImage: {
@@ -17,4 +17,4 @@ module.exports = {
     },
   },
   plugins: [],
-}
+};

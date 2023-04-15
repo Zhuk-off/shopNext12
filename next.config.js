@@ -3,8 +3,8 @@ const nextConfig = {
   images: {
     domains: ['i.ibb.co'],
   },
-  trailingSlash:true,
+  trailingSlash: true,
   reactStrictMode: true,
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
