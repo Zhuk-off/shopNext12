@@ -19,11 +19,11 @@ export const Slider = () => {
       effect={'cube'}
       grabCursor={true}
       loop={true}
-      autoplay={{
-        delay: 2500,
-        disableOnInteraction: false,
-        pauseOnMouseEnter: true,
-      }}
+      // autoplay={{
+      //   delay: 2500,
+      //   disableOnInteraction: false,
+      //   pauseOnMouseEnter: true,
+      // }}
       cubeEffect={{
         shadow: true,
         slideShadows: true,

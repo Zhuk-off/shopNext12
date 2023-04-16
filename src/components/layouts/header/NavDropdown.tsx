@@ -14,7 +14,7 @@ export const DataContext = createContext<Data>({
 });
 
 const NavDropdown = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [subMenuItems, setSubMenuItems] = useState<ISubmenu[]>([]);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
@@ -22,9 +22,9 @@ const NavDropdown = () => {
   return (
     <div className="relative font-medium text-gray-500 ">
       <button
-        className="rounded-full border bg-gray-300 px-6 py-1 font-medium 
+        className="rounded-full border bg-pink-700 text-white px-6 py-1 font-medium 
         transition
-        hover:bg-gray-400 hover:text-white focus:bg-gray-500 focus:text-white focus:outline-none"
+        hover:bg-pink-800 hover:text-white  focus:outline-none"
         onClick={toggleDropdown}
       >
         Каталог
