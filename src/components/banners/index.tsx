@@ -17,30 +17,32 @@ const banners = [
 
 export const Banners = () => {
   return (
-    <div className="container mx-auto p-8">
-      <div className="grid grid-cols-6 justify-center gap-3">
-        {banners.map((item, index) => (
-          <Link key={index} href={item.uri}>
-            <div className="h-[200px] overflow-hidden whitespace-nowrap rounded-xl bg-gray-100 px-3 py-5 text-center transition-all hover:bg-red-50 hover:text-red-600">
-              <div className="">
-                <Image
-                  src={item.icon}
-                  alt={item.title}
-                  width={200}
-                  height={200}
-                  className="h-[100px] w-[200px] object-contain"
-                />
+    <section className="pt-5 pb-20">
+      <div className="container mx-auto max-w-7xl px-4">
+        <div className="grid grid-cols-6 justify-center gap-3">
+          {banners.map((item, index) => (
+            <Link key={index} href={item.uri}>
+              <div className="h-[200px] overflow-hidden whitespace-nowrap rounded-xl bg-gray-100 px-3 py-5 text-center transition-all hover:bg-red-50 hover:text-red-600">
+                <div className="">
+                  <Image
+                    src={item.icon}
+                    alt={item.title}
+                    width={200}
+                    height={200}
+                    className="h-[100px] w-[200px] object-contain"
+                  />
+                </div>
+                <div className="overflow-hidden text-clip text-center font-semibold">
+                  {item.title}
+                </div>
+                <div className="overflow-hidden text-clip text-center">
+                  {item.description}
+                </div>
               </div>
-              <div className="overflow-hidden text-clip text-center font-semibold">
-                {item.title}
-              </div>
-              <div className="overflow-hidden text-clip text-center">
-                {item.description}
-              </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          ))}
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
