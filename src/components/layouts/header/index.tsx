@@ -4,6 +4,8 @@ import { useState } from 'react';
 import LocationContacts from './locationContacts';
 import Promotions from './promotions';
 import NavMenu from './menuSearchLogin';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,6 +20,7 @@ const Header = () => {
         <NavMenu />
         <Promotions />
       </div>
+
     </header>
   );
 };
