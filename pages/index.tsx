@@ -24,43 +24,42 @@ import { client } from '@/src/utils/apollo/apolloClient';
 import { GET_CATEGORIES } from '@/src/utils/apollo/queriesConst';
 import buildMenu from '@/src/utils/buildMenu';
 import { IGetCategories } from '@/src/interfaces/apollo/getCatigories.interface';
+import { GetStaticProps } from 'next';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Home({
   headerFooter,
-  menu
+  menu,
 }: {
   headerFooter: IData | undefined;
   menu: MenuItem[];
 }) {
-  
+  // console.log(menu);
+
   return (
     <main className="">
       <Layout headerFooter={headerFooter || {}} menu={menu}>
-
-
         <div className="mb-20 mt-12 rounded-xl px-20 ">
           <Slider />
         </div>
         <Banners />
         <Offers />
-
       </Layout>
     </main>
   );
 }
 
-export async function getStaticProps() {
+export const getStaticProps: GetStaticProps = async () => {
   const { data: headerFooterData } = await axios.get(HEADER_FOOTER_ENDPOINT);
-  const { data:menu }:ApolloQueryResult<IGetCategories> = await client.query({
-    query: GET_CATEGORIES
+  const { data: menu }: ApolloQueryResult<IGetCategories> = await client.query({
+    query: GET_CATEGORIES,
   });
-  const menuObject=buildMenu(menu.productCategories.edges)
+  const menuObject = buildMenu(menu.productCategories.edges);
   return {
     props: {
       headerFooter: headerFooterData?.data ?? {},
-      menu: menuObject
+      menu: menuObject,
     },
 
     /**
@@ -70,4 +69,4 @@ export async function getStaticProps() {
      */
     revalidate: 1,
   };
-}
+};

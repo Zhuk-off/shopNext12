@@ -2,8 +2,9 @@ import Link from 'next/link';
 import { useContext } from 'react';
 import { DataContext } from '../NavDropdown';
 import SubMenuRecursive from './subMenuRecursive';
+import Image from 'next/image';
 
-const SubMenu = () => {
+const SubMenu = ({toggleDropdown}:{toggleDropdown:any}) => {
   const { subMenuItems } = useContext(DataContext);
   if (!subMenuItems || subMenuItems.length === 0) return null;
 
@@ -12,13 +13,21 @@ const SubMenu = () => {
       {subMenuItems.map((menuItem, index) => (
         <li key={index} className="pb-2">
           <Link
-            href={menuItem.uri}
+            href={menuItem.slug}
             className=" hover:bg-red-50 hover:text-red-600"
+            onClick={toggleDropdown}
           >
-            <span>{'#'}</span> <span>{menuItem.name}</span>
+                            <div className="mr-1 inline-block">
+                  <Image
+                    src={menuItem.imageUrl ? menuItem.imageUrl : '/vercel.svg'}
+                    alt={menuItem.name}
+                    width={15}
+                    height={15}
+                  />
+                </div> <span>{menuItem.name}</span>
           </Link>
           {menuItem?.children && menuItem?.children.length !== 0 ? (
-            <SubMenuRecursive key={menuItem.uri} items={menuItem?.children} />
+            <SubMenuRecursive key={menuItem.slug} items={menuItem?.children} toggleDropdown={toggleDropdown}/>
           ) : null}
         </li>
       ))}

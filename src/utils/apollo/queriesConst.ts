@@ -88,6 +88,9 @@ query Category {
         slug
         uri
         databaseId
+        image {
+          sourceUrl
+        }
       }
     }
   }

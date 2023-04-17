@@ -11,10 +11,11 @@ export interface ICategory {
 }
 
 interface Node {
-  id:         string;
-  name:       string;
-  parentId:   null | string;
-  slug:       string;
-  uri:        string;
+  id: string;
+  name: string;
+  parentId: null | string;
+  slug: string;
+  uri: string;
   databaseId: number;
+  image: { sourceUrl: string };
 }

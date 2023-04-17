@@ -17,6 +17,7 @@ function buildMenu(categories: ICategory[]): MenuItem[] {
       slug: category.node.slug,
       uri: category.node.uri,
       databaseId: category.node.databaseId,
+      imageUrl:  category.node.image ? category.node.image.sourceUrl: null,
       children: children.map((child) => buildMenuItem(child)),
     };
 

@@ -24,12 +24,6 @@ const NavDropdown = ({menu}:{menu:MenuItem[]}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [subMenuItems, setSubMenuItems] = useState<MenuItem[]>([]);
 
-  // const { loading, error, data } = useQuery<IGetCategories>(GET_CATEGORIES);
-  // if (loading) return 'Loading...';
-  // if (error) return `Error! ${error.message}`;
-  // if (!data) return 'Error 500...';
-  // const menu = buildMenu(data?.productCategories.edges);
-
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   return (
@@ -47,10 +41,10 @@ const NavDropdown = ({menu}:{menu:MenuItem[]}) => {
           <DataContext.Provider value={{ subMenuItems, setSubMenuItems }}>
             <div className="container mx-auto flex h-full max-w-7xl px-2 py-2 sm:px-6 lg:px-8">
               <div className="max-w-xs border-r border-gray-400 p-3">
-                <MainMenu menu={menu}/>
+                <MainMenu menu={menu} toggleDropdown={toggleDropdown}/>
               </div>
               <div className="p-3">
-                <SubMenu />
+                <SubMenu toggleDropdown={toggleDropdown}/>
               </div>
             </div>
           </DataContext.Provider>

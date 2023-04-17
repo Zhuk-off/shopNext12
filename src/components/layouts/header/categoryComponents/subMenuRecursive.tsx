@@ -4,7 +4,13 @@ import { useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
 
-const SubMenuRecursive = ({ items }: { items: MenuItem[] }) => {
+const SubMenuRecursive = ({
+  items,
+  toggleDropdown,
+}: {
+  items: MenuItem[];
+  toggleDropdown: any;
+}) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownItems = items.slice(7);
 
@@ -16,7 +22,11 @@ const SubMenuRecursive = ({ items }: { items: MenuItem[] }) => {
     <ul className="ml-10">
       {items.slice(0, 7).map((item) => (
         <li key={item.name}>
-          <Link href={item.uri} className="font-normal hover:text-red-600">
+          <Link
+            href={item.slug}
+            className="font-normal hover:text-red-600"
+            onClick={toggleDropdown}
+          >
             {item.name}
           </Link>
         </li>
@@ -28,8 +38,9 @@ const SubMenuRecursive = ({ items }: { items: MenuItem[] }) => {
               {dropdownItems.map((item) => (
                 <li key={item.id}>
                   <Link
-                    href={item.uri}
+                    href={item.slug}
                     className="font-normal hover:text-red-600"
+                    onClick={toggleDropdown}
                   >
                     {item.name}
                   </Link>

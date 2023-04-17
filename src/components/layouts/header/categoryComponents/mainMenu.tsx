@@ -6,6 +6,7 @@ import buildMenu from '@/src/utils/buildMenu';
 import { IGetCategories } from '@/src/interfaces/apollo/getCatigories.interface';
 import { GET_CATEGORIES } from '@/src/utils/apollo/queriesConst';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
+import Image from 'next/image';
 
 export interface IMainMenu {
   catName: string;
@@ -516,12 +517,20 @@ const data: IMainMenu[] = [
   },
 ];
 
-const MainMenu = ({ menu }: { menu: MenuItem[] }) => {
+const MainMenu = ({
+  menu,
+  toggleDropdown,
+}: {
+  menu: MenuItem[];
+  toggleDropdown: any;
+}) => {
   const { setSubMenuItems } = useContext(DataContext);
 
   const handleMouseEnter = (data: MenuItem[]) => {
     setSubMenuItems(data);
   };
+  console.log('menumenu',menu);
+  
 
   return (
     <>
@@ -533,13 +542,21 @@ const MainMenu = ({ menu }: { menu: MenuItem[] }) => {
               className="hover:bg-red-50 hover:text-red-600"
             >
               <Link
-                href={menuItem.uri}
+                href={menuItem.slug}
                 className="block"
                 onMouseEnter={() =>
                   handleMouseEnter(menuItem?.children ? menuItem?.children : [])
                 }
+                onClick={toggleDropdown}
               >
-                <span className="mr-1 inline-block">{'#'}</span>
+                <div className="mr-1 inline-block">
+                  <Image
+                    src={menuItem.imageUrl ? menuItem.imageUrl : '/vercel.svg'}
+                    alt={menuItem.name}
+                    width={15}
+                    height={15}
+                  />
+                </div>
                 <span>{menuItem.name}</span>
               </Link>
             </li>

@@ -1,7 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['i.ibb.co'],
+    domains: [
+      'i.ibb.co',
+      process.env.NEXT_PUBLIC_WORDPRESS_SITE_URL?.match(
+        /(?!(w+)\.)\w*(?:\w+\.)+\w+/
+      )[0],
+    ],
   },
   trailingSlash: true,
   reactStrictMode: true,

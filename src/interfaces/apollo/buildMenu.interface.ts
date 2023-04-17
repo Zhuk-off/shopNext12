@@ -4,5 +4,6 @@ export interface MenuItem {
   slug: string;
   uri: string;
   databaseId: number;
+  imageUrl: string | null;
   children?: MenuItem[];
 }
