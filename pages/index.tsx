@@ -10,6 +10,7 @@ import {
   ApolloProvider,
   gql,
   ApolloQueryResult,
+  useQuery,
 } from '@apollo/client';
 import { Users } from '@/src/utils/apollo/queries';
 import { HEADER_FOOTER_ENDPOINT } from '@/src/utils/constants/endpoints';
@@ -21,10 +22,15 @@ import {
 } from '@/src/interfaces/footerHeaderRestAPIDataResponse';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
 import { client } from '@/src/utils/apollo/apolloClient';
-import { GET_CATEGORIES } from '@/src/utils/apollo/queriesConst';
+import {
+  GET_CATEGORIES,
+  GET_CATEGORY_WITH_PRODUCTS_OF_CILD,
+} from '@/src/utils/apollo/queriesConst';
 import buildMenu from '@/src/utils/buildMenu';
 import { IGetCategories } from '@/src/interfaces/apollo/getCatigories.interface';
 import { GetStaticProps } from 'next';
+import { findObjectById, getAllChildSlugs } from '@/src/utils/getAllChildIds';
+import { IProductCat } from '@/src/interfaces/apollo/getProducts.interface';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -35,7 +41,24 @@ export default function Home({
   headerFooter: IData | undefined;
   menu: MenuItem[];
 }) {
+  const cats = ['akkumulyatornye-dreli-shurupoverty'];
   // console.log(menu);
+  
+  const foundObject = findObjectById(menu[0], 'akkumulyatornye-dreli-shurupoverty');
+  const allSlugs = foundObject ? getAllChildSlugs(foundObject) : [];
+  
+  const { loading, error, data } = useQuery(
+    GET_CATEGORY_WITH_PRODUCTS_OF_CILD,
+    {
+      variables: { categorySlugs:allSlugs },
+    }
+  );
+
+  console.log('data', data);
+  console.log('menu', menu);
+
+  if (loading) return 'Loading...';
+  if (error) return `Error! ${error.message}`;
 
   return (
     <main className="">

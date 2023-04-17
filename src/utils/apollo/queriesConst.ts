@@ -78,21 +78,96 @@ export const GET_PRODUCTS_SIMPLE_NAME_PRICE_IMG = gql`
   }
 `;
 export const GET_CATEGORIES = gql`
-query Category {
-  productCategories(where: {exclude: "15"}) {
-    edges {
-      node {
-        id
-        name
-        parentId
-        slug
-        uri
-        databaseId
-        image {
-          sourceUrl
+  query Category {
+    productCategories(where: { exclude: "15" }) {
+      edges {
+        node {
+          id
+          name
+          parentId
+          slug
+          uri
+          databaseId
+          image {
+            sourceUrl
+          }
         }
       }
     }
   }
-}
 `;
+
+export const GET_CATEGORY_WITH_PRODUCTS = gql`
+  query MyQuery4($id: ID = "akkumulyatornye-dreli-shurupoverty") {
+    productCategory(id: $id, idType: SLUG) {
+      databaseId
+      description
+      id
+      parentId
+      seo {
+        breadcrumbs {
+          text
+          url
+        }
+      }
+      slug
+      products {
+        edges {
+          node {
+            ... on SimpleProduct {
+              id
+              name
+              price
+              salePrice
+              regularPrice
+            }
+          }
+        }
+      }
+      count
+    }
+  }
+`;
+export const GET_CATEGORY_WITH_PRODUCTS_OF_CILD = gql`
+  query AllProductsInCategories($categorySlugs: [String!]!) {
+    products(where: { categoryIn: $categorySlugs }) {
+      edges {
+        node {
+          id
+          name
+          ... on SimpleProduct {
+            id
+            name
+            price
+            salePrice
+            regularPrice
+          }
+        }
+      }
+    }
+  }
+`;
+
+const i = {
+  id: 'dGVybTo3Mjg=',
+  children: [
+    {
+      id: 'dGVybTo3Mjk=',
+      children: [
+        {
+          id: 'dGVybTo3MzA=',
+          children: [],
+        },
+      ],
+    },
+    {
+      id: 'dGVybTo3MzI=',
+      children: [
+        {
+          id: 'dGVybTo3MzM=',
+          children: [],
+        },
+      ],
+    },
+  ],
+};

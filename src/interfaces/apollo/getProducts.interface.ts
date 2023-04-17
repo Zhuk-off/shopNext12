@@ -9,10 +9,10 @@ export interface Products {
 
 export interface Edge {
   __typename: string;
-  node:       Node;
+  node:       IProductCat;
 }
 
-export interface Node {
+export interface IProductCat {
   __typename:        string;
   id?:               string;
   name?:             string;
