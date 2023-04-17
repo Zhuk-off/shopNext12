@@ -2,8 +2,9 @@ import Link from 'next/link';
 import { ISubmenu } from './mainMenu';
 import { useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
+import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
 
-const SubMenuRecursive = ({ items }: { items: ISubmenu[] }) => {
+const SubMenuRecursive = ({ items }: { items: MenuItem[] }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownItems = items.slice(7);
 
@@ -12,11 +13,11 @@ const SubMenuRecursive = ({ items }: { items: ISubmenu[] }) => {
   };
 
   return (
-    <ul className="ml-4">
+    <ul className="ml-10">
       {items.slice(0, 7).map((item) => (
-        <li key={item.catName}>
-          <Link href={item.link} className="font-normal hover:text-red-600">
-            {item.catName}
+        <li key={item.name}>
+          <Link href={item.uri} className="font-normal hover:text-red-600">
+            {item.name}
           </Link>
         </li>
       ))}
@@ -25,12 +26,12 @@ const SubMenuRecursive = ({ items }: { items: ISubmenu[] }) => {
           {showDropdown && (
             <ul className="flex w-full flex-col items-start">
               {dropdownItems.map((item) => (
-                <li key={item.catName}>
+                <li key={item.id}>
                   <Link
-                    href={item.link}
+                    href={item.uri}
                     className="font-normal hover:text-red-600"
                   >
-                    {item.catName}
+                    {item.name}
                   </Link>
                 </li>
               ))}

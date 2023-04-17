@@ -12,13 +12,13 @@ const SubMenu = () => {
       {subMenuItems.map((menuItem, index) => (
         <li key={index} className="pb-2">
           <Link
-            href={menuItem.link}
+            href={menuItem.uri}
             className=" hover:bg-red-50 hover:text-red-600"
           >
-            <span>{menuItem.icon}</span> <span>{menuItem.catName}</span>
+            <span>{'#'}</span> <span>{menuItem.name}</span>
           </Link>
-          {menuItem?.submenu && menuItem?.submenu.length !== 0 ? (
-            <SubMenuRecursive key={menuItem.link} items={menuItem?.submenu} />
+          {menuItem?.children && menuItem?.children.length !== 0 ? (
+            <SubMenuRecursive key={menuItem.uri} items={menuItem?.children} />
           ) : null}
         </li>
       ))}

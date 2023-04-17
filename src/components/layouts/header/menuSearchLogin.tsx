@@ -4,8 +4,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Fragment } from 'react';
 import NavDropdown from './NavDropdown';
+import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
 
-const NavMenu = () => {
+const NavMenu = ({menu}:{menu:MenuItem[]}) => {
   return (
     <nav className="relative flex items-center justify-between bg-gray-100 sm:h-10 lg:justify-start">
       <div className="flex flex-shrink-0 flex-grow items-center lg:flex-grow-0">
@@ -20,7 +21,7 @@ const NavMenu = () => {
         </Link>
       </div>
       <div className="hidden items-center md:ml-10 md:flex md:space-x-8 md:pr-4">
-        <NavDropdown />
+        <NavDropdown menu={menu}/>
 
         <Link
           href="/sale"

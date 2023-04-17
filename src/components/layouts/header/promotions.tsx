@@ -1,5 +1,5 @@
 const Promotions = () => {
-  return <h2>Promotions</h2>;
+  return <div className="p-4"></div>;
 };
 
 export default Promotions;

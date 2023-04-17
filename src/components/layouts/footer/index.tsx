@@ -1,6 +1,9 @@
+import { IFooter } from '@/src/interfaces/footerHeaderRestAPIDataResponse';
 import Link from 'next/link';
 
-const Footer = () => {
+const Footer = ({ footer }: { footer: IFooter | undefined }) => {
+  // console.log('footer', footer);
+
   return (
     <footer className="bg-gray-900 py-10 text-gray-300">
       <div className="container mx-auto max-w-7xl px-4">
