@@ -1,10 +1,15 @@
 import Layout from '@/src/components/layouts';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
-import { IGetCategories } from '@/src/interfaces/apollo/getCatigories.interface';
+import {
+  ICategory,
+  IGetCategories,
+  IProductCategoryData,
+} from '@/src/interfaces/apollo/getCatigories.interface';
 import { IData } from '@/src/interfaces/footerHeaderRestAPIDataResponse';
 import { client } from '@/src/utils/apollo/apolloClient';
 import {
   GET_CATEGORIES,
+  GET_CATEGORY_DATA,
   GET_CATEGORY_WITH_PRODUCTS_OF_CILD,
 } from '@/src/utils/apollo/queriesConst';
 import buildMenu from '@/src/utils/buildMenu';
@@ -15,6 +20,7 @@ import { Inter } from 'next/font/google';
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from 'next';
 import { findObjectById, getAllChildSlugs } from '@/src/utils/getAllChildIds';
 import { IProductCat } from '@/src/interfaces/apollo/getProducts.interface';
+import Breadcrumbs from '@/src/components/breadcrumbs';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,17 +28,26 @@ export default function Category({
   headerFooter,
   menu,
   productsFromCat,
+  category,
 }: {
   headerFooter: IData | undefined;
   menu: MenuItem[];
   productsFromCat: IProductCat[];
+  category: IProductCategoryData;
 }) {
+  console.log(category.productCategory.name);
   console.log(productsFromCat);
 
   return (
     <main className="">
       <Layout headerFooter={headerFooter || {}} menu={menu}>
-        1
+        <div className="container mx-auto max-w-7xl px-4">
+          {category.productCategory.seo?.breadcrumbs ? (
+            <Breadcrumbs
+              breadcrumbs={category.productCategory.seo?.breadcrumbs}
+            />
+          ) : null}
+        </div>
       </Layout>
     </main>
   );
@@ -78,12 +93,19 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       variables: { categorySlugs: allSlugs },
     });
 
+  const { data: category }: ApolloQueryResult<IProductCategoryData> =
+    await client.query({
+      query: GET_CATEGORY_DATA,
+      variables: { id: slug },
+    });
+
   return {
     props: {
       headerFooter: headerFooterData?.data ?? {},
       menu: menuObjectArr,
       params,
       productsFromCat,
+      category,
     },
     revalidate: 1,
   };

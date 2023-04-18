@@ -96,7 +96,6 @@ export const GET_CATEGORIES = gql`
     }
   }
 `;
-
 export const GET_CATEGORY_WITH_PRODUCTS = gql`
   query MyQuery4($id: ID = "akkumulyatornye-dreli-shurupoverty") {
     productCategory(id: $id, idType: SLUG) {
@@ -147,27 +146,24 @@ export const GET_CATEGORY_WITH_PRODUCTS_OF_CILD = gql`
     }
   }
 `;
+export const GET_CATEGORY_DATA = gql`
+query AllProductsInCategory($id: ID! ) {
+  productCategory(id: $id, idType: SLUG) {
+    id
+    databaseId
+    description
+    slug
+    image {
+      sourceUrl
+    }
+    name
+    seo {
+      breadcrumbs {
+        text
+        url
+      }
+    }
+  }
+}
+`;
 
-const i = {
-  id: 'dGVybTo3Mjg=',
-  children: [
-    {
-      id: 'dGVybTo3Mjk=',
-      children: [
-        {
-          id: 'dGVybTo3MzA=',
-          children: [],
-        },
-      ],
-    },
-    {
-      id: 'dGVybTo3MzI=',
-      children: [
-        {
-          id: 'dGVybTo3MzM=',
-          children: [],
-        },
-      ],
-    },
-  ],
-};
