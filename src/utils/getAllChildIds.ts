@@ -1,4 +1,5 @@
 import { MenuItem } from '../interfaces/apollo/buildMenu.interface';
+import { ChildSlugNameByCategory } from '../interfaces/apollo/getCatigories.interface';
 
 export const getAllChildSlugs = (obj: MenuItem) => {
   let childIds: string[] = [];
@@ -9,6 +10,19 @@ export const getAllChildSlugs = (obj: MenuItem) => {
     });
   }
   return childIds;
+};
+
+export const getAllChildSlugsAndName = (
+  obj: MenuItem
+): ChildSlugNameByCategory[] => {
+  let childObj: ChildSlugNameByCategory[] = [];
+  if (obj.children && obj.children.length > 0) {
+    obj.children.forEach((child) => {
+      childObj.push({ slug: child.slug, name: child.name });
+      childObj = [...childObj, ...getAllChildSlugsAndName(child)];
+    });
+  }
+  return childObj;
 };
 
 export const findObjectById = (

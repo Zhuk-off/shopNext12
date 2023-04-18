@@ -30,34 +30,39 @@ export interface IBreadcrumbs {
   url: string;
 }
 
-
 export interface IProductCategoryData {
   productCategory: ProductCategory;
 }
 
 export interface ProductCategory {
-  __typename?:  string;
-  id:          string;
-  databaseId:  number;
+  __typename?: string;
+  id: string;
+  databaseId: number;
   description: null;
-  slug:        string;
-  image:       Image;
-  name:        string;
-  seo?:         SEO;
+  slug: string;
+  image: Image;
+  name: string;
+  seo?: SEO;
 }
 
 export interface Image {
   __typename?: string;
-  sourceUrl:  string;
+  sourceUrl: string;
 }
 
 export interface SEO {
-  __typename?:  string;
+  __typename?: string;
   breadcrumbs: Breadcrumb[];
 }
 
 export interface Breadcrumb {
   __typename?: string;
-  text:       string;
-  url:        string;
+  text: string;
+  url: string;
+}
+
+// для суб категорий на странице категории
+export interface ChildSlugNameByCategory {
+  slug: string;
+  name: string;
 }

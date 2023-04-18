@@ -1,6 +1,7 @@
 import Layout from '@/src/components/layouts';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
 import {
+  ChildSlugNameByCategory,
   ICategory,
   IGetCategories,
   IProductCategoryData,
@@ -18,9 +19,14 @@ import { ApolloQueryResult, useQuery } from '@apollo/client';
 import axios from 'axios';
 import { Inter } from 'next/font/google';
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from 'next';
-import { findObjectById, getAllChildSlugs } from '@/src/utils/getAllChildIds';
+import {
+  findObjectById,
+  getAllChildSlugs,
+  getAllChildSlugsAndName,
+} from '@/src/utils/getAllChildIds';
 import { IProductCat } from '@/src/interfaces/apollo/getProducts.interface';
 import Breadcrumbs from '@/src/components/breadcrumbs';
+import SubCategories from '@/src/components/subCategories';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -29,24 +35,32 @@ export default function Category({
   menu,
   productsFromCat,
   category,
+  childrenSlugName,
 }: {
   headerFooter: IData | undefined;
   menu: MenuItem[];
   productsFromCat: IProductCat[];
   category: IProductCategoryData;
+  childrenSlugName: ChildSlugNameByCategory[];
 }) {
-  console.log(category.productCategory.name);
-  console.log(productsFromCat);
-
+  // console.log(category.productCategory.name);
+  // console.log(productsFromCat);
+  console.log(childrenSlugName);
+  // console.log(getAllChildSlugsAndName(foundObject));
+const first8Elem = childrenSlugName.slice(0,8)
   return (
     <main className="">
       <Layout headerFooter={headerFooter || {}} menu={menu}>
-        <div className="container mx-auto max-w-7xl px-4">
+        <div className="container mx-auto max-w-7xl">
           {category.productCategory.seo?.breadcrumbs ? (
             <Breadcrumbs
               breadcrumbs={category.productCategory.seo?.breadcrumbs}
             />
           ) : null}
+        </div>
+        <h1 className='font-semibold text-2xl mt-5'>{category.productCategory.name}</h1>
+        <div className="mt-3">
+          <SubCategories childrenSlugName={first8Elem} />
         </div>
       </Layout>
     </main>
@@ -99,6 +113,10 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       variables: { id: slug },
     });
 
+  const childrenSlugName = foundObject
+    ? getAllChildSlugsAndName(foundObject)
+    : [];
+
   return {
     props: {
       headerFooter: headerFooterData?.data ?? {},
@@ -106,6 +124,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       params,
       productsFromCat,
       category,
+      childrenSlugName,
     },
     revalidate: 1,
   };
