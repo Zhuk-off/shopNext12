@@ -8,7 +8,7 @@ import Link from 'next/link';
 import React from 'react';
 import Shipment from '../layouts/shipment';
 
-const ProductCard = ({ product }: { product: IProductCat }) => {
+const ProductCardHorisontal = ({ product }: { product: IProductCat }) => {
   console.log(product);
 
   const image = product.image?.sourceUrl
@@ -24,7 +24,7 @@ const ProductCard = ({ product }: { product: IProductCat }) => {
   const uri = product.slug ? product.slug : '#';
 
   return (
-    <div className="grid h-48 grid-cols-5 overflow-hidden rounded-md bg-white p-4 shadow-md">
+    <div className="grid h-48 grid-cols-5 overflow-hidden rounded-md bg-white p-4 shadow-md hover:shadow-lg">
       <Link href={uri} className="col-span-1 self-center justify-self-center">
         <Image
           src={image}
@@ -78,21 +78,21 @@ const ProductCard = ({ product }: { product: IProductCat }) => {
           </div>
         )}
         {inStock ? (
-          <span className="inline-block rounded-full bg-green-100 px-2 py-1 text-xs font-medium max-w-max uppercase text-green-800">
+          <span className="inline-block max-w-max rounded-full bg-green-100 px-2 py-1 text-xs font-medium uppercase text-green-800">
             В наличии
           </span>
         ) : (
-          <span className="inline-block rounded-full bg-red-100 px-2 py-1 text-xs text-center max-w-max font-medium uppercase text-red-800">
+          <span className="inline-block max-w-max rounded-full bg-red-100 px-2 py-1 text-center text-xs font-medium uppercase text-red-800">
             Нет в наличии
           </span>
         )}
         {/* TODO: информация о доставке в превью карточки товара, надо получить данные о доставке */}
-        <div className='h-5'>
-           {/* {price !== '--,--' ?<Shipment courierDelivery={true} selfDelivery={true} /> :null} */}
-           </div>
+        <div className="h-5">
+          {/* {price !== '--,--' ?<Shipment courierDelivery={true} selfDelivery={true} /> :null} */}
+        </div>
       </div>
     </div>
   );
 };
 
-export default ProductCard;
+export default ProductCardHorisontal;
