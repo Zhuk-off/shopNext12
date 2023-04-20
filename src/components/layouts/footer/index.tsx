@@ -1,12 +1,13 @@
 import { IFooter } from '@/src/interfaces/footerHeaderRestAPIDataResponse';
 import Link from 'next/link';
+import Container from '../../container';
 
 const Footer = ({ footer }: { footer: IFooter | undefined }) => {
   // console.log('footer', footer);
 
   return (
     <footer className="bg-gray-900 py-10 text-gray-300">
-      <div className="container mx-auto max-w-7xl px-4">
+      <Container>
         <div className="flex flex-wrap justify-between">
           <div className="w-full md:w-1/3">
             <h3 className="mb-4 text-xl font-semibold">Контакты</h3>
@@ -70,7 +71,7 @@ const Footer = ({ footer }: { footer: IFooter | undefined }) => {
             </ul>
           </div>
         </div>
-      </div>
+      </Container>
     </footer>
   );
 };

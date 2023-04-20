@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import Container from '../container';
 
 const Offers = () => {
   const offers = [
@@ -43,7 +44,7 @@ const Offers = () => {
 
   return (
     <section className="bg-gray-100 py-10">
-      <div className="container mx-auto max-w-7xl px-4">
+      <Container>
         <h2 className="mb-6 text-3xl font-semibold">Предложения</h2>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 ">
           {offers.map((offer) => (
@@ -72,7 +73,7 @@ const Offers = () => {
             </div>
           ))}
         </div>
-      </div>
+      </Container>
     </section>
   );
 };

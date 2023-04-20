@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import Container from '../container';
 
 const banners = [
   { icon: '/logo.png', uri: '#', title: 'Wortex', description: 'description' },
@@ -18,7 +19,7 @@ const banners = [
 export const Banners = () => {
   return (
     <section className="pt-5 pb-20">
-      <div className="container mx-auto max-w-7xl px-4">
+      <Container>
         <div className="grid grid-cols-6 justify-center gap-3">
           {banners.map((item, index) => (
             <Link key={index} href={item.uri}>
@@ -42,7 +43,7 @@ export const Banners = () => {
             </Link>
           ))}
         </div>
-      </div>
+      </Container>
     </section>
   );
 };

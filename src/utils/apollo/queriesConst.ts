@@ -132,14 +132,19 @@ export const GET_CATEGORY_WITH_PRODUCTS_OF_CILD = gql`
     products(where: { categoryIn: $categorySlugs }) {
       edges {
         node {
+          ... on SimpleProduct {
+          sku
           id
           name
-          ... on SimpleProduct {
-            id
-            name
-            price
-            salePrice
-            regularPrice
+          price
+          salePrice
+          regularPrice
+          shortDescription
+          image {
+            altText
+            sourceUrl
+          }
+          stockStatus
           }
         }
       }

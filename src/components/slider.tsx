@@ -11,11 +11,12 @@ import {
   EffectCards,
 } from 'swiper';
 import Image from 'next/image';
+import Container from './container';
 
 export const Slider = () => {
   return (
     <section className="pb-5 pt-3">
-      <div className="container mx-auto max-w-7xl px-4">
+      <Container>
         <Swiper
           speed={1000}
           effect={'cube'}
@@ -92,7 +93,7 @@ export const Slider = () => {
             />
           </SwiperSlide>
         </Swiper>
-      </div>
+      </Container>
     </section>
   );
 };

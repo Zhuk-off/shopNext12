@@ -24,9 +24,12 @@ import {
   getAllChildSlugs,
   getAllChildSlugsAndName,
 } from '@/src/utils/getAllChildIds';
-import { IProductCat } from '@/src/interfaces/apollo/getProducts.interface';
+import { IGetProductsSimple, IProductCat } from '@/src/interfaces/apollo/getProducts.interface';
 import Breadcrumbs from '@/src/components/breadcrumbs';
 import SubCategories from '@/src/components/subCategories';
+import ProductsBoard from '@/src/components/products';
+import {DividerH} from '@/src/components/divider';
+import Container from '@/src/components/container';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -39,29 +42,35 @@ export default function Category({
 }: {
   headerFooter: IData | undefined;
   menu: MenuItem[];
-  productsFromCat: IProductCat[];
+  productsFromCat: IGetProductsSimple;
   category: IProductCategoryData;
   childrenSlugName: ChildSlugNameByCategory[];
 }) {
   // console.log(category.productCategory.name);
-  // console.log(productsFromCat);
-  console.log(childrenSlugName);
+  console.log(productsFromCat);
+  // console.log(childrenSlugName);
   // console.log(getAllChildSlugsAndName(foundObject));
-const first8Elem = childrenSlugName.slice(0,8)
+  const first8Elem = childrenSlugName.slice(0, 8);
   return (
     <main className="">
       <Layout headerFooter={headerFooter || {}} menu={menu}>
-        <div className="container mx-auto max-w-7xl">
+        <Container>
           {category.productCategory.seo?.breadcrumbs ? (
             <Breadcrumbs
               breadcrumbs={category.productCategory.seo?.breadcrumbs}
             />
           ) : null}
-        </div>
-        <h1 className='font-semibold text-2xl mt-5'>{category.productCategory.name}</h1>
+        <h1 className="mt-5 text-2xl font-semibold">
+          {category.productCategory.name}
+        </h1>
         <div className="mt-3">
           <SubCategories childrenSlugName={first8Elem} />
         </div>
+        <DividerH />
+        <div className="mt-5">
+          <ProductsBoard products={productsFromCat} />
+        </div>
+        </Container>
       </Layout>
     </main>
   );
