@@ -30,3 +30,22 @@ body {
     )
     rgb(var(--background-start-rgb));
 } */
+
+.skeleton {
+  background-color: #e5e5e5;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

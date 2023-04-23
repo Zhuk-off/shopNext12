@@ -8,8 +8,35 @@ import Link from 'next/link';
 import React from 'react';
 import Shipment from '../layouts/shipment';
 
-const ProductCardHorisontal = ({ product }: { product: IProductCat }) => {
-  console.log(product);
+const ProductCardHorisontal = ({
+  product,
+  loading,
+}: {
+  product: IProductCat | null;
+  loading: boolean;
+}) => {
+  // console.log(product);
+  if (loading) {
+    return (
+      <div className="skeleton grid h-48 grid-cols-5 overflow-hidden rounded-md bg-white  p-4 shadow-md hover:shadow-lg">
+        <div className="col-span-3 flex px-4">
+          <div className="flex-1 overflow-hidden"></div>
+        </div>
+
+        <div className="items-center1 col-span-1 flex flex-col justify-between whitespace-nowrap border-l border-gray-200 px-4">
+          <div className="flex items-center text-3xl font-normal text-gray-900"></div>
+
+          <div className=" "></div>
+
+          {/* TODO: информация о доставке в превью карточки товара, надо получить данные о доставке */}
+          <div className="h-5">
+            {/* {price !== '--,--' ?<Shipment courierDelivery={true} selfDelivery={true} /> :null} */}
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (product === null) return null;
 
   const image = product.image?.sourceUrl
     ? product.image?.sourceUrl

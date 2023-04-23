@@ -6,11 +6,7 @@ export const getSlugFromUrl = (url: string): string => {
 };
 
 export const formatBelarusianCurrency = (currencyString: string) => {
-  const amount = Number(currencyString.replace('Br', ''));
-  const formattedAmount = amount.toLocaleString('ru-RU', {
-    style: 'decimal',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
+  const amount = currencyString.replace('Br', '')
+  const formattedAmount = amount
   return formattedAmount;
 };

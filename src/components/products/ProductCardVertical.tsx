@@ -8,8 +8,22 @@ import Link from 'next/link';
 import React from 'react';
 import Shipment from '../layouts/shipment';
 
-const ProductCardVertical = ({ product }: { product: IProductCat }) => {
-  console.log(product);
+const ProductCardVertical = ({
+  product,
+  loading,
+}: {
+  product: IProductCat | null;
+  loading: boolean;
+}) => {
+  // console.log(product);
+
+  if (loading) {
+    return (
+      <div className="skeleton flex h-[416px] flex-col overflow-hidden rounded-md bg-white p-4 shadow-md hover:shadow-lg" />
+    );
+  }
+
+  if (product === null) return null;
 
   const image = product.image?.sourceUrl
     ? product.image?.sourceUrl
@@ -24,14 +38,14 @@ const ProductCardVertical = ({ product }: { product: IProductCat }) => {
   const uri = product.slug ? product.slug : '#';
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-md bg-white p-4 shadow-md hover:shadow-lg min-h-[416px]">
+    <div className="flex h-[416px] flex-col overflow-hidden rounded-md bg-white p-4 shadow-md hover:shadow-lg">
       <Link href={uri} className="self-center justify-self-center">
         <Image
           src={image}
           alt={alt}
           width={150}
           height={150}
-          className="object-contain h-40"
+          className="h-40 object-contain"
         />
       </Link>
       {/* <div
@@ -42,7 +56,7 @@ const ProductCardVertical = ({ product }: { product: IProductCat }) => {
       <div className="flex px-4">
         <div className="flex-1 overflow-hidden">
           <Link href={uri}>
-            <h2 className="line-clamp-3 text-base font-medium text-blue-500 underline hover:text-red-500 text-center min-h-[72px]">
+            <h2 className="line-clamp-3 min-h-[72px] text-center text-base font-medium text-blue-500 underline hover:text-red-500">
               {title}
             </h2>
           </Link>
@@ -55,8 +69,8 @@ const ProductCardVertical = ({ product }: { product: IProductCat }) => {
         </div>
       </div>
 
-      <div className="items-center flex flex-col gap-2 mt-2 justify-between whitespace-nowrap border-t border-gray-200 px-4">
-        <div className="flex items-center text-3xl font-normal text-gray-900 mt-2">
+      <div className="mt-2 flex flex-col items-center justify-between gap-2 whitespace-nowrap border-t border-gray-200 px-4">
+        <div className="mt-2 flex items-center text-3xl font-normal text-gray-900">
           {price}
 
           <span className="ml-1 mt-2 inline-block text-lg font-medium">р.</span>

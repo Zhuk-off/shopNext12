@@ -20,11 +20,12 @@ export const DataContext = createContext<Data>({
   setSubMenuItems: () => [],
 });
 
-const NavDropdown = ({menu}:{menu:MenuItem[]}) => {
+const NavDropdown = ({ menu }: { menu: MenuItem[] }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [subMenuItems, setSubMenuItems] = useState<MenuItem[]>([]);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
+  console.log('menu', menu);
 
   return (
     <div className="relative font-medium text-gray-500 ">
@@ -41,10 +42,10 @@ const NavDropdown = ({menu}:{menu:MenuItem[]}) => {
           <DataContext.Provider value={{ subMenuItems, setSubMenuItems }}>
             <div className="container mx-auto flex h-full max-w-7xl px-2 py-2 sm:px-6 lg:px-8">
               <div className="max-w-xs border-r border-gray-400 p-3">
-                <MainMenu menu={menu} toggleDropdown={toggleDropdown}/>
+                <MainMenu menu={menu} toggleDropdown={toggleDropdown} />
               </div>
               <div className="p-3">
-                <SubMenu toggleDropdown={toggleDropdown}/>
+                <SubMenu toggleDropdown={toggleDropdown} />
               </div>
             </div>
           </DataContext.Provider>

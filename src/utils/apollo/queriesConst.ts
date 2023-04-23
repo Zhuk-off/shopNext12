@@ -98,7 +98,7 @@ export const GET_CATEGORIES = gql`
 `;
 export const GET_CATEGORY_WITH_PRODUCTS = gql`
   query MyQuery4($id: ID = "akkumulyatornye-dreli-shurupoverty") {
-    productCategory(id: $id, idType: SLUG) {
+    productCategory(first: 100, id: $id, idType: SLUG) {
       databaseId
       description
       id
@@ -129,7 +129,7 @@ export const GET_CATEGORY_WITH_PRODUCTS = gql`
 `;
 export const GET_CATEGORY_WITH_PRODUCTS_OF_CILD = gql`
   query AllProductsInCategories($categorySlugs: [String!]!) {
-    products(where: { categoryIn: $categorySlugs }) {
+    products(first: 100, where: { categoryIn: $categorySlugs }) {
       edges {
         node {
           ... on SimpleProduct {
@@ -148,9 +148,47 @@ export const GET_CATEGORY_WITH_PRODUCTS_OF_CILD = gql`
           }
         }
       }
+      pageInfo {
+        hasNextPage
+        endCursor
+        offsetPagination {
+          total
+        }
+      }
     }
   }
 `;
+export const PRODUCTS_TEST = gql`
+query AllProductsInCategories($first: Int, $after: String, $categorySlugs: [String!]!) {
+  products(
+    first: $first, where: { categoryIn: $categorySlugs }, after: $after) {
+    edges {
+      node {
+        ... on SimpleProduct {
+          sku
+          id
+          name
+          price
+          salePrice
+          regularPrice
+          shortDescription
+          image {
+            altText
+            sourceUrl
+          }
+          stockStatus
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
+}
+`;
+
+
 export const GET_CATEGORY_DATA = gql`
 query AllProductsInCategory($id: ID! ) {
   productCategory(id: $id, idType: SLUG) {
