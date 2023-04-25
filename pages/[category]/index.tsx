@@ -2,7 +2,6 @@ import Layout from '@/src/components/layouts';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
 import {
   ChildSlugNameByCategory,
-  ICategory,
   IGetCategories,
   IProductCategoryData,
 } from '@/src/interfaces/apollo/getCatigories.interface';
@@ -30,13 +29,8 @@ import {
 } from '@/src/interfaces/apollo/getProducts.interface';
 import Breadcrumbs from '@/src/components/breadcrumbs';
 import SubCategories from '@/src/components/subCategories';
-import ProductsBoard from '@/src/components/products';
 import { DividerH } from '@/src/components/divider';
 import Container from '@/src/components/container';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
-import classNames from 'classnames';
-import { useEffect, useState } from 'react';
 import ProductsList from '@/src/components/pagiation/productsList';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -70,15 +64,10 @@ export default function Category({
           <div className="mt-3">
             <SubCategories childrenSlugName={first8Elem} />
           </div>
-
           <DividerH />
           <div className="mt-5">
-            {/* <ProductsBoard products={productsFromCat} /> */}
+            <ProductsList currentPageProps={1} />
           </div>
-
-          {/* тестовая Функция */}
-          <ProductsList currentPageProps={1}  />
-          {/* конец тестовой функции */}
         </Container>
       </Layout>
     </main>

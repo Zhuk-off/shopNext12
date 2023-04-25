@@ -1,5 +1,4 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
 
 export const NavButtons = ({
   currentPage,
@@ -10,11 +9,15 @@ export const NavButtons = ({
   totalPages: any;
   onPageChange: any;
 }) => {
+  // минимальное количество страниц, если страний нет
   const totalPaginationPages = totalPages < 1 ? 1 : totalPages;
 
-  let buttons: JSX.Element[] = [];
+  // массив для схематичного отображения пагинации
   let arr: (string | number)[] = [];
+  // преобразованный массив arr со стилями, ссылками и прочим, предназначенный для отображения
+  let buttons: JSX.Element[] = [];
 
+  // логика отображения при разном количестве страниц, при разной текущей странице
   if (totalPaginationPages <= 7) {
     arr = Array.from({ length: totalPaginationPages }, (_, index) => index + 1);
 
@@ -64,6 +67,7 @@ export const NavButtons = ({
         );
       });
     }
+
     if (currentPage > 3 && currentPage <= totalPaginationPages - 3) {
       arr.push(1);
       arr.push('...');
@@ -103,6 +107,7 @@ export const NavButtons = ({
       className="isolate inline-flex -space-x-px rounded-md shadow-sm"
       aria-label="Pagination"
     >
+      {/* кнопка назад */}
       <button
         onClick={() =>
           onPageChange(currentPage !== 1 ? currentPage - 1 : currentPage)
@@ -113,8 +118,10 @@ export const NavButtons = ({
         <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
       </button>
 
+      {/* основной блоко кнопок пагинации */}
       {buttons?.map((item) => item)}
 
+      {/* кнопка вперед */}
       <button
         onClick={() =>
           onPageChange(

@@ -1,12 +1,10 @@
 import { IProductCat } from '@/src/interfaces/apollo/getProducts.interface';
-import { DEFAULT_IMG_URL } from '@/src/utils/constants/images';
-import { formatBelarusianCurrency } from '@/src/utils/helpers';
-import { sanitize } from '@/src/utils/miscellaneous';
-import { log } from 'console';
+import {
+  productDataConversion,
+} from '@/src/utils/helpers';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
-import Shipment from '../layouts/shipment';
 
 const ProductCardVertical = ({
   product,
@@ -15,27 +13,17 @@ const ProductCardVertical = ({
   product: IProductCat | null;
   loading: boolean;
 }) => {
-  // console.log(product);
-
+  // вывод скелетона, если загрузка
   if (loading) {
     return (
       <div className="skeleton flex h-[416px] flex-col overflow-hidden rounded-md bg-white p-4 shadow-md hover:shadow-lg" />
     );
   }
-
   if (product === null) return null;
 
-  const image = product.image?.sourceUrl
-    ? product.image?.sourceUrl
-    : DEFAULT_IMG_URL;
-  const alt = product.image?.altText ? product.image?.altText : '';
-  const title = product.name ? product.name : '';
-  const description = product.shortDescription ? product.shortDescription : '';
-  const price = product.price
-    ? formatBelarusianCurrency(product.price)
-    : '--,--';
-  const inStock = product.stockStatus === 'IN_STOCK' ? true : false;
-  const uri = product.slug ? product.slug : '#';
+  // преобразование входных данных для отображения в карточке товара
+  const { image, alt, title, description, price, inStock, uri } =
+    productDataConversion(product);
 
   return (
     <div className="flex h-[416px] flex-col overflow-hidden rounded-md bg-white p-4 shadow-md hover:shadow-lg">
@@ -48,10 +36,6 @@ const ProductCardVertical = ({
           className="h-40 object-contain"
         />
       </Link>
-      {/* <div
-        className="h-48 w-full rounded-md bg-cover bg-center"
-        style={{ backgroundImage: `url(${imgSrc})` }}
-      /> */}
 
       <div className="flex px-4">
         <div className="flex-1 overflow-hidden">
@@ -60,19 +44,12 @@ const ProductCardVertical = ({
               {title}
             </h2>
           </Link>
-          {/* <div
-            className="line-clamp-3 max-h-36 overflow-hidden text-sm text-gray-500 mt-2 text-center"
-            dangerouslySetInnerHTML={{
-              __html: sanitize(description ?? ''),
-            }}
-          /> */}
         </div>
       </div>
 
       <div className="mt-2 flex flex-col items-center justify-between gap-2 whitespace-nowrap border-t border-gray-200 px-4">
         <div className="mt-2 flex items-center text-3xl font-normal text-gray-900">
           {price}
-
           <span className="ml-1 mt-2 inline-block text-lg font-medium">р.</span>
         </div>
 
