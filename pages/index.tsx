@@ -22,6 +22,7 @@ import buildMenu from '@/src/utils/buildMenu';
 import { IGetCategories } from '@/src/interfaces/apollo/getCatigories.interface';
 import { GetStaticProps } from 'next';
 import { findObjectById, getAllChildSlugs } from '@/src/utils/getAllChildIds';
+import { getAllCategories } from '@/src/utils/apollo/queries';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -64,10 +65,12 @@ export default function Home({
 
 export const getStaticProps: GetStaticProps = async () => {
   const { data: headerFooterData } = await axios.get(HEADER_FOOTER_ENDPOINT);
-  const { data: menu }: ApolloQueryResult<IGetCategories> = await client.query({
-    query: GET_CATEGORIES,
-  });
-  const menuObject = buildMenu(menu.productCategories.edges);
+  // const { data: menu }: ApolloQueryResult<IGetCategories> = await client.query({
+  //   query: GET_CATEGORIES,
+  // });
+  // const menuObject = buildMenu(menu.productCategories.edges);
+  const categories = await getAllCategories()
+  const menuObject = buildMenu(categories);
   return {
     props: {
       headerFooter: headerFooterData?.data ?? {},

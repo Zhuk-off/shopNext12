@@ -1,23 +1,20 @@
+import { ApolloClient, ApolloQueryResult, InMemoryCache } from '@apollo/client';
+import { offsetLimitPagination } from '@apollo/client/utilities';
+import { gql } from '@apollo/client';
 import {
   ICategory,
   IGetCategories,
 } from '@/src/interfaces/apollo/getCatigories.interface';
-import {
-  ApolloClient,
-  ApolloQueryResult,
-  InMemoryCache,
-  gql,
-} from '@apollo/client';
 
 const client = new ApolloClient({
   uri: 'https://sp.zhu.by/graphql',
   cache: new InMemoryCache(),
 });
 
-export async function getAllCategories() {
+async function getAllCategories() {
   let categories: ICategory[] = [];
-  let hasNextPage: boolean = true;
-  let endCursor: string = '';
+  let hasNextPage:boolean = true;
+  let endCursor: string  = '';
 
   while (hasNextPage) {
     const data: ApolloQueryResult<IGetCategories> = await client.query({
@@ -61,4 +58,24 @@ export async function getAllCategories() {
   }
 
   return categories;
+}
+
+export default function Test({ categories }: { categories: ICategory[] }) {
+  return (
+    <div>
+      {categories.map((category,index) => (
+        <div key={category.node.id}>{index} {category.node.name}</div>
+      ))}
+    </div>
+  );
+}
+
+export async function getStaticProps() {
+  const categories = await getAllCategories();
+
+  return {
+    props: {
+      categories,
+    },
+  };
 }

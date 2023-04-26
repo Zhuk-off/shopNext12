@@ -12,31 +12,32 @@ const SubMenuRecursive = ({
   toggleDropdown: any;
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
-  const dropdownItems = items.slice(7);
+  const MAX_SUBCATEGORY_OPEN = 4;
+  const dropdownItems = items.slice(MAX_SUBCATEGORY_OPEN);
 
   const handleDropdownToggle = () => {
     setShowDropdown(!showDropdown);
   };
 
   return (
-    <ul className="ml-10">
-      {items.slice(0, 7).map((item) => (
-        <li key={item.name}>
+    <ul className="ml-3 mt-1 leading-tight">
+      {items.slice(0, MAX_SUBCATEGORY_OPEN).map((item) => (
+        <li key={item.name} className="mt-2">
           <Link
             href={item.slug}
-            className="font-normal hover:text-red-600"
+            className="font-normal text-gray-800 hover:text-red-600"
             onClick={toggleDropdown}
           >
             {item.name}
           </Link>
         </li>
       ))}
-      {items.length > 7 && (
+      {items.length > MAX_SUBCATEGORY_OPEN && (
         <li>
           {showDropdown && (
             <ul className="flex w-full flex-col items-start">
               {dropdownItems.map((item) => (
-                <li key={item.id}>
+                <li key={item.id} className="mt-2">
                   <Link
                     href={item.slug}
                     className="font-normal hover:text-red-600"
@@ -48,20 +49,20 @@ const SubMenuRecursive = ({
               ))}
             </ul>
           )}
-          <Link href="#" onClick={handleDropdownToggle}>
+          <button onClick={handleDropdownToggle}>
             {showDropdown ? (
-              <div className="flex gap-1 text-blue-500 hover:text-red-600">
+              <div className="mt-2 flex gap-1 text-blue-500 hover:text-red-600">
                 <div>Свернуть</div>
                 <ChevronUpIcon className="w-4" />
               </div>
             ) : (
-              <div className="flex gap-1 text-blue-500 hover:text-red-600">
+              <div className="mt-2 flex gap-1 text-blue-500 hover:text-red-600">
                 <div>Посмотреть все</div>
 
                 <ChevronDownIcon className="w-4" />
               </div>
             )}
-          </Link>
+          </button>
         </li>
       )}
 

@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import { useContext } from 'react';
-import { DataContext } from '../NavDropdown';
+
 import { useQuery } from '@apollo/client';
 import buildMenu from '@/src/utils/buildMenu';
 import { IGetCategories } from '@/src/interfaces/apollo/getCatigories.interface';
 import { GET_CATEGORIES } from '@/src/utils/apollo/queriesConst';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
 import Image from 'next/image';
+import { DataContext } from '..';
 
 export interface IMainMenu {
   catName: string;
@@ -530,6 +531,7 @@ const MainMenu = ({
     setSubMenuItems(data);
   };
 
+  console.log(menu.filter(item=>item.name==='Крепеж'));
   
 
   return (
@@ -539,7 +541,7 @@ const MainMenu = ({
           {menu.map((menuItem) => (
             <li
               key={menuItem.id + Math.random.toString()}
-              className="hover:bg-red-50 hover:text-red-600"
+              className="hover:bg-red-50 hover:text-red-600 mt-2 text-gray-600"
             >
               <Link
                 href={menuItem.slug}
@@ -557,7 +559,7 @@ const MainMenu = ({
                     height={15}
                   />
                 </div>
-                <span>{menuItem.name}</span>
+                <span className='font-semibold'>{menuItem.name}</span>
               </Link>
             </li>
           ))}

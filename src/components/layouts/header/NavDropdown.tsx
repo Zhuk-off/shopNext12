@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useState, createContext } from 'react';
+import { useState, createContext, Dispatch, SetStateAction } from 'react';
 import MainMenu, { ISubmenu } from './categoryComponents/mainMenu';
 import SubMenu from './categoryComponents/subMenu';
 import { client } from '@/src/utils/apollo/apolloClient';
@@ -10,47 +10,57 @@ import { ApolloQueryResult, useQuery } from '@apollo/client';
 import buildMenu from '@/src/utils/buildMenu';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
 
-interface Data {
-  subMenuItems: MenuItem[];
-  setSubMenuItems: (data: MenuItem[]) => void;
-}
+// interface Data {
+//   subMenuItems: MenuItem[];
+//   setSubMenuItems: (data: MenuItem[]) => void;
+// }
 
-export const DataContext = createContext<Data>({
-  subMenuItems: [],
-  setSubMenuItems: () => [],
-});
+// export const DataContext = createContext<Data>({
+//   subMenuItems: [],
+//   setSubMenuItems: () => [],
+// });
 
-const NavDropdown = ({ menu }: { menu: MenuItem[] }) => {
+const NavDropdown = ({
+  menu,
+  setIsMenuOpen,
+  isMenuOpen,
+}: {
+  menu: MenuItem[];
+  setIsMenuOpen: Dispatch<SetStateAction<boolean>>;
+  isMenuOpen: boolean;
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [subMenuItems, setSubMenuItems] = useState<MenuItem[]>([]);
 
-  const toggleDropdown = () => setIsOpen(!isOpen);
+  // if (!isMenuOpen && isOpen) {
+  //   setIsOpen(false)
+  // }
+
+  const toggleDropdown = () => setIsMenuOpen(!isMenuOpen);
+
+  // const toggleDropdown = () => {
+  //   if (!isMenuOpen && !isOpen) {
+  //     setIsMenuOpen(!isMenuOpen);
+  //     setIsOpen(!isOpen);
+  //   }
+  //   if (!isMenuOpen && isOpen) {
+  //     setIsOpen(!isOpen);
+  //   }
+  // };
   // console.log('menu', menu);
 
+  /* В элементе button есть класс dropdown-toggle - он нужен для корректной работы открытия и закрытия меню
+  с ним работает обработчик событий, чтобы исключить его при клике вне открытого меню */
   return (
-    <div className="relative font-medium text-gray-500 ">
+    <div className="font-medium text-gray-500 ">
       <button
-        className="rounded-full border bg-pink-700 px-6 py-1 font-medium text-white 
+        className="dropdown-toggle rounded-full border bg-pink-700 px-6 py-1 font-medium text-white 
         transition
         hover:bg-pink-800 hover:text-white  focus:outline-none"
         onClick={toggleDropdown}
       >
         Каталог
       </button>
-      {isOpen && (
-        <div className="h-screen-minus-112px fixed left-0 top-28 z-50 w-full overflow-hidden overflow-y-scroll bg-white shadow-lg">
-          <DataContext.Provider value={{ subMenuItems, setSubMenuItems }}>
-            <div className="container mx-auto flex h-full max-w-7xl px-2 py-2 sm:px-6 lg:px-8">
-              <div className="max-w-xs border-r border-gray-400 p-3">
-                <MainMenu menu={menu} toggleDropdown={toggleDropdown} />
-              </div>
-              <div className="p-3">
-                <SubMenu toggleDropdown={toggleDropdown} />
-              </div>
-            </div>
-          </DataContext.Provider>
-        </div>
-      )}
     </div>
   );
 };

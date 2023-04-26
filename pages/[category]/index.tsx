@@ -33,6 +33,7 @@ import { DividerH } from '@/src/components/divider';
 import Container from '@/src/components/container';
 import ProductsList from '@/src/components/pagiation/productsList';
 import Search from '@/src/components/search';
+import { getAllCategories } from '@/src/utils/apollo/queries';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -89,12 +90,12 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { data: headerFooterData } = await axios.get(HEADER_FOOTER_ENDPOINT);
-  const { data: menu }: ApolloQueryResult<IGetCategories> = await client.query({
-    query: GET_CATEGORIES,
-  });
-
-  const menuObjectArr = buildMenu(menu.productCategories.edges);
-
+  // const { data: menu }: ApolloQueryResult<IGetCategories> = await client.query({
+  //   query: GET_CATEGORIES,
+  // });
+  // const menuObjectArr = buildMenu(menu.productCategories.edges);
+  const categories = await getAllCategories()
+  const menuObjectArr = buildMenu(categories);
   // Проверка не является ли params - undefined, null, array
   let slug = params ? params.category : '';
   if (!slug) {

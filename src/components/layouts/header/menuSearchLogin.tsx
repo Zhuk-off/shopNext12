@@ -2,11 +2,18 @@ import { Popover, Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Fragment } from 'react';
+import { Dispatch, Fragment, SetStateAction } from 'react';
 import NavDropdown from './NavDropdown';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
 
-const NavMenu = ({menu}:{menu:MenuItem[]}) => {
+const NavMenu = ({
+  menu,
+  setIsMenuOpen,isMenuOpen
+}: {
+  menu: MenuItem[];
+  setIsMenuOpen: Dispatch<SetStateAction<boolean>>;
+  isMenuOpen:boolean
+}) => {
   return (
     <nav className="relative flex items-center justify-between bg-gray-100 sm:h-10 lg:justify-start">
       <div className="flex flex-shrink-0 flex-grow items-center lg:flex-grow-0">
@@ -21,7 +28,7 @@ const NavMenu = ({menu}:{menu:MenuItem[]}) => {
         </Link>
       </div>
       <div className="hidden items-center md:ml-10 md:flex md:space-x-8 md:pr-4">
-        <NavDropdown menu={menu}/>
+        <NavDropdown menu={menu} setIsMenuOpen={setIsMenuOpen} isMenuOpen={isMenuOpen}/>
 
         <Link
           href="/sale"

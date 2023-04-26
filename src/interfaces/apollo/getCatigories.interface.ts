@@ -4,6 +4,7 @@ export interface IGetCategories {
 
 export interface ProductCategories {
   edges: ICategory[];
+  pageInfo: PageInfo;
 }
 
 export interface ICategory {
@@ -17,8 +18,12 @@ interface Node {
   slug: string;
   uri?: string;
   databaseId: number;
-  image: { sourceUrl: string };
+  image: IImageCat;
   seo?: ISeo;
+}
+
+interface IImageCat {
+  sourceUrl: string;
 }
 
 interface ISeo {
@@ -65,4 +70,9 @@ export interface Breadcrumb {
 export interface ChildSlugNameByCategory {
   slug: string;
   name: string;
+}
+
+interface PageInfo {
+  hasNextPage: boolean;
+  endCursor: string;
 }

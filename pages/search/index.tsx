@@ -36,6 +36,7 @@ import Search from '@/src/components/search';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import ProductsListSearch from '@/src/components/pagiation/productsListSearch';
+import { getAllCategories } from '@/src/utils/apollo/queries';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -78,11 +79,13 @@ export default function Category({
 
 export const getStaticProps: GetStaticProps = async () => {
   const { data: headerFooterData } = await axios.get(HEADER_FOOTER_ENDPOINT);
-  const { data: menu }: ApolloQueryResult<IGetCategories> = await client.query({
-    query: GET_CATEGORIES,
-  });
+  // const { data: menu }: ApolloQueryResult<IGetCategories> = await client.query({
+  //   query: GET_CATEGORIES,
+  // });
 
-  const menuObjectArr = buildMenu(menu.productCategories.edges);
+  const categories = await getAllCategories()
+  const menuObjectArr = buildMenu(categories);
+  // const menuObjectArr = buildMenu(menu.productCategories.edges);
 
   // Проверка не является ли params - undefined, null, array
   // let slug = params ? params.category : '';
