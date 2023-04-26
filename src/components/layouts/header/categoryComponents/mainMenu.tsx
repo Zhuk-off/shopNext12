@@ -529,7 +529,7 @@ const MainMenu = ({
   const handleMouseEnter = (data: MenuItem[]) => {
     setSubMenuItems(data);
   };
-  // console.log('menumenu',menu);
+
   
 
   return (

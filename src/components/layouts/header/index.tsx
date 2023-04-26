@@ -15,8 +15,6 @@ const Header = ({ header,menu }: { header: IHeader | undefined ,menu:MenuItem[]}
   const handleMenuClick = () => {
     setIsMenuOpen(!isMenuOpen);
   };
-  // console.log('header', header);
-  // console.log('header', header);
 
   return (
     <header className="relative bg-gray-100 shadow">

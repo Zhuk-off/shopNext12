@@ -30,9 +30,9 @@ const ProductCardHorisontal = ({
         <Image
           src={image}
           alt={alt}
-          width={150}
-          height={150}
-          className="object-contain"
+          width={160}
+          height={160}
+          className="object-contain h-auto w-auto"
         />
       </Link>
       <div className="col-span-3 flex border-l border-gray-200 px-4">

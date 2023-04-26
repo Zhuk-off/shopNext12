@@ -33,43 +33,42 @@ import { DividerH } from '@/src/components/divider';
 import Container from '@/src/components/container';
 import ProductsList from '@/src/components/pagiation/productsList';
 import Search from '@/src/components/search';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import ProductsListSearch from '@/src/components/pagiation/productsListSearch';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Category({
   headerFooter,
   menu,
-  productsFromCat,
-  category,
-  childrenSlugName,
+  // productsFromCat,
+
+  // childrenSlugName,
 }: {
   headerFooter: IData | undefined;
   menu: MenuItem[];
   productsFromCat: IGetProductsSimple;
-  category: IProductCategoryData;
-  childrenSlugName: ChildSlugNameByCategory[];
+  // category: IProductCategoryData;
+  // childrenSlugName: ChildSlugNameByCategory[];
 }) {
-  const first8Elem = childrenSlugName?.slice(0, 8);
+  const router = useRouter();
+  const [foundProducts, setFoundProducts] = useState<IGetProductsSimple>();
+
+  // const first8Elem = childrenSlugName?.slice(0, 8);
   return (
     <main className="">
       <Layout headerFooter={headerFooter || {}} menu={menu}>
         <Container>
-          {category?.productCategory?.seo?.breadcrumbs ? (
-            <Breadcrumbs
-              breadcrumbs={category.productCategory.seo?.breadcrumbs}
-            />
-          ) : null}
-          <h1 className="mt-5 text-2xl font-semibold">
-            {category?.productCategory?.name}
-          </h1>
+          <h1 className="mt-5 text-2xl font-semibold">Результаты поиска</h1>
           <div className="mt-3">
-            <SubCategories childrenSlugName={first8Elem} />
+            {/* <SubCategories childrenSlugName={first8Elem} /> */}
           </div>
           <DividerH />
-          <Search/>
+          <Search setFoundProducts={setFoundProducts} />
           <DividerH />
           <div className="mt-5">
-            <ProductsList currentPageProps={1} />
+            <ProductsListSearch currentPageProps={1} />
           </div>
         </Container>
       </Layout>
@@ -77,17 +76,7 @@ export default function Category({
   );
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const { data: menu }: ApolloQueryResult<IGetCategories> = await client.query({
-    query: GET_CATEGORIES,
-  });
-  return {
-    paths: menu.productCategories.edges.map((item) => `/${item.node.slug}`),
-    fallback: true,
-  };
-};
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getStaticProps: GetStaticProps = async () => {
   const { data: headerFooterData } = await axios.get(HEADER_FOOTER_ENDPOINT);
   const { data: menu }: ApolloQueryResult<IGetCategories> = await client.query({
     query: GET_CATEGORIES,
@@ -96,45 +85,45 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const menuObjectArr = buildMenu(menu.productCategories.edges);
 
   // Проверка не является ли params - undefined, null, array
-  let slug = params ? params.category : '';
-  if (!slug) {
-    slug = '';
-  }
-  if (Array.isArray(slug)) {
-    slug = slug[0];
-  }
+  // let slug = params ? params.category : '';
+  // if (!slug) {
+  //   slug = '';
+  // }
+  // if (Array.isArray(slug)) {
+  //   slug = slug[0];
+  // }
 
   // Получаем объект категории текущей
-  const foundObject = findObjectById(menuObjectArr[0], slug);
+  // const foundObject = findObjectById(menuObjectArr[0], slug);
   // Получаем все slug дочерних элементов
-  let allSlugs = foundObject ? getAllChildSlugs(foundObject) : [];
+  // let allSlugs = foundObject ? getAllChildSlugs(foundObject) : [];
   // Еще кладем туда текущую категорию
-  allSlugs.push(slug);
+  // allSlugs.push(slug);
   // Получаем продукты из массива текущей категории и дочерних категорий, если они есть
-  const { data: productsFromCat }: ApolloQueryResult<IProductCat[]> =
-    await client.query({
-      query: GET_CATEGORY_WITH_PRODUCTS_OF_CILD,
-      variables: { categorySlugs: allSlugs },
-    });
+  // const { data: productsFromCat }: ApolloQueryResult<IProductCat[]> =
+  //   await client.query({
+  //     query: GET_CATEGORY_WITH_PRODUCTS_OF_CILD,
+  //     variables: { categorySlugs: allSlugs },
+  //   });
 
-  const { data: category }: ApolloQueryResult<IProductCategoryData> =
-    await client.query({
-      query: GET_CATEGORY_DATA,
-      variables: { id: slug },
-    });
+  // const { data: category }: ApolloQueryResult<IProductCategoryData> =
+  //   await client.query({
+  //     query: GET_CATEGORY_DATA,
+  //     variables: { id: slug },
+  //   });
 
-  const childrenSlugName = foundObject
-    ? getAllChildSlugsAndName(foundObject)
-    : [];
+  // const childrenSlugName = foundObject
+  //   ? getAllChildSlugsAndName(foundObject)
+  //   : [];
 
   return {
     props: {
       headerFooter: headerFooterData?.data ?? {},
       menu: menuObjectArr,
-      params,
-      productsFromCat,
-      category,
-      childrenSlugName,
+      // params,
+      // productsFromCat,
+      // category,
+      // childrenSlugName,
     },
     revalidate: 1,
   };

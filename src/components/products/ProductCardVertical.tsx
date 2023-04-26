@@ -31,13 +31,13 @@ const ProductCardVertical = ({
         <Image
           src={image}
           alt={alt}
-          width={150}
-          height={150}
-          className="h-40 object-contain"
+          width={160}
+          height={160}
+          className="h-40 w-auto object-contain"
         />
       </Link>
 
-      <div className="flex px-4">
+      <div className="flex px-4 mt-2">
         <div className="flex-1 overflow-hidden">
           <Link href={uri}>
             <h2 className="line-clamp-3 min-h-[72px] text-center text-base font-medium text-blue-500 underline hover:text-red-500">

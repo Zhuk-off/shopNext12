@@ -5,6 +5,7 @@ export interface IGetProductsSimple {
 export interface Products {
   __typename: string;
   edges: Edge[];
+  pageInfo: PageInfo;
 }
 
 export interface Edge {
@@ -47,4 +48,16 @@ export interface Image {
   slug: string;
   sourceUrl: string;
   title: string;
+}
+
+export interface PageInfo {
+  __typename: string;
+  hasNextPage: boolean;
+  endCursor: string;
+  offsetPagination: OffsetPagination;
+}
+
+export interface OffsetPagination {
+  __typename: string;
+  total: number;
 }

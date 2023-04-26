@@ -125,7 +125,7 @@ const ProductsBoard = ({
           </div>
 
           <ul className="flex flex-col gap-2">
-            {viewType === 'list' ? (
+            {viewType === 'list' ? (products.products.edges.length!==0 ? 
               products.products.edges.map((product, index) => {
                 // Если товар вариативный, а мы выводим простой товар, то вариативный отображается в виде пустых объектов, чтобы убрать пустой товар делаем проверку на пустой id
                 if (!product.node.id) return null;
@@ -138,10 +138,11 @@ const ProductsBoard = ({
                     />
                   </li>
                 );
-              })
+              }):<h2 className='font-semibold text-xl'>Товаров не найдено</h2>
             ) : (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
-                {products.products.edges.map((product, index) => {
+                {products.products.edges.length!==0 ? 
+                products.products.edges.map((product, index) => {
                   // Если товар вариативный, а мы выводим простой товар, то вариативный отображается в виде пустых объектов, чтобы убрать пустой товар делаем проверку на пустой id
                   if (!product.node.id) return null;
                   return (
@@ -153,7 +154,7 @@ const ProductsBoard = ({
                       />
                     </li>
                   );
-                })}
+                }):(<h2 className='font-semibold text-xl'>Товаров не найдено</h2>)}
               </div>
             )}
           </ul>

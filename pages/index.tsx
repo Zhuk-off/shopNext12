@@ -32,7 +32,7 @@ export default function Home({
   headerFooter: IData | undefined;
   menu: MenuItem[];
 }) {
-  // console.log(menu);
+
   
   const foundObject = findObjectById(menu[0], 'akkumulyatornye-dreli-shurupoverty');
   const allSlugs = foundObject ? getAllChildSlugs(foundObject) : [];
@@ -44,8 +44,7 @@ export default function Home({
   //   }
   // );
 
-  // console.log('data', data);
-  // console.log('menu', menu);
+
 
   // if (loading) return 'Loading...';
   // if (error) return `Error! ${error.message}`;

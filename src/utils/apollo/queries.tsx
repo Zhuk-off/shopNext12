@@ -17,12 +17,12 @@ export function Users() {
 
   // data &&
   //   data.products.edges.map((product) => {
-  //     console.log(product.node.databaseId);
+  //     
   //   });
-  // console.log(data?.productCategories.edges);
+
   if (data) {
     const cat = buildMenu(data?.productCategories.edges);
-    // console.log('cat', cat);
+
   }
 
   return (

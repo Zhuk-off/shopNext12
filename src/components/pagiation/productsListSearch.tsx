@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
 import Pagination from '.';
-import { gql, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import ProductsBoard from '../products';
 import { IGetProductsSimple } from '@/src/interfaces/apollo/getProducts.interface';
-import { PRODUCTS_TEST } from '@/src/utils/apollo/queriesConst';
+import { SEARCH_PRODUCTS_QUERY } from '@/src/utils/apollo/queriesConst';
+import { useRouter } from 'next/router';
 
-function ProductsList({ currentPageProps }: { currentPageProps: number }) {
+function ProductsListSearch({
+  currentPageProps,
+}: {
+  currentPageProps: number;
+}) {
   // количество товаров на страницу
   const productsPerPage = 12;
   // текущая страница - входной параметр - по умолчанию ставится 1 при вызовен на уровне выше, записывается в стейт
@@ -18,12 +23,14 @@ function ProductsList({ currentPageProps }: { currentPageProps: number }) {
   const [totalProducts, setTotalProducts] = useState(0);
   // предыдущее общее количество товаров, чтобы при переключении страницы пока loading, общее количество товаров не сбрасывалось на ноль
   const [prevTotalProducts, setPrevTotalProducts] = useState(0);
+  const router = useRouter();
 
   // получение данных о товарах
-  const { loading, error, data } = useQuery(PRODUCTS_TEST, {
+  const { loading, error, data } = useQuery(SEARCH_PRODUCTS_QUERY, {
     variables: {
       offset: (currentPage - 1) * productsPerPage,
       size: productsPerPage,
+      search: router.query.q,
     },
   });
   // действия, для выполнения, когда переключается страница
@@ -67,7 +74,7 @@ function ProductsList({ currentPageProps }: { currentPageProps: number }) {
 
   return (
     <div>
-      <ProductsBoard products={products} loading={loading} />
+      <ProductsBoard products={products} loading={false} />
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
@@ -82,4 +89,4 @@ function ProductsList({ currentPageProps }: { currentPageProps: number }) {
   );
 }
 
-export default ProductsList;
+export default ProductsListSearch;

@@ -25,7 +25,7 @@ const NavDropdown = ({ menu }: { menu: MenuItem[] }) => {
   const [subMenuItems, setSubMenuItems] = useState<MenuItem[]>([]);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
-  console.log('menu', menu);
+  // console.log('menu', menu);
 
   return (
     <div className="relative font-medium text-gray-500 ">
@@ -63,8 +63,6 @@ const NavDropdown = ({ menu }: { menu: MenuItem[] }) => {
 //   const { data }:ApolloQueryResult<Props> = await client.query({
 //     query: GET_CATEGORY
 //   });
-
-//   console.log(data,data);
 
 //   return {
 //     props: {

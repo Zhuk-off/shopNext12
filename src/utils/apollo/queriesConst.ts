@@ -133,18 +133,18 @@ export const GET_CATEGORY_WITH_PRODUCTS_OF_CILD = gql`
       edges {
         node {
           ... on SimpleProduct {
-          sku
-          id
-          name
-          price
-          salePrice
-          regularPrice
-          shortDescription
-          image {
-            altText
-            sourceUrl
-          }
-          stockStatus
+            sku
+            id
+            name
+            price
+            salePrice
+            regularPrice
+            shortDescription
+            image {
+              altText
+              sourceUrl
+            }
+            stockStatus
           }
         }
       }
@@ -158,55 +158,118 @@ export const GET_CATEGORY_WITH_PRODUCTS_OF_CILD = gql`
     }
   }
 `;
-export const PRODUCTS_TEST = gql`
-query AllProductsInCategories($first: Int, $after: String, $categorySlugs: [String!]!) {
-  products(
-    first: $first, where: { categoryIn: $categorySlugs }, after: $after) {
-    edges {
-      node {
-        ... on SimpleProduct {
-          sku
-          id
-          name
-          price
-          salePrice
-          regularPrice
-          shortDescription
-          image {
-            altText
-            sourceUrl
-          }
-          stockStatus
+// export const PRODUCTS_TEST = gql`
+// query AllProductsInCategories($first: Int, $after: String, $categorySlugs: [String!]!) {
+//   products(
+//     first: $first, where: { categoryIn: $categorySlugs }, after: $after) {
+//     edges {
+//       node {
+//         ... on SimpleProduct {
+//           sku
+//           id
+//           name
+//           price
+//           salePrice
+//           regularPrice
+//           shortDescription
+//           image {
+//             altText
+//             sourceUrl
+//           }
+//           stockStatus
+//         }
+//       }
+//     }
+//     pageInfo {
+//       hasNextPage
+//       endCursor
+//     }
+//   }
+// }
+// `;
+
+export const GET_CATEGORY_DATA = gql`
+  query AllProductsInCategory($id: ID!) {
+    productCategory(id: $id, idType: SLUG) {
+      id
+      databaseId
+      description
+      slug
+      image {
+        sourceUrl
+      }
+      name
+      seo {
+        breadcrumbs {
+          text
+          url
         }
       }
     }
-    pageInfo {
-      hasNextPage
-      endCursor
-    }
   }
-}
 `;
 
-
-export const GET_CATEGORY_DATA = gql`
-query AllProductsInCategory($id: ID! ) {
-  productCategory(id: $id, idType: SLUG) {
-    id
-    databaseId
-    description
-    slug
-    image {
-      sourceUrl
-    }
-    name
-    seo {
-      breadcrumbs {
-        text
-        url
+// Тестовый запрос - Запрос всех товаров - используется для тестирования функции пагинации
+export const PRODUCTS_TEST = gql`
+  query AllProductsInCategories($offset: Int, $size: Int) {
+    products(where: { offsetPagination: { size: $size, offset: $offset } }) {
+      edges {
+        node {
+          ... on SimpleProduct {
+            sku
+            id
+            name
+            price
+            salePrice
+            regularPrice
+            shortDescription
+            image {
+              altText
+              sourceUrl
+            }
+            stockStatus
+          }
+        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+        offsetPagination {
+          total
+        }
       }
     }
   }
-}
 `;
 
+export const SEARCH_PRODUCTS_QUERY = gql`
+  query SearchProducts($search: String, $offset: Int, $size: Int) {
+    products(where: { search: $search, offsetPagination: { size: $size, offset: $offset } }) {
+      edges {
+        node {
+          ... on SimpleProduct {
+            sku
+            id
+            name
+            price
+            salePrice
+            regularPrice
+            shortDescription
+            image {
+              altText
+              sourceUrl
+            }
+            stockStatus
+          }
+        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+        offsetPagination {
+          total
+        }
+      }
+    }
+  }
+`;
