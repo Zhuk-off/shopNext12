@@ -531,9 +531,6 @@ const MainMenu = ({
     setSubMenuItems(data);
   };
 
-  console.log(menu.filter(item=>item.name==='Крепеж'));
-  
-
   return (
     <>
       {data && (
@@ -541,7 +538,7 @@ const MainMenu = ({
           {menu.map((menuItem) => (
             <li
               key={menuItem.id + Math.random.toString()}
-              className="hover:bg-red-50 hover:text-red-600 mt-2 text-gray-600"
+              className="mt-2 text-gray-600 hover:bg-red-50 hover:text-red-600"
             >
               <Link
                 href={menuItem.slug}
@@ -559,7 +556,7 @@ const MainMenu = ({
                     height={15}
                   />
                 </div>
-                <span className='font-semibold'>{menuItem.name}</span>
+                <span className="font-semibold">{menuItem.name}</span>
               </Link>
             </li>
           ))}

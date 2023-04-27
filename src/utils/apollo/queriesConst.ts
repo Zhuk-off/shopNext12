@@ -127,65 +127,36 @@ export const GET_CATEGORY_WITH_PRODUCTS = gql`
     }
   }
 `;
-export const GET_CATEGORY_WITH_PRODUCTS_OF_CILD = gql`
-  query AllProductsInCategories($categorySlugs: [String!]!) {
-    products(first: 100, where: { categoryIn: $categorySlugs }) {
-      edges {
-        node {
-          ... on SimpleProduct {
-            sku
-            id
-            name
-            price
-            salePrice
-            regularPrice
-            shortDescription
-            image {
-              altText
-              sourceUrl
-            }
-            stockStatus
-          }
-        }
-      }
-      pageInfo {
-        hasNextPage
-        endCursor
-        offsetPagination {
-          total
-        }
-      }
-    }
-  }
-`;
-// export const PRODUCTS_TEST = gql`
-// query AllProductsInCategories($first: Int, $after: String, $categorySlugs: [String!]!) {
-//   products(
-//     first: $first, where: { categoryIn: $categorySlugs }, after: $after) {
-//     edges {
-//       node {
-//         ... on SimpleProduct {
-//           sku
-//           id
-//           name
-//           price
-//           salePrice
-//           regularPrice
-//           shortDescription
-//           image {
-//             altText
-//             sourceUrl
+// export const GET_CATEGORY_WITH_PRODUCTS_OF_CILD = gql`
+//   query AllProductsInCategories($categorySlugs: [String!]!) {
+//     products(first: 100, where: { categoryIn: $categorySlugs }) {
+//       edges {
+//         node {
+//           ... on SimpleProduct {
+//             sku
+//             id
+//             name
+//             price
+//             salePrice
+//             regularPrice
+//             shortDescription
+//             image {
+//               altText
+//               sourceUrl
+//             }
+//             stockStatus
 //           }
-//           stockStatus
+//         }
+//       }
+//       pageInfo {
+//         hasNextPage
+//         endCursor
+//         offsetPagination {
+//           total
 //         }
 //       }
 //     }
-//     pageInfo {
-//       hasNextPage
-//       endCursor
-//     }
 //   }
-// }
 // `;
 
 export const GET_CATEGORY_DATA = gql`
@@ -211,8 +182,8 @@ export const GET_CATEGORY_DATA = gql`
 
 // Тестовый запрос - Запрос всех товаров - используется для тестирования функции пагинации
 export const PRODUCTS_TEST = gql`
-  query AllProductsInCategories($offset: Int, $size: Int) {
-    products(where: { offsetPagination: { size: $size, offset: $offset } }) {
+  query AllProductsInCategories($offset: Int, $size: Int, $categorySlugs: [String!]!) {
+    products(where: { offsetPagination: { size: $size, offset: $offset }, categoryIn: $categorySlugs }) {
       edges {
         node {
           ... on SimpleProduct {
