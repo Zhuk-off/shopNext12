@@ -26,6 +26,7 @@ function ProductsList({ currentPageProps }: { currentPageProps: number }) {
       size: productsPerPage,
     },
   });
+  
   // действия, для выполнения, когда переключается страница
   useEffect(() => {
     // записываем предыдущие значения

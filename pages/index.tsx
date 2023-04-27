@@ -2,16 +2,11 @@ import { Inter } from 'next/font/google';
 import { Slider } from '@/src/components/slider';
 import { Banners } from '@/src/components/banners';
 import Offers from '@/src/components/offers';
-import {
-  ApolloQueryResult,
-  useQuery,
-} from '@apollo/client';
+import { ApolloQueryResult, useQuery } from '@apollo/client';
 import { HEADER_FOOTER_ENDPOINT } from '@/src/utils/constants/endpoints';
 import axios from 'axios';
 import Layout from '@/src/components/layouts';
-import {
-  IData,
-} from '@/src/interfaces/footerHeaderRestAPIDataResponse';
+import { IData } from '@/src/interfaces/footerHeaderRestAPIDataResponse';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
 import { client } from '@/src/utils/apollo/apolloClient';
 import {
@@ -23,6 +18,8 @@ import { IGetCategories } from '@/src/interfaces/apollo/getCatigories.interface'
 import { GetStaticProps } from 'next';
 import { findObjectById, getAllChildSlugs } from '@/src/utils/getAllChildIds';
 import { getAllCategories } from '@/src/utils/apollo/queries';
+import Search from '@/src/components/search';
+import Container from '@/src/components/container';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -33,11 +30,12 @@ export default function Home({
   headerFooter: IData | undefined;
   menu: MenuItem[];
 }) {
-
-  
-  const foundObject = findObjectById(menu[0], 'akkumulyatornye-dreli-shurupoverty');
+  const foundObject = findObjectById(
+    menu[0],
+    'akkumulyatornye-dreli-shurupoverty'
+  );
   const allSlugs = foundObject ? getAllChildSlugs(foundObject) : [];
-  
+
   // const { loading, error, data } = useQuery(
   //   GET_CATEGORY_WITH_PRODUCTS_OF_CILD,
   //   {
@@ -45,14 +43,15 @@ export default function Home({
   //   }
   // );
 
-
-
   // if (loading) return 'Loading...';
   // if (error) return `Error! ${error.message}`;
 
   return (
     <main className="">
       <Layout headerFooter={headerFooter || {}} menu={menu}>
+        <Container>
+          <Search />
+        </Container>
         <div className="mb-20 mt-12 rounded-xl px-20 ">
           <Slider />
         </div>
@@ -69,7 +68,7 @@ export const getStaticProps: GetStaticProps = async () => {
   //   query: GET_CATEGORIES,
   // });
   // const menuObject = buildMenu(menu.productCategories.edges);
-  const categories = await getAllCategories()
+  const categories = await getAllCategories();
   const menuObject = buildMenu(categories);
   return {
     props: {

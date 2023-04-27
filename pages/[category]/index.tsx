@@ -2,6 +2,7 @@ import Layout from '@/src/components/layouts';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
 import {
   ChildSlugNameByCategory,
+  ICategory,
   IGetCategories,
   IProductCategoryData,
 } from '@/src/interfaces/apollo/getCatigories.interface';
@@ -34,6 +35,7 @@ import Container from '@/src/components/container';
 import ProductsList from '@/src/components/pagiation/productsList';
 import Search from '@/src/components/search';
 import { getAllCategories } from '@/src/utils/apollo/queries';
+import { useRouter } from 'next/router';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -43,6 +45,7 @@ export default function Category({
   productsFromCat,
   category,
   childrenSlugName,
+
 }: {
   headerFooter: IData | undefined;
   menu: MenuItem[];
@@ -50,7 +53,16 @@ export default function Category({
   category: IProductCategoryData;
   childrenSlugName: ChildSlugNameByCategory[];
 }) {
-  const first8Elem = childrenSlugName?.slice(0, 8);
+
+  // const first8Elem = childrenSlugName?.slice(0, 8);
+  const first8Elem = childrenSlugName
+
+  // console.log(productsFromCat);
+  // console.log('foundObject', foundObject );
+  console.log('category', category );
+
+
+
   return (
     <main className="">
       <Layout headerFooter={headerFooter || {}} menu={menu}>
@@ -67,7 +79,7 @@ export default function Category({
             <SubCategories childrenSlugName={first8Elem} />
           </div>
           <DividerH />
-          <Search/>
+          <Search />
           <DividerH />
           <div className="mt-5">
             <ProductsList currentPageProps={1} />
@@ -79,11 +91,9 @@ export default function Category({
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const { data: menu }: ApolloQueryResult<IGetCategories> = await client.query({
-    query: GET_CATEGORIES,
-  });
+  const menu: ICategory[] = await getAllCategories();
   return {
-    paths: menu.productCategories.edges.map((item) => `/${item.node.slug}`),
+    paths: menu.map((item) => `/${item.node.slug}`),
     fallback: true,
   };
 };
@@ -94,7 +104,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   //   query: GET_CATEGORIES,
   // });
   // const menuObjectArr = buildMenu(menu.productCategories.edges);
-  const categories = await getAllCategories()
+  const categories = await getAllCategories();
   const menuObjectArr = buildMenu(categories);
   // Проверка не является ли params - undefined, null, array
   let slug = params ? params.category : '';
@@ -106,7 +116,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   }
 
   // Получаем объект категории текущей
-  const foundObject = findObjectById(menuObjectArr[0], slug);
+  const foundObject = menuObjectArr.find((cat) => findObjectById(cat, slug));
   // Получаем все slug дочерних элементов
   let allSlugs = foundObject ? getAllChildSlugs(foundObject) : [];
   // Еще кладем туда текущую категорию
@@ -136,6 +146,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       productsFromCat,
       category,
       childrenSlugName,
+      allSlugs,
+      foundObject,
     },
     revalidate: 1,
   };
