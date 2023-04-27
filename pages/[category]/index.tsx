@@ -61,9 +61,7 @@ export default function Category({
           <Search />
           <DividerH />
           <div className="mt-5">
-            <ProductsList
-              mainAndChildrenSlugs={allSlugs}
-            />
+            <ProductsList mainAndChildrenSlugs={allSlugs} />
           </div>
         </Container>
       </Layout>

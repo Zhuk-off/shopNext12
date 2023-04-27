@@ -1,10 +1,35 @@
-import { useEffect, useState } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  createContext,
+  useEffect,
+  useState,
+} from 'react';
 import Pagination from '.';
 import { useQuery } from '@apollo/client';
 import ProductsBoard from '../products';
 import { IGetProductsSimple } from '@/src/interfaces/apollo/getProducts.interface';
 import { PRODUCTS_TEST } from '@/src/utils/apollo/queriesConst';
 import { useRouter } from 'next/router';
+import { PerPage, ViewType } from '@/src/interfaces/productsView.interface';
+
+export interface IControlBar {
+  productsPerPage: PerPage;
+  viewProducts: ViewType;
+}
+
+interface IControlBarContex {
+  controlBar: IControlBar;
+  setControlBars: Dispatch<SetStateAction<IControlBar>>;
+}
+
+export const ControlBarContext = createContext<IControlBarContex>({
+  controlBar: {
+    productsPerPage: 12,
+    viewProducts: 'card',
+  },
+  setControlBars: () => {},
+});
 
 function ProductsList({
   mainAndChildrenSlugs,
@@ -13,7 +38,7 @@ function ProductsList({
 }) {
   const router = useRouter();
   // количество товаров на страницу
-  const productsPerPage = 12;
+
   // текущая страница - входной параметр - по умолчанию ставится 1 при вызовен на уровне выше, записывается в стейт
   const [currentPage, setCurrentPage] = useState(1);
   // общее количество страниц - 1 - минимальное количество
@@ -24,22 +49,23 @@ function ProductsList({
   const [totalProducts, setTotalProducts] = useState(0);
   // предыдущее общее количество товаров, чтобы при переключении страницы пока loading, общее количество товаров не сбрасывалось на ноль
   const [prevTotalProducts, setPrevTotalProducts] = useState(0);
+  const [controlBar, setControlBars] = useState<IControlBar>({
+    productsPerPage: 12,
+    viewProducts: 'card',
+  });
 
   /* Необходимо, для того, чтобы при переходе на новую страницу стейт не сохранялся старый
-  из за этого товар не найден, потому что он учавствует в запросе*/
+  из за этого товар не найден, потому что он учавствует в запросе, а также при изменении вывода
+  количества товаров на страницу*/
   useEffect(() => {
     setCurrentPage(1);
-  }, [router.query.category]);
-
-  console.log('router.route', router.route);
-  console.log('router', router);
-  console.log('currentPage', currentPage);
+  }, [router.query.category, controlBar.productsPerPage]);
 
   // получение данных о товарах
   const { loading, error, data } = useQuery(PRODUCTS_TEST, {
     variables: {
-      offset: (currentPage - 1) * productsPerPage,
-      size: productsPerPage,
+      offset: (currentPage - 1) * controlBar.productsPerPage,
+      size: controlBar.productsPerPage,
       categorySlugs: mainAndChildrenSlugs,
     },
   });
@@ -52,7 +78,8 @@ function ProductsList({
     // получаем и вычисляем новые значения для товаров и страниц
     const totalPagesNew = data
       ? Math.ceil(
-          data.products.pageInfo.offsetPagination.total / productsPerPage
+          data.products.pageInfo.offsetPagination.total /
+            controlBar.productsPerPage
         )
       : prevTotalPages;
 
@@ -63,19 +90,23 @@ function ProductsList({
     setTotalPages(totalPagesNew !== 0 ? totalPagesNew : 1);
     setTotalProducts(totalProductsNew);
   }, [
+    controlBar.productsPerPage,
     data,
     prevTotalPages,
     prevTotalProducts,
     totalPages,
     totalProducts,
-    router,
   ]);
 
   // пока идет загрузка - выводим skeleton для того, чтобы не плыла верстка
   if (loading)
     return (
       <div>
-        <ProductsBoard products={null} loading={loading} />
+        <ProductsBoard
+          products={null}
+          loading={loading}
+          controlBarFaster={controlBar}
+        />
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}
@@ -89,11 +120,16 @@ function ProductsList({
   if (error) return <p>Error :(</p>;
 
   const products: IGetProductsSimple = data;
-  console.log('data', data);
 
   return (
     <div>
-      <ProductsBoard products={products} loading={loading} />
+      <ControlBarContext.Provider value={{ controlBar, setControlBars }}>
+        <ProductsBoard
+          products={products}
+          loading={loading}
+          controlBarFaster={controlBar}
+        />
+      </ControlBarContext.Provider>
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}

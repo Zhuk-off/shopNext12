@@ -1,5 +1,6 @@
-import { IProductCat } from "../interfaces/apollo/getProducts.interface";
-import { DEFAULT_IMG_URL } from "./constants/images";
+import { IProductCat } from '../interfaces/apollo/getProducts.interface';
+import { PerPage } from '../interfaces/productsView.interface';
+import { DEFAULT_IMG_URL } from './constants/images';
 
 // Получить slug из URL
 export const getSlugFromUrl = (url: string): string => {
@@ -9,14 +10,14 @@ export const getSlugFromUrl = (url: string): string => {
 };
 
 export const formatBelarusianCurrency = (currencyString: string) => {
-  const amount = currencyString.replace('Br', '')
-  const formattedAmount = amount
+  const amount = currencyString.replace('Br', '');
+  const formattedAmount = amount;
   return formattedAmount;
 };
 
 // преобразование входных данных для отображения в карточке товара
 export const productDataConversion = (product: IProductCat) => {
-const image = product.image?.sourceUrl
+  const image = product.image?.sourceUrl
     ? product.image?.sourceUrl
     : DEFAULT_IMG_URL;
   const alt = product.image?.altText ? product.image?.altText : '';
@@ -28,7 +29,10 @@ const image = product.image?.sourceUrl
   const inStock = product.stockStatus === 'IN_STOCK' ? true : false;
   const uri = product.slug ? product.slug : '#';
 
-  return {image,alt,title,description,price,inStock,uri};
+  return { image, alt, title, description, price, inStock, uri };
 };
 
-
+// Проверка на типы (сужение типов)
+export function isPerPage(value: number): value is PerPage {
+  return [12, 24, 48, 96].includes(value);
+}
