@@ -6,6 +6,10 @@ import ProductCardVertical from './ProductCardVertical';
 import { ViewButton } from './viewButton';
 import ProductsPerPageDropdown from './productsPerPagePageDropdown';
 import { ControlBarContext, IControlBar } from '../pagiation/productsList';
+import { SortPriceButton } from './SortPriceButton';
+import { SortNameButton } from './SortNameButton';
+import { FilterPrice } from './filterPrice';
+import { DividerH } from '../divider';
 
 const ProductsBoard = ({
   products,
@@ -70,10 +74,20 @@ const ProductsBoard = ({
   return (
     <section>
       <Container>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-4 flex items-center justify-end gap-2">
-            <ProductsPerPageDropdown />
-            <ViewButton />
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 ">
+          <div className="mb-8 flex items-center justify-end flex-col xl:flex-row border border-gray-200">
+            <div className="my-4 lg:my-2">
+              <FilterPrice />
+            </div>
+            <div className="py-4 lg:py-2 pl-4 border-l border-gray-200">
+              <span className="pr-2 lg:py-2 inline-block">Сортировать по:</span>
+              <SortNameButton />
+              <SortPriceButton />
+            </div>
+            <div className='flex pl-4 border-l border-gray-200 gap-4'>
+              <ProductsPerPageDropdown />
+              <ViewButton />
+            </div>
           </div>
 
           <ul className="flex flex-col gap-2">

@@ -9,13 +9,40 @@ import Pagination from '.';
 import { useQuery } from '@apollo/client';
 import ProductsBoard from '../products';
 import { IGetProductsSimple } from '@/src/interfaces/apollo/getProducts.interface';
-import { PRODUCTS_TEST } from '@/src/utils/apollo/queriesConst';
+import {
+  PRODUCTS_TEST,
+  PRODUCTS_TEST_FILTER_BY_MAX_PRICE,
+  PRODUCTS_TEST_FILTER_BY_MIN_MAX_PRICE,
+  PRODUCTS_TEST_FILTER_BY_MIN_PRICE,
+  PRODUCTS_TEST_SORT,
+  PRODUCTS_TEST_SORT_FILTER_BY_MAX_PRICE,
+  PRODUCTS_TEST_SORT_FILTER_BY_MIN_MAX_PRICE,
+  PRODUCTS_TEST_SORT_FILTER_BY_MIN_PRICE,
+} from '@/src/utils/apollo/queriesConst';
 import { useRouter } from 'next/router';
-import { PerPage, ViewType } from '@/src/interfaces/productsView.interface';
+import {
+  PerPage,
+  SortName,
+  SortPrice,
+  ViewType,
+} from '@/src/interfaces/productsView.interface';
 
 export interface IControlBar {
   productsPerPage: PerPage;
   viewProducts: ViewType;
+  sortPrice: SortPrice;
+  sortName: SortName;
+  minPrice?: number | null;
+  maxPrice?: number | null;
+}
+export interface IVariables {
+  offset: number;
+  size: PerPage;
+  categorySlugs: string[];
+  field?: 'NAME' | 'PRICE' | '';
+  order?: 'ASC' | 'DESC' | '';
+  minPrice?: number | null;
+  maxPrice?: number | null;
 }
 
 interface IControlBarContex {
@@ -27,6 +54,10 @@ export const ControlBarContext = createContext<IControlBarContex>({
   controlBar: {
     productsPerPage: 12,
     viewProducts: 'card',
+    sortPrice: '',
+    sortName: '',
+    minPrice: null,
+    maxPrice: null,
   },
   setControlBars: () => {},
 });
@@ -52,6 +83,10 @@ function ProductsList({
   const [controlBar, setControlBars] = useState<IControlBar>({
     productsPerPage: 12,
     viewProducts: 'card',
+    sortPrice: '',
+    sortName: '',
+    minPrice: null,
+    maxPrice: null,
   });
 
   /* Необходимо, для того, чтобы при переходе на новую страницу стейт не сохранялся старый
@@ -61,13 +96,96 @@ function ProductsList({
     setCurrentPage(1);
   }, [router.query.category, controlBar.productsPerPage]);
 
-  // получение данных о товарах
-  const { loading, error, data } = useQuery(PRODUCTS_TEST, {
-    variables: {
+  const variablesFunc = () => {
+    let variables: IVariables = {
       offset: (currentPage - 1) * controlBar.productsPerPage,
       size: controlBar.productsPerPage,
       categorySlugs: mainAndChildrenSlugs,
-    },
+    };
+    const field = controlBar.sortName !== '' ? 'NAME' : 'PRICE';
+    const order =
+      controlBar.sortName !== '' ? controlBar.sortName : controlBar.sortPrice;
+    const minPrice = controlBar.minPrice;
+    const maxPrice = controlBar.maxPrice;
+
+    /**проверка на сортировку и фильтр */
+    if (
+      (controlBar.sortName !== '' || controlBar.sortPrice !== '') &&
+      controlBar.maxPrice &&
+      controlBar.minPrice
+    ) {
+      variables = { ...variables, field, order, minPrice, maxPrice };
+    } else if (
+      (controlBar.sortName !== '' || controlBar.sortPrice !== '') &&
+      controlBar.minPrice
+    ) {
+      variables = { ...variables, field, order, minPrice };
+    } else if (
+      (controlBar.sortName !== '' || controlBar.sortPrice !== '') &&
+      controlBar.maxPrice
+    ) {
+      variables = { ...variables, field, order, maxPrice };
+    } else if (controlBar.sortName !== '' || controlBar.sortPrice !== '') {
+      variables = { ...variables, field, order };
+    }else
+
+    /**проверка на фильтр */
+    if (controlBar.maxPrice && controlBar.minPrice) {
+      variables = { ...variables, minPrice, maxPrice };
+    } else if (controlBar.minPrice) {
+      variables = { ...variables, minPrice };
+    } else if (controlBar.maxPrice) {
+      variables = { ...variables, maxPrice };
+    }
+    console.log(variables);
+    
+    return variables;
+  };
+
+  const queryFunc = () => {
+    let query = PRODUCTS_TEST;
+    console.log('contex', controlBar);
+
+    /**проверка на сортировку и фильтр */
+    if (
+      (controlBar.sortName !== '' || controlBar.sortPrice !== '') &&
+      controlBar.maxPrice &&
+      controlBar.minPrice
+    ) {
+      query = PRODUCTS_TEST_SORT_FILTER_BY_MIN_MAX_PRICE;
+      console.log('PRODUCTS_TEST_SORT_FILTER_BY_MIN_MAX_PRICE');
+    } else if (
+      (controlBar.sortName !== '' || controlBar.sortPrice !== '') &&
+      controlBar.minPrice
+    ) {
+      query = PRODUCTS_TEST_SORT_FILTER_BY_MIN_PRICE;
+      console.log('PRODUCTS_TEST_SORT_FILTER_BY_MIN_PRICE');
+    } else if (
+      (controlBar.sortName !== '' || controlBar.sortPrice !== '') &&
+      controlBar.maxPrice
+    ) {
+      query = PRODUCTS_TEST_SORT_FILTER_BY_MAX_PRICE;
+      console.log('PRODUCTS_TEST_SORT_FILTER_BY_MAX_PRICE');
+    } else if (controlBar.sortName !== '' || controlBar.sortPrice !== '') {
+      query = PRODUCTS_TEST_SORT;
+      console.log('PRODUCTS_TEST_SORT');
+    } else if (controlBar.maxPrice && controlBar.minPrice) {
+      /**проверка на фильтр */
+      query = PRODUCTS_TEST_FILTER_BY_MIN_MAX_PRICE;
+      console.log('PRODUCTS_TEST_FILTER_BY_MIN_MAX_PRICE');
+    } else if (controlBar.minPrice) {
+      query = PRODUCTS_TEST_FILTER_BY_MIN_PRICE;
+      console.log('PRODUCTS_TEST_FILTER_BY_MIN_PRICE');
+    } else if (controlBar.maxPrice) {
+      query = PRODUCTS_TEST_FILTER_BY_MAX_PRICE;
+      console.log('PRODUCTS_TEST_FILTER_BY_MAX_PRICE');
+    }
+    return query;
+  };
+
+  // получение данных о товарах
+  const { loading, error, data } = useQuery(queryFunc(), {
+    variables: variablesFunc(),
   });
 
   // действия, для выполнения, когда переключается страница
@@ -91,6 +209,8 @@ function ProductsList({
     setTotalProducts(totalProductsNew);
   }, [
     controlBar.productsPerPage,
+    controlBar.minPrice,
+    controlBar.maxPrice,
     data,
     prevTotalPages,
     prevTotalProducts,
@@ -120,6 +240,8 @@ function ProductsList({
   if (error) return <p>Error :(</p>;
 
   const products: IGetProductsSimple = data;
+
+  console.log(controlBar);
 
   return (
     <div>

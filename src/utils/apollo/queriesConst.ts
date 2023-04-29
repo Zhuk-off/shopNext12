@@ -180,42 +180,100 @@ export const GET_CATEGORY_DATA = gql`
   }
 `;
 
+const productQuery = `
+edges {
+  node {
+    ... on SimpleProduct {
+      sku
+      id
+      name
+      price
+      salePrice
+      regularPrice
+      shortDescription
+      image {
+        altText
+        sourceUrl
+      }
+      stockStatus
+    }
+  }
+}
+pageInfo {
+  hasNextPage
+  endCursor
+  offsetPagination {
+    total
+  }
+}
+`;
+
 // Тестовый запрос - Запрос всех товаров - используется для тестирования функции пагинации
 export const PRODUCTS_TEST = gql`
   query AllProductsInCategories($offset: Int, $size: Int, $categorySlugs: [String!]!) {
-    products(where: { offsetPagination: { size: $size, offset: $offset }, categoryIn: $categorySlugs }) {
-      edges {
-        node {
-          ... on SimpleProduct {
-            sku
-            id
-            name
-            price
-            salePrice
-            regularPrice
-            shortDescription
-            image {
-              altText
-              sourceUrl
-            }
-            stockStatus
-          }
-        }
-      }
-      pageInfo {
-        hasNextPage
-        endCursor
-        offsetPagination {
-          total
-        }
-      }
+    products(where: {offsetPagination: { size: $size, offset: $offset }, categoryIn: $categorySlugs }) {
+      ${productQuery}
+    }
+  }
+`;
+export const PRODUCTS_TEST_FILTER_BY_MIN_PRICE = gql`
+  query AllProductsInCategories($minPrice: Float, $offset: Int, $size: Int, $categorySlugs: [String!]!) {
+    products(where: {minPrice: $minPrice, offsetPagination: { size: $size, offset: $offset }, categoryIn: $categorySlugs }) {
+      ${productQuery}
+    }
+  }
+`;
+export const PRODUCTS_TEST_FILTER_BY_MAX_PRICE = gql`
+  query AllProductsInCategories($maxPrice: Float, $offset: Int, $size: Int, $categorySlugs: [String!]!) {
+    products(where: {maxPrice: $maxPrice, offsetPagination: { size: $size, offset: $offset }, categoryIn: $categorySlugs }) {
+      ${productQuery}
+    }
+  }
+`;
+export const PRODUCTS_TEST_FILTER_BY_MIN_MAX_PRICE = gql`
+  query AllProductsInCategories($minPrice: Float, $maxPrice: Float, $offset: Int, $size: Int, $categorySlugs: [String!]!) {
+    products(where: {minPrice: $minPrice, maxPrice: $maxPrice, offsetPagination: { size: $size, offset: $offset }, categoryIn: $categorySlugs }) {
+      ${productQuery}
+    }
+  }
+`;
+export const PRODUCTS_TEST_SORT = gql`
+  query AllProductsInCategories($offset: Int, $size: Int, $categorySlugs: [String!]!, $field: ProductsOrderByEnum!, $order: OrderEnum) {
+    products(where: {orderby: {field: $field, order: $order}, offsetPagination: { size: $size, offset: $offset }, categoryIn: $categorySlugs }) {
+      ${productQuery}
+    }
+  }
+`;
+export const PRODUCTS_TEST_SORT_FILTER_BY_MIN_PRICE = gql`
+  query AllProductsInCategories($minPrice: Float, $offset: Int, $size: Int, $categorySlugs: [String!]!, $field: ProductsOrderByEnum!, $order: OrderEnum) {
+    products(where: {minPrice: $minPrice, orderby: {field: $field, order: $order}, offsetPagination: { size: $size, offset: $offset }, categoryIn: $categorySlugs }) {
+      ${productQuery}
+    }
+  }
+`;
+export const PRODUCTS_TEST_SORT_FILTER_BY_MAX_PRICE = gql`
+  query AllProductsInCategories($maxPrice: Float, $offset: Int, $size: Int, $categorySlugs: [String!]!, $field: ProductsOrderByEnum!, $order: OrderEnum) {
+    products(where: {maxPrice: $maxPrice, orderby: {field: $field, order: $order}, offsetPagination: { size: $size, offset: $offset }, categoryIn: $categorySlugs }) {
+      ${productQuery}
+    }
+  }
+`;
+export const PRODUCTS_TEST_SORT_FILTER_BY_MIN_MAX_PRICE = gql`
+  query AllProductsInCategories($minPrice: Float, $maxPrice: Float, $offset: Int, $size: Int, $categorySlugs: [String!]!, $field: ProductsOrderByEnum!, $order: OrderEnum) {
+    products(where: {minPrice: $minPrice, maxPrice: $maxPrice, orderby: {field: $field, order: $order}, offsetPagination: { size: $size, offset: $offset }, categoryIn: $categorySlugs }) {
+      ${productQuery}
     }
   }
 `;
 
 export const SEARCH_PRODUCTS_QUERY = gql`
   query SearchProducts($search: String, $offset: Int, $size: Int) {
-    products(where: { search: $search, offsetPagination: { size: $size, offset: $offset } }) {
+    products(
+      where: {
+        search: $search
+        offsetPagination: { size: $size, offset: $offset }
+      }
+    ) {
       edges {
         node {
           ... on SimpleProduct {
