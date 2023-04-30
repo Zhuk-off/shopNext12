@@ -2,19 +2,13 @@ import { Inter } from 'next/font/google';
 import { Slider } from '@/src/components/slider';
 import { Banners } from '@/src/components/banners';
 import Offers from '@/src/components/offers';
-import { ApolloQueryResult, useQuery } from '@apollo/client';
+
 import { HEADER_FOOTER_ENDPOINT } from '@/src/utils/constants/endpoints';
 import axios from 'axios';
 import Layout from '@/src/components/layouts';
 import { IData } from '@/src/interfaces/footerHeaderRestAPIDataResponse';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
-import { client } from '@/src/utils/apollo/apolloClient';
-import {
-  GET_CATEGORIES,
-  GET_CATEGORY_WITH_PRODUCTS_OF_CILD,
-} from '@/src/utils/apollo/queriesConst';
 import buildMenu from '@/src/utils/buildMenu';
-import { IGetCategories } from '@/src/interfaces/apollo/getCatigories.interface';
 import { GetStaticProps } from 'next';
 import { findObjectById, getAllChildSlugs } from '@/src/utils/getAllChildIds';
 import { getAllCategories } from '@/src/utils/apollo/queries';
