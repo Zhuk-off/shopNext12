@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Dispatch, Fragment, SetStateAction } from 'react';
 import NavDropdown from './NavDropdown';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
+import AccountButton from './accountButton';
 
 const NavMenu = ({
   menu,
@@ -48,6 +49,7 @@ const NavMenu = ({
         >
           Контакты
         </Link>
+        <AccountButton/>
       </div>
 
       <div className="-mr-2 flex items-center md:hidden">
