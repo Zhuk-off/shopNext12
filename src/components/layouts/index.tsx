@@ -16,6 +16,7 @@ import {
 } from '@/src/interfaces/footerHeaderRestAPIDataResponse';
 import { ReactNode } from 'react';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
+import { CartCountProvider } from '@/src/contex/CartCounter';
 
 const Layout = ({
   children,
@@ -46,9 +47,11 @@ const Layout = ({
 					}
 				</Head> */}
       {/* <Header header={header} /> */}
-      <Header header={header} menu={menu}/>
-      <main className="min-h-50vh container mx-auto py-4">{children}</main>
-      <Footer footer={footer} />
+      <CartCountProvider>
+        <Header header={header} menu={menu} />
+        <main className="min-h-50vh container mx-auto py-4">{children}</main>
+        <Footer footer={footer} />
+      </CartCountProvider>
     </div>
   );
 };

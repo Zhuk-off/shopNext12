@@ -1,4 +1,4 @@
-export const storeSession = (session: string)=> {
+export const storeSession = (session: string) => {
   if (!session) {
     return null;
   }

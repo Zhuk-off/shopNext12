@@ -15,7 +15,7 @@ export interface Edge {
 
 export interface IProductCat {
   __typename: string;
-  id?: string;
+  id: string;
   name?: string;
   databaseId?: number;
   description?: null | string;

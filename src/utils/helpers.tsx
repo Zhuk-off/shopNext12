@@ -1,4 +1,5 @@
 import { IProductCat } from '../interfaces/apollo/getProducts.interface';
+import { ICartItemLocalStorage } from '../interfaces/cart.interface';
 import { PerPage } from '../interfaces/productsView.interface';
 import { DEFAULT_IMG_URL } from './constants/images';
 
@@ -28,11 +29,26 @@ export const productDataConversion = (product: IProductCat) => {
     : '--,--';
   const inStock = product.stockStatus === 'IN_STOCK' ? true : false;
   const uri = product.slug ? product.slug : '#';
+  const id = product.id;
 
-  return { image, alt, title, description, price, inStock, uri };
+  return { image, alt, title, description, price, inStock, uri, id };
 };
 
 // Проверка на типы (сужение типов)
 export function isPerPage(value: number): value is PerPage {
   return [12, 24, 48, 96].includes(value);
 }
+
+// Добавить в массив новый объект, если он есть то просто увеличить или уменьшить количество
+export const addItem = (
+  arr: ICartItemLocalStorage[],
+  newItem: ICartItemLocalStorage
+) => {
+  const index = arr.findIndex((item) => item.id === newItem.id);
+
+  if (index !== -1) {
+    arr[index].quantity += newItem.quantity;
+  } else {
+    arr.push(newItem);
+  }
+};

@@ -7,16 +7,6 @@ function classNames(...classes: string[]) {
 }
 
 export default function AccountButton() {
-  const [isOpenAccountMenu, setIsOpenAccountMenu] = useState(false);
-  <div className="font-medium text-gray-500 ">
-    <button
-      className="dropdown-toggle rounded-full border bg-pink-700 px-6 py-1 font-medium text-white 
-    transition
-    hover:bg-pink-800 hover:text-white  focus:outline-none"
-    >
-      Каталог
-    </button>
-  </div>;
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>

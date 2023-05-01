@@ -1,10 +1,9 @@
 import { IProductCat } from '@/src/interfaces/apollo/getProducts.interface';
-import {
-  productDataConversion,
-} from '@/src/utils/helpers';
+import { productDataConversion } from '@/src/utils/helpers';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
+import { CartAddButton } from './cartAddButton';
 
 const ProductCardVertical = ({
   product,
@@ -22,7 +21,7 @@ const ProductCardVertical = ({
   if (product === null) return null;
 
   // преобразование входных данных для отображения в карточке товара
-  const { image, alt, title, description, price, inStock, uri } =
+  const { image, alt, title, description, price, inStock, uri,id } =
     productDataConversion(product);
 
   return (
@@ -37,7 +36,7 @@ const ProductCardVertical = ({
         />
       </Link>
 
-      <div className="flex px-4 mt-2">
+      <div className="mt-2 flex px-4">
         <div className="flex-1 overflow-hidden">
           <Link href={uri}>
             <h2 className="line-clamp-3 min-h-[72px] text-center text-base font-medium text-blue-500 underline hover:text-red-500">
@@ -54,20 +53,9 @@ const ProductCardVertical = ({
         </div>
 
         {price !== '--,--' ? (
-          <div className=" ">
-            <button className="flex-shrink-0 rounded bg-pink-700 px-4 py-2 text-white transition hover:bg-pink-800 ">
-              В корзину
-            </button>
-          </div>
+          <CartAddButton buttonStatus="enable" idProduct={id}/>
         ) : (
-          <div className=" ">
-            <button
-              disabled
-              className="flex-shrink-0 rounded bg-gray-300 px-4 py-2 text-white transition"
-            >
-              В корзину
-            </button>
-          </div>
+          <CartAddButton buttonStatus="disable" idProduct={id}/>
         )}
         {inStock ? (
           <span className="inline-block max-w-max rounded-full bg-green-100 px-2 py-1 text-xs font-medium uppercase text-green-800">

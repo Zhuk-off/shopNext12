@@ -5,7 +5,16 @@ export interface ICart {
   totalPrice: number;
   totalQty: number;
 }
+export interface ICartLocalStorage {
+  cartItems: ICartItemLocalStorage[];
+  totalPrice: number;
+  totalQty: number;
+}
 
+export interface ICartItemLocalStorage {
+  id: string;
+  quantity: number;
+}
 export interface ICartItem {
   currency: string;
   data: IProduct;
@@ -35,6 +44,6 @@ export interface IConfig {
 }
 
 export interface IQtyAndPrice {
-  totalQty: number,
-  totalPrice: number,
+  totalQty: number;
+  totalPrice: number;
 }

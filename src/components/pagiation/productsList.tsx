@@ -127,24 +127,23 @@ function ProductsList({
       variables = { ...variables, field, order, maxPrice };
     } else if (controlBar.sortName !== '' || controlBar.sortPrice !== '') {
       variables = { ...variables, field, order };
-    }else
+    } else if (controlBar.maxPrice && controlBar.minPrice) {
 
     /**проверка на фильтр */
-    if (controlBar.maxPrice && controlBar.minPrice) {
       variables = { ...variables, minPrice, maxPrice };
     } else if (controlBar.minPrice) {
       variables = { ...variables, minPrice };
     } else if (controlBar.maxPrice) {
       variables = { ...variables, maxPrice };
     }
-    console.log(variables);
-    
+    // console.log(variables);
+
     return variables;
   };
 
   const queryFunc = () => {
     let query = PRODUCTS_TEST;
-    console.log('contex', controlBar);
+    // console.log('contex', controlBar);
 
     /**проверка на сортировку и фильтр */
     if (
@@ -153,32 +152,32 @@ function ProductsList({
       controlBar.minPrice
     ) {
       query = PRODUCTS_TEST_SORT_FILTER_BY_MIN_MAX_PRICE;
-      console.log('PRODUCTS_TEST_SORT_FILTER_BY_MIN_MAX_PRICE');
+      // console.log('PRODUCTS_TEST_SORT_FILTER_BY_MIN_MAX_PRICE');
     } else if (
       (controlBar.sortName !== '' || controlBar.sortPrice !== '') &&
       controlBar.minPrice
     ) {
       query = PRODUCTS_TEST_SORT_FILTER_BY_MIN_PRICE;
-      console.log('PRODUCTS_TEST_SORT_FILTER_BY_MIN_PRICE');
+      // console.log('PRODUCTS_TEST_SORT_FILTER_BY_MIN_PRICE');
     } else if (
       (controlBar.sortName !== '' || controlBar.sortPrice !== '') &&
       controlBar.maxPrice
     ) {
       query = PRODUCTS_TEST_SORT_FILTER_BY_MAX_PRICE;
-      console.log('PRODUCTS_TEST_SORT_FILTER_BY_MAX_PRICE');
+      // console.log('PRODUCTS_TEST_SORT_FILTER_BY_MAX_PRICE');
     } else if (controlBar.sortName !== '' || controlBar.sortPrice !== '') {
       query = PRODUCTS_TEST_SORT;
-      console.log('PRODUCTS_TEST_SORT');
+      // console.log('PRODUCTS_TEST_SORT');
     } else if (controlBar.maxPrice && controlBar.minPrice) {
       /**проверка на фильтр */
       query = PRODUCTS_TEST_FILTER_BY_MIN_MAX_PRICE;
-      console.log('PRODUCTS_TEST_FILTER_BY_MIN_MAX_PRICE');
+      // console.log('PRODUCTS_TEST_FILTER_BY_MIN_MAX_PRICE');
     } else if (controlBar.minPrice) {
       query = PRODUCTS_TEST_FILTER_BY_MIN_PRICE;
-      console.log('PRODUCTS_TEST_FILTER_BY_MIN_PRICE');
+      // console.log('PRODUCTS_TEST_FILTER_BY_MIN_PRICE');
     } else if (controlBar.maxPrice) {
       query = PRODUCTS_TEST_FILTER_BY_MAX_PRICE;
-      console.log('PRODUCTS_TEST_FILTER_BY_MAX_PRICE');
+      // console.log('PRODUCTS_TEST_FILTER_BY_MAX_PRICE');
     }
     return query;
   };
@@ -241,7 +240,7 @@ function ProductsList({
 
   const products: IGetProductsSimple = data;
 
-  console.log(controlBar);
+  // console.log(controlBar);
 
   return (
     <div>

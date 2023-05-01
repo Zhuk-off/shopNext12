@@ -6,14 +6,17 @@ import { Dispatch, Fragment, SetStateAction } from 'react';
 import NavDropdown from './NavDropdown';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
 import AccountButton from './accountButton';
+import CartButton from './cartButton';
+import { CartCountProvider } from '@/src/contex/CartCounter';
 
 const NavMenu = ({
   menu,
-  setIsMenuOpen,isMenuOpen
+  setIsMenuOpen,
+  isMenuOpen,
 }: {
   menu: MenuItem[];
   setIsMenuOpen: Dispatch<SetStateAction<boolean>>;
-  isMenuOpen:boolean
+  isMenuOpen: boolean;
 }) => {
   return (
     <nav className="relative flex items-center justify-between bg-gray-100 sm:h-10 lg:justify-start">
@@ -29,14 +32,18 @@ const NavMenu = ({
         </Link>
       </div>
       <div className="hidden items-center md:ml-10 md:flex md:space-x-8 md:pr-4">
-        <NavDropdown menu={menu} setIsMenuOpen={setIsMenuOpen} isMenuOpen={isMenuOpen}/>
+        <NavDropdown
+          menu={menu}
+          setIsMenuOpen={setIsMenuOpen}
+          isMenuOpen={isMenuOpen}
+        />
 
-        <Link
+        {/* <Link
           href="/sale"
           className="font-medium text-gray-500 hover:text-gray-900"
         >
           Акции
-        </Link>
+        </Link> */}
         <Link
           href="/delivery"
           className="font-medium text-gray-500 hover:text-gray-900"
@@ -49,7 +56,8 @@ const NavMenu = ({
         >
           Контакты
         </Link>
-        <AccountButton/>
+        <AccountButton />
+        <CartButton />
       </div>
 
       <div className="-mr-2 flex items-center md:hidden">
