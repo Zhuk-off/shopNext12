@@ -5,6 +5,7 @@ import { ApolloProvider } from '@apollo/client';
 import { client } from '@/src/utils/apollo/apolloClient';
 import Router from 'next/router';
 import NProgress from 'nprogress';
+import { CartCountProvider } from '@/src/contex/CartCounter';
 
 // Авторизация с использованием токена из localStorage
 // const httpLink = new HttpLink({
@@ -26,17 +27,17 @@ import NProgress from 'nprogress';
 //   cache: new InMemoryCache(),
 // });
 
-
-NProgress.configure( { showSpinner: false } );
-Router.events.on( 'routeChangeStart', () => NProgress.start() );
-Router.events.on( 'routeChangeComplete', () => NProgress.done() );
-Router.events.on( 'routeChangeError', () => NProgress.done() );
-
+NProgress.configure({ showSpinner: false });
+Router.events.on('routeChangeStart', () => NProgress.start());
+Router.events.on('routeChangeComplete', () => NProgress.done());
+Router.events.on('routeChangeError', () => NProgress.done());
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <ApolloProvider client={client}>
-      <Component {...pageProps} />
+      <CartCountProvider>
+        <Component {...pageProps} />
+      </CartCountProvider>
     </ApolloProvider>
   );
 }

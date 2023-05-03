@@ -24,7 +24,7 @@ const NavMenu = ({
         <Link href="/">
           <Image
             className="h-8 w-auto sm:h-10"
-            src="/logo.png"
+            src="/logo.svg"
             alt="spec1.by"
             width={126}
             height={24}

@@ -186,6 +186,7 @@ edges {
     ... on SimpleProduct {
       sku
       id
+      databaseId
       name
       price
       salePrice
@@ -297,6 +298,42 @@ export const SEARCH_PRODUCTS_QUERY = gql`
         endCursor
         offsetPagination {
           total
+        }
+      }
+    }
+  }
+`;
+export const GET_PRODUCTS_BY_IDS_TOTAL_COST = gql`
+  query getProductsByIds($include: [Int]) {
+    products(where: { include: $include }) {
+      edges {
+        node {
+          ... on SimpleProduct {
+            price
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const GET_PRODUCTS_BY_IDS_ORDER_CARD = gql`
+  query getProductsByIds($include: [Int]) {
+    products(where: { include: $include }) {
+      edges {
+        node {
+          ... on SimpleProduct {
+            id
+            databaseId
+            name
+            price
+            stockStatus
+            uri
+            image {
+              altText
+              sourceUrl
+            }
+          }
         }
       }
     }

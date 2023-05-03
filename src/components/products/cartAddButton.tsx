@@ -1,21 +1,24 @@
 import { CartContext } from '@/src/contex/CartCounter';
 import { useContext, useEffect, useState } from 'react';
-import cx from 'classnames';
 import { addToCart } from '@/src/utils/cart';
 import classNames from 'classnames';
+import { useRouter } from 'next/router';
 
 type buttonStatus = 'enable' | 'disable';
 
 export const CartAddButton = ({
   buttonStatus,
   idProduct,
+  databaseId,
 }: {
   buttonStatus: buttonStatus;
   idProduct: string;
+  databaseId: number;
 }) => {
   const [cart, setCart] = useContext(CartContext);
   const [isAddedToCart, setIsAddedToCart] = useState(false); // нужно для показа рядом кнопки посмотреть в корзине, чтобы он мог кликнуть по ней и перейди в корзину
   const [loading, setLoading] = useState(false); // для показа того, что товар добавляется в корзину
+  const router = useRouter();
 
   useEffect(() => {
     if (cart !== null) {
@@ -42,12 +45,13 @@ export const CartAddButton = ({
               ? addToCart(
                   idProduct,
                   1,
+                  databaseId,
                   cart,
                   setCart,
                   setIsAddedToCart,
                   setLoading
                 )
-              : {}
+              : router.push('/order')
           }
         >
           {isAddedToCart ? 'В корзине' : 'В корзину'}

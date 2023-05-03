@@ -22,10 +22,11 @@ import { addItem } from '../helpers';
 export const addToCart = async (
   productId: string,
   qty: number = 1,
+  databaseId: number,
   cart: ICartLocalStorage | null,
   setCart: (cart: ICartLocalStorage) => void,
-  setIsAddedToCart: Dispatch<SetStateAction<boolean>>,
-  setLoading: Dispatch<SetStateAction<boolean>>
+  setIsAddedToCart?: Dispatch<SetStateAction<boolean>>,
+  setLoading?: Dispatch<SetStateAction<boolean>>
 ) => {
   // const storedSession = getSession();
   // const addOrViewCartConfig = getApiCartConfig();
@@ -33,9 +34,11 @@ export const addToCart = async (
   const addProductToCart: ICartItemLocalStorage = {
     id: productId,
     quantity: qty,
+    databaseId,
   };
+  // console.log('databaseId',databaseId);
 
-  setLoading(true);
+  if (setLoading !== undefined) setLoading(true);
   const cartItemsLocalStorage = cart;
   if (cartItemsLocalStorage === null) {
     const cartLocalStorage: ICartLocalStorage = {
@@ -54,8 +57,8 @@ export const addToCart = async (
     cartLocalStorage.totalQty = totalQuantity;
     setCart(cartLocalStorage);
   }
-  setIsAddedToCart(true);
-  setLoading(false);
+  if (setIsAddedToCart !== undefined) setIsAddedToCart(true);
+  if (setLoading !== undefined) setLoading(false);
 };
 
 /**

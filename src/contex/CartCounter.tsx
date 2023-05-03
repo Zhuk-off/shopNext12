@@ -21,6 +21,8 @@ export const CartCountProvider = ({ children }: { children: ReactNode }) => {
    *
    * Sets the cart data from localStorage to `cart` in the context.
    */
+  // console.log('contex');
+  
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const cartData = localStorage.getItem('cartItems');

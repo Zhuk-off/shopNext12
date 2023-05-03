@@ -17,7 +17,7 @@ export interface IProductCat {
   __typename: string;
   id: string;
   name?: string;
-  databaseId?: number;
+  databaseId: number;
   description?: null | string;
   featuredImageId?: null | string;
   height?: null | string;

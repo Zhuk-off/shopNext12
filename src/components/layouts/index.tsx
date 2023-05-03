@@ -47,11 +47,9 @@ const Layout = ({
 					}
 				</Head> */}
       {/* <Header header={header} /> */}
-      <CartCountProvider>
-        <Header header={header} menu={menu} />
-        <main className="min-h-50vh container mx-auto py-4">{children}</main>
-        <Footer footer={footer} />
-      </CartCountProvider>
+      <Header header={header} menu={menu} />
+      <main className="min-h-50vh container mx-auto py-4">{children}</main>
+      <Footer footer={footer} />
     </div>
   );
 };

@@ -1,3 +1,4 @@
+import { IOrderDataTotal } from '../interfaces/apollo/getOrderData.interfase';
 import { IProductCat } from '../interfaces/apollo/getProducts.interface';
 import { ICartItemLocalStorage } from '../interfaces/cart.interface';
 import { PerPage } from '../interfaces/productsView.interface';
@@ -30,8 +31,19 @@ export const productDataConversion = (product: IProductCat) => {
   const inStock = product.stockStatus === 'IN_STOCK' ? true : false;
   const uri = product.slug ? product.slug : '#';
   const id = product.id;
+  const databaseId = product.databaseId;
 
-  return { image, alt, title, description, price, inStock, uri, id };
+  return {
+    image,
+    alt,
+    title,
+    description,
+    price,
+    inStock,
+    uri,
+    id,
+    databaseId,
+  };
 };
 
 // Проверка на типы (сужение типов)
@@ -52,3 +64,16 @@ export const addItem = (
     arr.push(newItem);
   }
 };
+
+// получим общую сумму товаров
+export const getSumProducts = (data: IOrderDataTotal) =>{
+    const sum =  data?.products.edges.reduce(
+    (acc, obj) =>
+      acc + parseInt(obj.node.price.replace('Br', '').replace(',', '')),
+    0
+  ) / 100;
+
+return 
+}
+
+export const sumToStringWithComa = (sum:number) => sum.toString().replace('.', ',')

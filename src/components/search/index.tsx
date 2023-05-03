@@ -6,6 +6,7 @@ import { MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { IGetProductsSimple } from '@/src/interfaces/apollo/getProducts.interface';
 import classNames from 'classnames';
 import { useRouter } from 'next/router';
+import { Spinner } from '../spinner';
 
 const SEARCH_PRODUCTS_QUERY = gql`
   query SearchProducts($search: String) {
@@ -147,9 +148,7 @@ function Search({
               : 'pointer-events-none opacity-0'
           )}
         >
-          <div className="flex items-center justify-center">
-            <div className="inline-block h-5 w-5 animate-spin rounded-full border-b-2 border-gray-400"></div>
-          </div>
+          <Spinner />
         </div>
       </div>
 

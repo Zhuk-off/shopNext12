@@ -14,6 +14,7 @@ export interface ICartLocalStorage {
 export interface ICartItemLocalStorage {
   id: string;
   quantity: number;
+  databaseId: number;
 }
 export interface ICartItem {
   currency: string;
@@ -46,4 +47,11 @@ export interface IConfig {
 export interface IQtyAndPrice {
   totalQty: number;
   totalPrice: number;
+}
+
+export interface IPproductsDataOrder {
+  id: string;
+  quantity: number;
+  databaseId: number;
+  price?: string;
 }
