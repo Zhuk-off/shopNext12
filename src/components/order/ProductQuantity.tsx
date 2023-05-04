@@ -1,4 +1,4 @@
-import { CartContext } from '@/src/contex/CartCounter';
+import { CartContext } from '@/src/contex/CartContex';
 import { addToCart } from '@/src/utils/cart';
 import { useContext, useEffect, useState } from 'react';
 

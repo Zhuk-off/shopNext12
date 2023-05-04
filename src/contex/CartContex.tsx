@@ -1,5 +1,6 @@
 import { useState, useEffect, createContext, ReactNode } from 'react';
 import { ICart, ICartLocalStorage } from '../interfaces/cart.interface';
+import { updateContextLocalStorage } from '../utils/cart/updateContextLocalStorage';
 
 type CartContextType = [
   ICartLocalStorage | null,
@@ -26,7 +27,7 @@ export const CartCountProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const cartData = localStorage.getItem('cartItems');
-      console.log('cartData', cartData);
+      // console.log('cartData', cartData);
 
       const parsedCartData = cartData !== null ? JSON.parse(cartData) : null;
       console.log('parsedCartData', parsedCartData);

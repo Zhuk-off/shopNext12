@@ -16,7 +16,7 @@ import {
 } from '@/src/interfaces/footerHeaderRestAPIDataResponse';
 import { ReactNode } from 'react';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
-import { CartCountProvider } from '@/src/contex/CartCounter';
+import { CartCountProvider } from '@/src/contex/CartContex';
 
 const Layout = ({
   children,

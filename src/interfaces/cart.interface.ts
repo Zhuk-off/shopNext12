@@ -1,3 +1,4 @@
+import { IStockStatus } from './apollo/getOrderData.interfase';
 import { IProduct } from './products.interface';
 
 export interface ICart {
@@ -53,5 +54,10 @@ export interface IPproductsDataOrder {
   id: string;
   quantity: number;
   databaseId: number;
+  stockStatus: IStockStatus;
   price?: string;
+  uri: string | undefined;
+  imageUrl: string | undefined;
+  altImage: string | undefined;
+  name: string;
 }

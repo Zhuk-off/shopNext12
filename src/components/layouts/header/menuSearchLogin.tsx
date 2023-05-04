@@ -7,7 +7,7 @@ import NavDropdown from './NavDropdown';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
 import AccountButton from './accountButton';
 import CartButton from './cartButton';
-import { CartCountProvider } from '@/src/contex/CartCounter';
+import { CartCountProvider } from '@/src/contex/CartContex';
 
 const NavMenu = ({
   menu,

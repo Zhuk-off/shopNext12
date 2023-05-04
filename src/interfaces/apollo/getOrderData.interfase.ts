@@ -13,10 +13,11 @@ export interface IOrderProduct {
 export interface IOrderProductNode {
   name: string;
   price: string;
-  stockStatus?: 'IN_STOCK' | 'OUT_OF_STOCK';
+  stockStatus?: IStockStatus
   uri: string;
 }
 
+export type IStockStatus ='IN_STOCK' | 'OUT_OF_STOCK';
 //------------------------------------------
 
 export interface IOrderDataProductCard {
@@ -35,7 +36,7 @@ export interface IOrderProductNode {
   id: string;
   name: string;
   price: string;
-  stockStatus?: 'IN_STOCK' | 'OUT_OF_STOCK';
+  stockStatus?: IStockStatus
   uri: string;
   image?: Image | null;
   databaseId:number

@@ -1,4 +1,4 @@
-import { CartContext } from '@/src/contex/CartCounter';
+import { CartContext } from '@/src/contex/CartContex';
 import { Menu } from '@headlessui/react';
 import { useRouter } from 'next/router';
 import { useContext } from 'react';
@@ -9,14 +9,14 @@ import { useContext } from 'react';
 
 export default function CartButton() {
   const [cart] = useContext(CartContext);
-  const router = useRouter()
+  const router = useRouter();
   return (
     <Menu as="div" className="relative inline-block text-left">
       <Menu.Button
         className="inline-flex w-full items-center justify-center gap-x-1.5 rounded-full
          bg-white px-4 py-1 font-medium text-gray-900 shadow-sm ring-1 
          ring-inset ring-gray-300 hover:bg-gray-50"
-         onClick={()=>router.push('/order')}
+        onClick={() => router.push('/order')}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"

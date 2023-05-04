@@ -23,7 +23,6 @@ const ProductCardVertical = ({
   // преобразование входных данных для отображения в карточке товара
   const { image, alt, title, price, inStock, uri, id ,databaseId} =
     productDataConversion(product);
-    console.log('databaseId',databaseId);
 
   return (
     <div className="flex h-[416px] flex-col overflow-hidden rounded-md bg-white p-4 shadow-md hover:shadow-lg">

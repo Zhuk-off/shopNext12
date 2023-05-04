@@ -1,4 +1,4 @@
-import { CartContext } from '@/src/contex/CartCounter';
+import { CartContext } from '@/src/contex/CartContex';
 import { useContext } from 'react';
 
 export const CounterOrderPage = () => {

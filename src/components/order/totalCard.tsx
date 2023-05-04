@@ -1,4 +1,4 @@
-import { CartContext } from '@/src/contex/CartCounter';
+import { CartContext } from '@/src/contex/CartContex';
 import { IOrderDataTotal } from '@/src/interfaces/apollo/getOrderData.interfase';
 import { GET_PRODUCTS_BY_IDS_TOTAL_COST } from '@/src/utils/apollo/queriesConst';
 import { getSumProducts, sumToStringWithComa } from '@/src/utils/helpers';
@@ -15,6 +15,8 @@ export const TotalCard = ({
   totalCount: number | undefined;
   loading: boolean;
 }) => {
+  console.log(sum);
+
   const sumWithComa = sumToStringWithComa(sum);
 
   return (

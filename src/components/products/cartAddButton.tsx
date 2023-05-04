@@ -1,4 +1,4 @@
-import { CartContext } from '@/src/contex/CartCounter';
+import { CartContext } from '@/src/contex/CartContex';
 import { useContext, useEffect, useState } from 'react';
 import { addToCart } from '@/src/utils/cart';
 import classNames from 'classnames';
@@ -22,7 +22,9 @@ export const CartAddButton = ({
 
   useEffect(() => {
     if (cart !== null) {
-      const isIdExist = cart.cartItems.some((item) => item.id === idProduct);
+      const isIdExist = cart.cartItems.some(
+        (item) => item.id === idProduct && item.quantity > 0
+      );
       setIsAddedToCart(isIdExist);
     }
   }, [cart, idProduct]);

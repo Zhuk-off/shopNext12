@@ -11,12 +11,14 @@ import { CounterOrderPage } from '@/src/components/order/counterOrderPage';
 import Container from '@/src/components/container';
 import { CartOrderItem } from '@/src/components/order/cartOrderItem';
 import { TotalCard } from '@/src/components/order/totalCard';
-import { useContext } from 'react';
-import { CartContext } from '@/src/contex/CartCounter';
+import { useContext, useEffect } from 'react';
+import { CartContext } from '@/src/contex/CartContex';
 import { useQuery } from '@apollo/client';
 import { IOrderDataProductCard } from '@/src/interfaces/apollo/getOrderData.interfase';
 import { GET_PRODUCTS_BY_IDS_ORDER_CARD } from '@/src/utils/apollo/queriesConst';
 import { IPproductsDataOrder } from '@/src/interfaces/cart.interface';
+import { CartOrderItems } from '@/src/components/order/cartOrderItems';
+import { useRouter } from 'next/router';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -27,7 +29,8 @@ export default function Category({
   headerFooter: IData | undefined;
   menu: MenuItem[];
 }) {
-  const [cart] = useContext(CartContext);
+  const [cart, setCart] = useContext(CartContext);
+  const router = useRouter();
   const databaseIds = cart?.cartItems.map((item) => item.databaseId);
 
   const { loading, data } = useQuery<
@@ -37,27 +40,86 @@ export default function Category({
     variables: { include: databaseIds },
   });
 
+  // При переходе на другую страницу надо очистить скрытые элементы, которые удалили
+  useEffect(() => {
+    function handleRouteChange() {
+      if (!cart) return;
+      if (typeof window !== 'undefined') {
+        const filteredObj = cart.cartItems.filter(
+          (item) => item.quantity !== 0
+        );
+
+        const getlocalStorage = localStorage.getItem('cartItems');
+        const getLocalStorageParsed =
+          getlocalStorage !== null ? JSON.parse(getlocalStorage) : null;
+        /** если количество равно в контексте и в localStorage, то обноляем контекст
+         * это может произойти если в соседней вкладке добавили товары, а в корзине
+         * не обновили. Чтобы не перезаписать корзину старвыми данными нужна эта проверка
+         */
+        if (getLocalStorageParsed.totalQty !== cart.totalQty) {
+          setCart(getLocalStorageParsed);
+        }
+        const cartClean = { ...cart };
+        cartClean.cartItems = filteredObj;
+        console.log('cartClean', cartClean);
+        console.log('getLocalStorageParsed', getLocalStorageParsed);
+        console.log('cartClean', cartClean);
+        setCart(cartClean);
+      }
+    }
+
+    router.events.on('routeChangeStart', handleRouteChange);
+
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   let sum = 0;
+  let totalCount = 0;
   let productsDataOrder: IPproductsDataOrder[] = [];
   // собираем новый массив с объектами для order страницы
   if (!loading && data !== undefined && cart) {
-    productsDataOrder = cart.cartItems.map<IPproductsDataOrder>((item) => ({
-      id: item.id,
-      quantity: item.quantity,
-      databaseId: item.databaseId,
-      price: data.products.edges.find((edge) => edge.node.id === item.id)?.node
-        .price,
-    }));
+    productsDataOrder = cart.cartItems.map<IPproductsDataOrder>((item) => {
+      const product = data.products.edges.find(
+        (edge) => edge.node.id === item.id
+      )?.node;
+      // console.log('product',product);
+
+      return {
+        id: item.id,
+        quantity: item.quantity,
+        databaseId: item.databaseId,
+        stockStatus:
+          product && product?.stockStatus
+            ? product?.stockStatus
+            : 'OUT_OF_STOCK',
+        price: product?.price,
+        uri: product?.uri,
+        imageUrl: product?.image?.sourceUrl,
+        altImage: product?.image?.altText,
+        name: product?.name ? product?.name : '',
+      };
+    });
+
     sum =
       productsDataOrder.reduce(
         (acc, obj) =>
           acc +
-          obj.quantity *
-            parseInt(
-              obj.price ? obj.price.replace('Br', '').replace(',', '') : ''
-            ),
+          (obj.stockStatus === 'IN_STOCK'
+            ? obj.quantity *
+              parseInt(
+                obj.price ? obj.price.replace('Br', '').replace(',', '') : ''
+              )
+            : 0),
         0
       ) / 100;
+
+    totalCount = productsDataOrder.reduce(
+      (acc, obj) => acc + (obj.stockStatus === 'IN_STOCK' ? obj.quantity : 0),
+      0
+    );
   }
 
   return (
@@ -74,25 +136,12 @@ export default function Category({
           </div>
           <div className="mt-8 flex flex-grow">
             <ul className="w-full flex-grow">
-              {data &&
-                databaseIds &&
-                databaseIds.length !== 0 &&
-                data.products.edges.map((product) => (
-                  <li key={product.node.id}>
-                    <CartOrderItem
-                      availability={product.node.stockStatus === 'IN_STOCK'}
-                      product={product.node}
-                    />
-                  </li>
-                ))}
+              {data && databaseIds && databaseIds.length !== 0 && (
+                <CartOrderItems productsDataOrder={productsDataOrder} />
+              )}
             </ul>
-            {/* <CartOrderItem availability={true} /> */}
             <div className="ml-12 rounded-lg shadow-lg">
-              <TotalCard
-                sum={sum}
-                totalCount={cart?.totalQty}
-                loading={loading}
-              />
+              <TotalCard sum={sum} totalCount={totalCount} loading={loading} />
             </div>
           </div>
         </Container>

@@ -5,7 +5,7 @@ import { ApolloProvider } from '@apollo/client';
 import { client } from '@/src/utils/apollo/apolloClient';
 import Router from 'next/router';
 import NProgress from 'nprogress';
-import { CartCountProvider } from '@/src/contex/CartCounter';
+import { CartCountProvider } from '@/src/contex/CartContex';
 
 // Авторизация с использованием токена из localStorage
 // const httpLink = new HttpLink({
