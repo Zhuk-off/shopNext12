@@ -77,3 +77,4 @@ return
 }
 
 export const sumToStringWithComa = (sum:number) => sum.toString().replace('.', ',')
+

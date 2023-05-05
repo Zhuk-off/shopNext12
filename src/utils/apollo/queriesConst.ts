@@ -304,22 +304,28 @@ export const SEARCH_PRODUCTS_QUERY = gql`
   }
 `;
 export const GET_PRODUCTS_BY_IDS_TOTAL_COST = gql`
-  query getProductsByIds($include: [Int]) {
-    products(where: { include: $include }) {
+  query getProductsByIds($include: [Int], $endCursor: String) {
+    products(where: { include: $include }, first: 1, after: $endCursor) {
       edges {
         node {
           ... on SimpleProduct {
             price
+          
           }
         }
-      }
+      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
     }
   }
+}
 `;
 
 export const GET_PRODUCTS_BY_IDS_ORDER_CARD = gql`
-  query getProductsByIds($include: [Int]) {
-    products(where: { include: $include }) {
+  query getProductsByIds($include: [Int], $endCursor: String) {
+    products(where: { include: $include }, first: 1000, after: $endCursor) {
       edges {
         node {
           ... on SimpleProduct {
@@ -335,6 +341,11 @@ export const GET_PRODUCTS_BY_IDS_ORDER_CARD = gql`
             }
           }
         }
+        cursor
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
       }
     }
   }

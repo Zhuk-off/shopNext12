@@ -5,9 +5,11 @@ import {
 import {
   ApolloClient,
   ApolloQueryResult,
+  DocumentNode,
   InMemoryCache,
   gql,
 } from '@apollo/client';
+import { GET_PRODUCTS_BY_IDS_TOTAL_COST } from './queriesConst';
 
 const client = new ApolloClient({
   uri: 'https://sp.zhu.by/graphql',
@@ -61,4 +63,25 @@ export async function getAllCategories() {
   }
 
   return categories;
+}
+export async function getAllOrderProducts(query: DocumentNode=GET_PRODUCTS_BY_IDS_TOTAL_COST) {
+  let productsOrder: ICategory[] = [];
+  let hasNextPage: boolean = true;
+  let endCursor: string = '';
+
+  while (hasNextPage) {
+    const data: ApolloQueryResult<IGetCategories> = await client.query({
+      query,
+      variables: { endCursor },
+    });
+
+    const {
+      productCategories: { edges },
+    } = data.data;
+    hasNextPage = data.data.productCategories.pageInfo.hasNextPage;
+    endCursor = data.data.productCategories.pageInfo.endCursor;
+    productsOrder = [...productsOrder, ...edges];
+  }
+
+  return productsOrder;
 }
