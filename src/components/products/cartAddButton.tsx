@@ -34,7 +34,7 @@ export const CartAddButton = ({
       {buttonStatus === 'enable' ? (
         <button
           className={classNames(
-            'flex-shrink-0 rounded border-2 border-pink-700 px-4 py-2 transition',
+            'flex-shrink-0 rounded border-2 border-pink-800 px-4 py-2 transition',
             {
               'font-medium text-pink-700 hover:border-pink-800 hover:text-pink-800':
                 isAddedToCart,

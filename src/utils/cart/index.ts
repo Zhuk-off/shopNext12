@@ -77,7 +77,7 @@ export const removeFromCart = async (
     return;
   } else {
     const cartLocalStorage: ICartLocalStorage = { ...cartItemsLocalStorage };
-    console.log('cartLocalStorage sta',cartLocalStorage);
+    // console.log('cartLocalStorage sta',cartLocalStorage);
 
     const index = cartLocalStorage.cartItems.findIndex(
       (item) => item.id === productId
@@ -88,10 +88,10 @@ export const removeFromCart = async (
         (accumulator, currentItem) => accumulator + currentItem.quantity,
         0
       );
-      console.log('cartLocalStorage end',cartLocalStorage);
+      // console.log('cartLocalStorage end',cartLocalStorage);
       
       cartLocalStorage.totalQty = totalQuantity;
-      console.log('cartLocalStorage totalQuantity end',totalQuantity);
+      // console.log('cartLocalStorage totalQuantity end',totalQuantity);
 
       setCart(cartLocalStorage);
     }

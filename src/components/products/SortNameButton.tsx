@@ -1,6 +1,6 @@
 import { useContext } from 'react';
-import { ControlBarContext } from '../pagiation/productsList';
 import { SortName } from '@/src/interfaces/productsView.interface';
+import { ControlBarContext } from '@/src/contex/ControlBarContext';
 
 export const SortNameButton = () => {
   const { controlBar, setControlBars } = useContext(ControlBarContext);

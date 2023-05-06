@@ -6,6 +6,7 @@ import { client } from '@/src/utils/apollo/apolloClient';
 import Router from 'next/router';
 import NProgress from 'nprogress';
 import { CartCountProvider } from '@/src/contex/CartContex';
+import { ControlBarContextProvider } from '@/src/contex/ControlBarContext';
 
 // Авторизация с использованием токена из localStorage
 // const httpLink = new HttpLink({
@@ -36,7 +37,9 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <ApolloProvider client={client}>
       <CartCountProvider>
-        <Component {...pageProps} />
+        <ControlBarContextProvider>
+          <Component {...pageProps} />
+        </ControlBarContextProvider>
       </CartCountProvider>
     </ApolloProvider>
   );

@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
-import { ControlBarContext } from '../pagiation/productsList';
 import { SortPrice } from '@/src/interfaces/productsView.interface';
+import { ControlBarContext } from '@/src/contex/ControlBarContext';
 
 export const FilterPrice = () => {
   const { controlBar, setControlBars } = useContext(ControlBarContext);
@@ -45,6 +45,8 @@ export const FilterPrice = () => {
     }));
   };
 
+  // console.log(controlBar);
+  
   return (
     <form onSubmit={handleSubmit} className="flex items-center mx-2 flex-col md:flex-row gap-2 justify-items-center">
         <span className='block'>Цена</span>

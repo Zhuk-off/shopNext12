@@ -23,7 +23,7 @@ export const ProductQuantity = ({
 
   // инкремент и декремент
   const handleTotal = (countNew: number) => {
-    console.log('handleTotal', countNew);
+    // console.log('handleTotal', countNew);
     if (count === 1 && countNew === -1) return;
     if (count === 9999 && countNew === 1) return;
     addToCart(id, countNew, databaseId, cart, setCart);

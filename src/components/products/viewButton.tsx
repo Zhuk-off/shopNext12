@@ -1,5 +1,5 @@
+import { ControlBarContext } from '@/src/contex/ControlBarContext';
 import { useContext } from 'react';
-import { ControlBarContext } from '../pagiation/productsList';
 
 export const ViewButton = () => {
   const { controlBar, setControlBars } = useContext(ControlBarContext);

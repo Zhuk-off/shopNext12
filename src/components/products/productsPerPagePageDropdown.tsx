@@ -1,6 +1,6 @@
 import { useContext } from 'react';
-import { ControlBarContext } from '../pagiation/productsList';
 import { isPerPage } from '@/src/utils/helpers';
+import { ControlBarContext } from '@/src/contex/ControlBarContext';
 
 export default function ProductsPerPageDropdown() {
   const { controlBar, setControlBars } = useContext(ControlBarContext);

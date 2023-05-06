@@ -1,52 +1,29 @@
 import Layout from '@/src/components/layouts';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
-import {
-  ChildSlugNameByCategory,
-  IGetCategories,
-  IProductCategoryData,
-} from '@/src/interfaces/apollo/getCatigories.interface';
 import { IData } from '@/src/interfaces/footerHeaderRestAPIDataResponse';
-import { client } from '@/src/utils/apollo/apolloClient';
-import {
-  GET_CATEGORIES,
-  GET_CATEGORY_DATA,
-  GET_CATEGORY_WITH_PRODUCTS_OF_CILD,
-} from '@/src/utils/apollo/queriesConst';
 import buildMenu from '@/src/utils/buildMenu';
 import { HEADER_FOOTER_ENDPOINT } from '@/src/utils/constants/endpoints';
-import { ApolloQueryResult, gql, useQuery } from '@apollo/client';
 import axios from 'axios';
 import { Inter } from 'next/font/google';
-import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from 'next';
-import {
-  findObjectById,
-  getAllChildSlugs,
-  getAllChildSlugsAndName,
-} from '@/src/utils/getAllChildIds';
-import {
-  IGetProductsSimple,
-  IProductCat,
-} from '@/src/interfaces/apollo/getProducts.interface';
-import Breadcrumbs from '@/src/components/breadcrumbs';
-import SubCategories from '@/src/components/subCategories';
+import { GetStaticProps } from 'next';
+import { IGetProductsSimple } from '@/src/interfaces/apollo/getProducts.interface';
 import { DividerH } from '@/src/components/divider';
 import Container from '@/src/components/container';
-import ProductsList from '@/src/components/pagiation/productsList';
 import Search from '@/src/components/search';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import ProductsListSearch from '@/src/components/pagiation/productsListSearch';
+import { useState } from 'react';
 import { getAllCategories } from '@/src/utils/apollo/queries';
+import ProductsListSearch from '@/src/components/pagiation/productsListSearch';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function Category({
   headerFooter,
   menu,
-  // productsFromCat,
+}: // productsFromCat,
 
-  // childrenSlugName,
-}: {
+// childrenSlugName,
+{
   headerFooter: IData | undefined;
   menu: MenuItem[];
   productsFromCat: IGetProductsSimple;
@@ -69,7 +46,7 @@ export default function Category({
           <Search setFoundProducts={setFoundProducts} />
           <DividerH />
           <div className="mt-5">
-            <ProductsListSearch currentPageProps={1} />
+            <ProductsListSearch />
           </div>
         </Container>
       </Layout>
@@ -83,7 +60,7 @@ export const getStaticProps: GetStaticProps = async () => {
   //   query: GET_CATEGORIES,
   // });
 
-  const categories = await getAllCategories()
+  const categories = await getAllCategories();
   const menuObjectArr = buildMenu(categories);
   // const menuObjectArr = buildMenu(menu.productCategories.edges);
 

@@ -113,9 +113,9 @@ export default function Order({
         }
         const cartClean = { ...cart };
         cartClean.cartItems = filteredObj;
-        console.log('cartClean', cartClean);
-        console.log('getLocalStorageParsed', getLocalStorageParsed);
-        console.log('cartClean', cartClean);
+        // console.log('cartClean', cartClean);
+        // console.log('getLocalStorageParsed', getLocalStorageParsed);
+        // console.log('cartClean', cartClean);
         setCart(cartClean);
       }
     }

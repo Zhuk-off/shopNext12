@@ -15,7 +15,7 @@ export const TotalCard = ({
   totalCount: number | undefined;
   loading: boolean;
 }) => {
-  console.log(sum);
+  // console.log(sum);
 
   const sumWithComa = sumToStringWithComa(sum);
 

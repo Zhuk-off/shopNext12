@@ -30,7 +30,7 @@ export const CartCountProvider = ({ children }: { children: ReactNode }) => {
       // console.log('cartData', cartData);
 
       const parsedCartData = cartData !== null ? JSON.parse(cartData) : null;
-      console.log('parsedCartData', parsedCartData);
+      // console.log('parsedCartData', parsedCartData);
       setCart(parsedCartData);
     }
   }, []);

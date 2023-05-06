@@ -2,6 +2,7 @@ import {
   Dispatch,
   SetStateAction,
   createContext,
+  useContext,
   useEffect,
   useState,
 } from 'react';
@@ -26,15 +27,9 @@ import {
   SortPrice,
   ViewType,
 } from '@/src/interfaces/productsView.interface';
+import { ControlBarContext } from '@/src/contex/ControlBarContext';
 
-export interface IControlBar {
-  productsPerPage: PerPage;
-  viewProducts: ViewType;
-  sortPrice: SortPrice;
-  sortName: SortName;
-  minPrice?: number | null;
-  maxPrice?: number | null;
-}
+
 export interface IVariables {
   offset: number;
   size: PerPage;
@@ -44,23 +39,6 @@ export interface IVariables {
   minPrice?: number | null;
   maxPrice?: number | null;
 }
-
-interface IControlBarContex {
-  controlBar: IControlBar;
-  setControlBars: Dispatch<SetStateAction<IControlBar>>;
-}
-
-export const ControlBarContext = createContext<IControlBarContex>({
-  controlBar: {
-    productsPerPage: 12,
-    viewProducts: 'card',
-    sortPrice: '',
-    sortName: '',
-    minPrice: null,
-    maxPrice: null,
-  },
-  setControlBars: () => {},
-});
 
 function ProductsList({
   mainAndChildrenSlugs,
@@ -80,14 +58,8 @@ function ProductsList({
   const [totalProducts, setTotalProducts] = useState(0);
   // предыдущее общее количество товаров, чтобы при переключении страницы пока loading, общее количество товаров не сбрасывалось на ноль
   const [prevTotalProducts, setPrevTotalProducts] = useState(0);
-  const [controlBar, setControlBars] = useState<IControlBar>({
-    productsPerPage: 12,
-    viewProducts: 'card',
-    sortPrice: '',
-    sortName: '',
-    minPrice: null,
-    maxPrice: null,
-  });
+  // сотояние controlBar
+  const { controlBar, setControlBars } = useContext(ControlBarContext);
 
   /* Необходимо, для того, чтобы при переходе на новую страницу стейт не сохранялся старый
   из за этого товар не найден, потому что он учавствует в запросе, а также при изменении вывода
@@ -128,8 +100,7 @@ function ProductsList({
     } else if (controlBar.sortName !== '' || controlBar.sortPrice !== '') {
       variables = { ...variables, field, order };
     } else if (controlBar.maxPrice && controlBar.minPrice) {
-
-    /**проверка на фильтр */
+      /**проверка на фильтр */
       variables = { ...variables, minPrice, maxPrice };
     } else if (controlBar.minPrice) {
       variables = { ...variables, minPrice };
@@ -244,13 +215,11 @@ function ProductsList({
 
   return (
     <div>
-      <ControlBarContext.Provider value={{ controlBar, setControlBars }}>
-        <ProductsBoard
-          products={products}
-          loading={loading}
-          controlBarFaster={controlBar}
-        />
-      </ControlBarContext.Provider>
+      <ProductsBoard
+        products={products}
+        loading={loading}
+        controlBarFaster={controlBar}
+      />
       <Pagination
         currentPage={currentPage}
         totalPages={totalPages}

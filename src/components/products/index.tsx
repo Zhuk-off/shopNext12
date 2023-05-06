@@ -5,11 +5,11 @@ import Container from '../container';
 import ProductCardVertical from './ProductCardVertical';
 import { ViewButton } from './viewButton';
 import ProductsPerPageDropdown from './productsPerPagePageDropdown';
-import { ControlBarContext, IControlBar } from '../pagiation/productsList';
 import { SortPriceButton } from './SortPriceButton';
 import { SortNameButton } from './SortNameButton';
 import { FilterPrice } from './filterPrice';
 import { DividerH } from '../divider';
+import { ControlBarContext, IControlBar } from '@/src/contex/ControlBarContext';
 
 const ProductsBoard = ({
   products,
@@ -70,6 +70,8 @@ const ProductsBoard = ({
 
   // если товаров нет во входящих параметрах, то не отображаем
   if (products === null) return null;
+
+// console.log('ProductsBoard', controlBar);
 
   return (
     <section>
