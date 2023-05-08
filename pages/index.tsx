@@ -29,6 +29,7 @@ export default function Home({
     'akkumulyatornye-dreli-shurupoverty'
   );
   const allSlugs = foundObject ? getAllChildSlugs(foundObject) : [];
+  // console.log(menu);
 
   // const { loading, error, data } = useQuery(
   //   GET_CATEGORY_WITH_PRODUCTS_OF_CILD,

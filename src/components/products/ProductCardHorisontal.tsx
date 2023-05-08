@@ -22,8 +22,17 @@ const ProductCardHorisontal = ({
   if (product === null) return null;
 
   // преобразование входных данных для отображения в карточке товара
-  const { image, alt, title, description, price, inStock, uri, id } =
-    productDataConversion(product);
+  const {
+    image,
+    alt,
+    title,
+    description,
+    price,
+    inStock,
+    uri,
+    id,
+    databaseId,
+  } = productDataConversion(product);
 
   return (
     <div className="grid h-48 grid-cols-5 overflow-hidden rounded-md bg-white p-4 shadow-md hover:shadow-lg">
@@ -59,9 +68,17 @@ const ProductCardHorisontal = ({
         </div>
 
         {price !== '--,--' ? (
-          <CartAddButton buttonStatus="enable" idProduct={id} />
+          <CartAddButton
+            buttonStatus="enable"
+            idProduct={id}
+            databaseId={databaseId}
+          />
         ) : (
-          <CartAddButton buttonStatus="disable" idProduct={id} />
+          <CartAddButton
+            buttonStatus="disable"
+            idProduct={id}
+            databaseId={databaseId}
+          />
         )}
         {inStock ? (
           <span className="inline-block max-w-max rounded-full bg-green-100 px-2 py-1 text-xs font-medium uppercase text-green-800">

@@ -17,7 +17,7 @@ import ProductsListSearch from '@/src/components/pagiation/productsListSearch';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export default function Category({
+export default function SearchPage({
   headerFooter,
   menu,
 }: // productsFromCat,

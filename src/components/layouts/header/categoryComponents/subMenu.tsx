@@ -1,8 +1,6 @@
 import Link from 'next/link';
 import { useContext } from 'react';
-
 import SubMenuRecursive from './subMenuRecursive';
-import Image from 'next/image';
 import { DataContext } from '..';
 
 const SubMenu = ({ toggleDropdown }: { toggleDropdown: any }) => {
@@ -15,17 +13,9 @@ const SubMenu = ({ toggleDropdown }: { toggleDropdown: any }) => {
         <li key={index} className="pb-2 leading-tight">
           <Link
             href={menuItem.slug}
-            className=" hover:bg-red-50 hover:text-red-600 font-semibold "
+            className=" font-semibold hover:bg-red-50 hover:text-red-600 "
             onClick={toggleDropdown}
           >
-            {/* <div className="mr-1 inline-block">
-              <Image
-                src={menuItem.imageUrl ? menuItem.imageUrl : '/vercel.svg'}
-                alt={menuItem.name}
-                width={15}
-                height={15}
-              />
-            </div>{' '} */}
             <span>{menuItem.name}</span>
           </Link>
           {menuItem?.children && menuItem?.children.length !== 0 ? (

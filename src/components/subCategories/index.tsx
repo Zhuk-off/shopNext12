@@ -18,9 +18,9 @@ const SubCategories = ({
 
   return (
     <nav className="text-sm font-medium">
-      {childrenSlugName?.length !== 0 ? (
+      {childrenSlugName && childrenSlugName?.length !== 0 ? (
         <ol className="inline-flex list-none flex-wrap gap-x-4 gap-y-2 font-medium">
-          {childrenSlugName.slice(0, MAX_SUBCATEGORY_OPEN).map((item) => (
+          {childrenSlugName && childrenSlugName.slice(0, MAX_SUBCATEGORY_OPEN).map((item) => (
             <li key={item.name}>
               <Link
                 href={item.slug}

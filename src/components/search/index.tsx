@@ -157,7 +157,7 @@ function Search({
           ref={searchResultsRef}
           className="absolute left-0 top-12 z-10 w-full rounded-b-md border border-gray-300 bg-white shadow-lg"
         >
-          {data.products.edges.length > 0 ? (
+          {data && data.products.edges.length > 0 ? (
             <ul className="divide-y divide-gray-200">
               {data.products.edges.map((product) => (
                 <Link

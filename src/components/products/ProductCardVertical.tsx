@@ -21,7 +21,7 @@ const ProductCardVertical = ({
   if (product === null) return null;
 
   // преобразование входных данных для отображения в карточке товара
-  const { image, alt, title, price, inStock, uri, id ,databaseId} =
+  const { image, alt, title, price, inStock, uri, id, databaseId } =
     productDataConversion(product);
 
   return (
@@ -53,9 +53,17 @@ const ProductCardVertical = ({
         </div>
 
         {price !== '--,--' ? (
-          <CartAddButton buttonStatus="enable" idProduct={id} databaseId={databaseId} />
+          <CartAddButton
+            buttonStatus="enable"
+            idProduct={id}
+            databaseId={databaseId}
+          />
         ) : (
-          <CartAddButton buttonStatus="disable" idProduct={id} databaseId={databaseId}/>
+          <CartAddButton
+            buttonStatus="disable"
+            idProduct={id}
+            databaseId={databaseId}
+          />
         )}
         {inStock ? (
           <span className="inline-block max-w-max rounded-full bg-green-100 px-2 py-1 text-xs font-medium uppercase text-green-800">

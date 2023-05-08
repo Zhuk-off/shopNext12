@@ -72,7 +72,7 @@ export default function Order({
           const newEdges = fetchMoreResult.products.edges;
           const pageInfo = fetchMoreResult.products.pageInfo;
 
-          return newEdges.length
+          return newEdges && newEdges.length
             ? {
                 products: {
                   __typename: prevResult.products.__typename,
@@ -177,26 +177,26 @@ export default function Order({
   return (
     <main>
       <Layout headerFooter={headerFooter || {}} menu={menu}>
-      <Container>
-        <div className="relative cursor-pointer border-b font-semibold">
-          <span className="inline-block border-b-2 border-black pb-5">
-            Корзина
-          </span>
-          <span className="absolute left-16 top-0 inline-block text-xs font-bold">
-            <CounterOrderPage />
-          </span>
-        </div>
-        <div className="mt-8 flex flex-grow">
-          <ul className="w-full flex-grow">
-            {data && databaseIds && databaseIds.length !== 0 && (
-              <CartOrderItems productsDataOrder={productsDataOrder} />
-            )}
-          </ul>
-          <div className="ml-12 rounded-lg shadow-lg">
-            <TotalCard sum={sum} totalCount={totalCount} loading={loading} />
+        <Container>
+          <div className="relative cursor-pointer border-b font-semibold">
+            <span className="inline-block border-b-2 border-black pb-5">
+              Корзина
+            </span>
+            <span className="absolute left-16 top-0 inline-block text-xs font-bold">
+              <CounterOrderPage />
+            </span>
           </div>
-        </div>
-      </Container>
+          <div className="mt-8 flex flex-grow">
+            <ul className="w-full flex-grow">
+              {data && databaseIds && databaseIds.length !== 0 && (
+                <CartOrderItems productsDataOrder={productsDataOrder} />
+              )}
+            </ul>
+            <div className="ml-12 rounded-lg shadow-lg">
+              <TotalCard sum={sum} totalCount={totalCount} loading={loading} />
+            </div>
+          </div>
+        </Container>
       </Layout>
     </main>
   );

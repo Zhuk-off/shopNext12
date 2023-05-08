@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { ISubmenu } from './mainMenu';
 import { useState } from 'react';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
@@ -13,7 +12,7 @@ const SubMenuRecursive = ({
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
   const MAX_SUBCATEGORY_OPEN = 4;
-  const dropdownItems = items.slice(MAX_SUBCATEGORY_OPEN);
+  const dropdownItems = items && items.slice(MAX_SUBCATEGORY_OPEN);
 
   const handleDropdownToggle = () => {
     setShowDropdown(!showDropdown);
@@ -21,18 +20,19 @@ const SubMenuRecursive = ({
 
   return (
     <ul className="ml-3 mt-1 leading-tight">
-      {items.slice(0, MAX_SUBCATEGORY_OPEN).map((item) => (
-        <li key={item.name} className="mt-2">
-          <Link
-            href={item.slug}
-            className="font-normal text-gray-800 hover:text-red-600"
-            onClick={toggleDropdown}
-          >
-            {item.name}
-          </Link>
-        </li>
-      ))}
-      {items.length > MAX_SUBCATEGORY_OPEN && (
+      {items &&
+        items.slice(0, MAX_SUBCATEGORY_OPEN).map((item) => (
+          <li key={item.name} className="mt-2">
+            <Link
+              href={item.slug}
+              className="font-normal text-gray-800 hover:text-red-600"
+              onClick={toggleDropdown}
+            >
+              {item.name}
+            </Link>
+          </li>
+        ))}
+      {items && items.length > MAX_SUBCATEGORY_OPEN && (
         <li>
           {showDropdown && (
             <ul className="flex w-full flex-col items-start">
@@ -58,7 +58,6 @@ const SubMenuRecursive = ({
             ) : (
               <div className="mt-2 flex gap-1 text-blue-500 hover:text-red-600">
                 <div>Посмотреть все</div>
-
                 <ChevronDownIcon className="w-4" />
               </div>
             )}
