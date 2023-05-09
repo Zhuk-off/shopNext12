@@ -9,8 +9,6 @@ export const CartOrderItems = ({
   return (
     <>
       {productsDataOrder.map((product) => {
-        if (product.quantity!==0) {console.log(product.quantity );
-        }
         return(
         <li key={product.id} className={`${product.quantity===0 ? 'hidden' : ''}`}>
           <CartOrderItem

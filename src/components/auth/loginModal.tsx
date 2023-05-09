@@ -1,5 +1,10 @@
+import { IDataLogin } from '@/src/interfaces/apollo/login.interface';
 import { LOGIN_AUTH } from '@/src/utils/apollo/mutationsConst';
-import { useMutation } from '@apollo/client';
+import {
+  ADD_PRODUCT_TO_CART,
+  GET_CART_TOTAL,
+} from '@/src/utils/apollo/queriesConst';
+import { useApolloClient, useMutation, useQuery } from '@apollo/client';
 import { Dialog, Transition } from '@headlessui/react';
 import Image from 'next/image';
 import { Dispatch, FormEvent, Fragment, SetStateAction, useState } from 'react';
@@ -13,33 +18,66 @@ export default function LoginModal({
 }) {
   const [login, setLogin] = useState('');
   const [pass, setPass] = useState('');
-  const [auth, { data, loading, error, reset }] = useMutation(LOGIN_AUTH);
+  const [auth, { data, loading, error, reset }] =
+    useMutation<IDataLogin>(LOGIN_AUTH);
+
+  const [addProduct, { data: addProductData, loading: loadingProduct }] =
+    useMutation(ADD_PRODUCT_TO_CART);
+
+  // для обновления кеша в Apollo
+  const apolloClient = useApolloClient();
+  function updateApolloCache() {
+    apolloClient.resetStore();
+  }
+
+  const authToken =
+    typeof localStorage !== 'undefined'
+      ? localStorage.getItem('authToken')
+      : null;
+  const authorizationHeader = authToken
+    ? { authorization: `Bearer ${authToken}` }
+    : {};
+
+  const { loading: cartTotalLoading, data: cartTotal } = useQuery(
+    GET_CART_TOTAL,
+    {
+      context: {
+        headers: authorizationHeader,
+      },
+    }
+  );
+
+  if (loading) return 'Loading...';
+  if (error) return `Error! ${error.message}`;
 
   function closeModal() {
     setIsOpen(false);
   }
 
-  function openModal() {
-    setIsOpen(true);
-  }
-
   function handleForm(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); // предотвращаем отправку формы по умолчанию
     // выполняем действия с данными формы, например, отправляем их на сервер
-    console.log(`Email: ${login}, Password: ${pass}`);
-
     auth({ variables: { username: login, password: pass } });
-    // closeModal();
-
-    // closeModal();
   }
 
-  if (data) {
-    // console.log(data);
+  if (data && !loading) {
+    console.log(data);
+    const { authToken, refreshToken, sessionToken } = data.login;
+    localStorage.setItem('authToken', authToken);
+    localStorage.setItem('refreshToken', refreshToken);
+    localStorage.setItem('sessionToken', sessionToken);
+    updateApolloCache();
+    window.location.reload();
   }
+
   if (error) {
     // console.log('error', error);
     reset();
+  }
+
+  if (data) {
+    console.log('dataAuth', data);
+    console.log('name', data.login.user.name);
   }
 
   return (
@@ -76,7 +114,7 @@ export default function LoginModal({
                   >
                     Sign in to your account
                   </Dialog.Title>
-                  {error && <p className='text-red-600'>{error.message}</p>}
+                  {/* {error && <p className="text-red-600">{error.message}</p>} */}
                   <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
                     <div className="sm:mx-auto sm:w-full sm:max-w-sm">
                       <Image
@@ -93,6 +131,7 @@ export default function LoginModal({
                         className="space-y-6"
                         onSubmit={handleForm} // обработчик отправки формы
                       >
+                        <p>{}</p>
                         <div>
                           <label
                             htmlFor="login"
@@ -149,11 +188,25 @@ export default function LoginModal({
                           <button
                             type="submit"
                             className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            onClick={() => setIsOpen(!isOpen)}
                           >
                             Sign in
                           </button>
                         </div>
                       </form>
+                      <button
+                        type="submit"
+                        className="mt-3 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        onClick={() =>
+                          addProduct({
+                            context: {
+                              headers: authorizationHeader,
+                            },
+                          })
+                        }
+                      >
+                        Add product
+                      </button>
                     </div>
                   </div>
                 </Dialog.Panel>
