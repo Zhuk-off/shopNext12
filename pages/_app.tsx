@@ -7,6 +7,7 @@ import Router from 'next/router';
 import NProgress from 'nprogress';
 import { CartCountProvider } from '@/src/contex/CartContex';
 import { ControlBarContextProvider } from '@/src/contex/ControlBarContext';
+import { SessionProvider } from 'next-auth/react';
 
 // Авторизация с использованием токена из localStorage
 // const httpLink = new HttpLink({
@@ -33,14 +34,19 @@ Router.events.on('routeChangeStart', () => NProgress.start());
 Router.events.on('routeChangeComplete', () => NProgress.done());
 Router.events.on('routeChangeError', () => NProgress.done());
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps) {
   return (
     <ApolloProvider client={client}>
-      <CartCountProvider>
-        <ControlBarContextProvider>
-          <Component {...pageProps} />
-        </ControlBarContextProvider>
-      </CartCountProvider>
+      <SessionProvider session={session}>
+        <CartCountProvider>
+          <ControlBarContextProvider>
+            <Component {...pageProps} />
+          </ControlBarContextProvider>
+        </CartCountProvider>
+      </SessionProvider>
     </ApolloProvider>
   );
 }

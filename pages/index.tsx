@@ -2,7 +2,6 @@ import { Inter } from 'next/font/google';
 import { Slider } from '@/src/components/slider';
 import { Banners } from '@/src/components/banners';
 import Offers from '@/src/components/offers';
-
 import { HEADER_FOOTER_ENDPOINT } from '@/src/utils/constants/endpoints';
 import axios from 'axios';
 import Layout from '@/src/components/layouts';
@@ -14,6 +13,7 @@ import { findObjectById, getAllChildSlugs } from '@/src/utils/getAllChildIds';
 import { getAllCategories } from '@/src/utils/apollo/queries';
 import Search from '@/src/components/search';
 import Container from '@/src/components/container';
+import { signOut, useSession } from 'next-auth/react';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -24,6 +24,9 @@ export default function Home({
   headerFooter: IData | undefined;
   menu: MenuItem[];
 }) {
+  const { data: session } = useSession({
+    required: true,
+  });
   const foundObject = findObjectById(
     menu[0],
     'akkumulyatornye-dreli-shurupoverty'
@@ -41,9 +44,18 @@ export default function Home({
   // if (loading) return 'Loading...';
   // if (error) return `Error! ${error.message}`;
 
+  // Проверка авторизации, если пользователь не авторизован, то чтобы не мелькал
+  // экран мы показываем пустоту до того, как произойдет перенаправление на страницу авторизации
+  if (!session) return <></>;
+
   return (
     <main className="">
       <Layout headerFooter={headerFooter || {}} menu={menu}>
+        {/* Кнопка, которая завершит авторизованную сессию */}
+        <button className="border p-2" onClick={(_) => signOut()}>
+          SignOut
+        </button>
+        {/* ---------------------------------------------- */}
         <Container>
           <Search />
         </Container>
