@@ -1,21 +1,31 @@
-import { Dialog, Transition } from '@headlessui/react';
-import { error } from 'console';
-import { signIn } from 'next-auth/react';
+import { ADD_PRODUCT_TO_CART } from '@/src/utils/apollo/queriesConst';
+import { useApolloClient, useMutation } from '@apollo/client';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 
 export default function Login() {
-  const router = useRouter()
+  const router = useRouter();
   const [authState, setAuthState] = useState({
     username: '',
     password: '',
   });
+  const { data: session } = useSession();
+  const [addProduct, { data: addProductData, loading: loadingProduct }] =
+    useMutation(ADD_PRODUCT_TO_CART);
 
   const [pageState, setPageState] = useState({
     error: '',
     processing: false,
   });
+
+  // Получим токен для будущей проверки есть ли он?
+  const [refreshToken, setRefreshToken] = useState<string | null>('');
+  useEffect(() => {
+    const refreshTokenFromLocalStorage = localStorage.getItem('refreshToken');
+    setRefreshToken(refreshTokenFromLocalStorage);
+  }, []);
 
   const handleFieldChange = (e: { target: { id: string; value: string } }) => {
     setAuthState((old) => ({ ...old, [e.target.id]: e.target.value }));
@@ -35,7 +45,8 @@ export default function Login() {
         console.log(response);
         if (response?.ok) {
           // пользователь аторизован
-         router.push('/')
+          console.log(response);
+          //  router.push('/')
         } else {
           setPageState((old) => ({
             ...old,
@@ -55,9 +66,48 @@ export default function Login() {
   };
 
   // console.log(authState.username, authState.password)
+  console.log('session', session);
+
+  // для обновления кеша в Apollo
+  const apolloClient = useApolloClient();
+  function updateApolloCache() {
+    apolloClient.resetStore();
+  }
+
+  if (session && (refreshToken === null || refreshToken === '')) {
+    const { authToken, refreshToken, sessionToken } = session.user.tokens;
+    localStorage.setItem('authToken', authToken);
+    localStorage.setItem('refreshToken', refreshToken);
+    localStorage.setItem('sessionToken', sessionToken);
+    updateApolloCache();
+    window.location.reload();
+  }
+
+  console.log('mutation', addProductData);
+
+  const handleSignOut = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('sessionToken');
+    signOut();
+  };
+
+  const authToken =
+    typeof localStorage !== 'undefined'
+      ? localStorage.getItem('authToken')
+      : null;
+  const authorizationHeader = authToken
+    ? { authorization: `Bearer ${authToken}` }
+    : {};
 
   return (
     <div className="fixed inset-0 overflow-y-auto">
+      <div>
+        <p>Signed in as {session && session?.user?.name}</p>
+        <button className="border p-2" onClick={() => handleSignOut()}>
+          Sign out
+        </button>
+      </div>
       <div className="flex min-h-full items-center justify-center p-4 text-center">
         <div className="justify-cent7er flex min-h-full flex-1 flex-col px-6 py-12 lg:px-8">
           <div className="mb-12">Sign in to your account</div>
@@ -135,7 +185,17 @@ export default function Login() {
               </button>
             </div>
 
-            <button className="mt-3 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            <button
+              type="submit"
+              className="mt-3 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              onClick={() =>
+                addProduct({
+                  context: {
+                    headers: authorizationHeader,
+                  },
+                })
+              }
+            >
               Add product
             </button>
           </div>
