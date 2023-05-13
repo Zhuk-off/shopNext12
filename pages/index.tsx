@@ -9,11 +9,9 @@ import { IData } from '@/src/interfaces/footerHeaderRestAPIDataResponse';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
 import buildMenu from '@/src/utils/buildMenu';
 import { GetStaticProps } from 'next';
-import { findObjectById, getAllChildSlugs } from '@/src/utils/getAllChildIds';
 import { getAllCategories } from '@/src/utils/apollo/queries';
 import Search from '@/src/components/search';
 import Container from '@/src/components/container';
-import { signOut, useSession } from 'next-auth/react';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -24,38 +22,15 @@ export default function Home({
   headerFooter: IData | undefined;
   menu: MenuItem[];
 }) {
-  const { data: session } = useSession({
-    required: true,
-  });
-  const foundObject = findObjectById(
-    menu[0],
-    'akkumulyatornye-dreli-shurupoverty'
-  );
-  const allSlugs = foundObject ? getAllChildSlugs(foundObject) : [];
-  // console.log(menu);
-
-  // const { loading, error, data } = useQuery(
-  //   GET_CATEGORY_WITH_PRODUCTS_OF_CILD,
-  //   {
-  //     variables: { categorySlugs:allSlugs },
-  //   }
+  // const foundObject = findObjectById(
+  //   menu[0],
+  //   'akkumulyatornye-dreli-shurupoverty'
   // );
-
-  // if (loading) return 'Loading...';
-  // if (error) return `Error! ${error.message}`;
-
-  // Проверка авторизации, если пользователь не авторизован, то чтобы не мелькал
-  // экран мы показываем пустоту до того, как произойдет перенаправление на страницу авторизации
-  if (!session) return <></>;
-
+  // const allSlugs = foundObject ? getAllChildSlugs(foundObject) : [];
+  
   return (
     <main className="">
       <Layout headerFooter={headerFooter || {}} menu={menu}>
-        {/* Кнопка, которая завершит авторизованную сессию */}
-        <button className="border p-2" onClick={(_) => signOut()}>
-          SignOut
-        </button>
-        {/* ---------------------------------------------- */}
         <Container>
           <Search />
         </Container>

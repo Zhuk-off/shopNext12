@@ -42,6 +42,10 @@ export default function Login() {
     setRefreshToken(refreshTokenFromLocalStorage);
   }, []);
 
+  if(session){
+    router.push('/')
+  }
+
   const handleFieldChange = (e: { target: { id: string; value: string } }) => {
     setAuthState((old) => ({ ...old, [e.target.id]: e.target.value }));
   };
@@ -61,7 +65,7 @@ export default function Login() {
         if (response?.ok) {
           // пользователь аторизован
           console.log(response);
-          //  router.push('/')
+          router.push('/');
         } else {
           setPageState((old) => ({
             ...old,
@@ -127,150 +131,150 @@ export default function Login() {
   console.log('errors', errors);
 
   return (
-    <div className="fixed inset-0 overflow-y-auto">
-      <div>
-        <p>Signed in as {session && session?.user?.name}</p>
-        <button className="border p-2" onClick={() => handleSignOut()}>
-          Sign out
-        </button>
-      </div>
-      <Container>
-        <Link
-          href={'/'}
-          className="flex items-center gap-1 font-medium text-indigo-600 hover:text-gray-900"
-        >
-          <ArrowLeftIcon width={15} height={15} /> На главную
-        </Link>
-        <div className="flex min-h-full items-center justify-center p-4 text-center">
-          <div className="justify-cent7er flex min-h-full flex-1 flex-col px-6 py-12 lg:px-8">
-            <div className="mb-12">Sign in to your account</div>
-            <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-              <Image
-                className="m-auto h-8 w-auto sm:h-10"
-                src="/logo.svg"
-                alt="spec1.by"
-                width={126}
-                height={24}
-              />
-            </div>
-
-            <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-              {pageState.error !== '' && (
-                <p className="text-red-500">{simplifyError(pageState.error)}</p>
-              )}
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <div>
-                  <label
-                    htmlFor="username"
-                    className="block text-left text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Email
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      {...register('username', {
-                        required: 'Поле Email обязательно для заполнения',
-                        pattern: {
-                          value: /\S+@\S+\.\S+/,
-                          message:
-                            'Поле Email должно быть в формате example@domain.com',
-                        },
-                      })}
-                      id="username"
-                      name="username"
-                      required
-                      className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      onChange={(e) => handleFieldChange(e)}
-                      value={authState.username}
-                    />
-                    {errors.username && (
-                      <span className="text-sm text-red-600" role="alert">
-                        {errors.username.message}
-                      </span>
-                    )}
-                  </div>
+    <>
+      {session === null ? (
+        <div className="fixed inset-0 overflow-y-auto">
+          <Container>
+            <Link
+              href={'/'}
+              className="flex items-center gap-1 font-medium text-indigo-600 hover:text-gray-900"
+            >
+              <ArrowLeftIcon width={15} height={15} /> На главную
+            </Link>
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <div className="justify-cent7er flex min-h-full flex-1 flex-col px-6 py-12 lg:px-8">
+                <div className="mb-12">Sign in to your account</div>
+                <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+                  <Image
+                    className="m-auto h-8 w-auto sm:h-10"
+                    src="/logo.svg"
+                    alt="spec1.by"
+                    width={126}
+                    height={24}
+                  />
                 </div>
 
-                <div>
-                  <div className="flex items-center justify-between">
-                    <label
-                      htmlFor="password"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Password
-                    </label>
-                    <div className="text-sm">
-                      <Link
-                        href="/reset-pass"
-                        className="font-semibold text-indigo-600 hover:text-indigo-500"
+                <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                  {pageState.error !== '' && (
+                    <p className="text-red-500">
+                      {simplifyError(pageState.error)}
+                    </p>
+                  )}
+                  <form onSubmit={handleSubmit(onSubmit)}>
+                    <div>
+                      <label
+                        htmlFor="username"
+                        className="block text-left text-sm font-medium leading-6 text-gray-900"
                       >
-                        Forgot password?
-                      </Link>
+                        Email
+                      </label>
+                      <div className="mt-2">
+                        <input
+                          {...register('username', {
+                            required: 'Поле Email обязательно для заполнения',
+                            pattern: {
+                              value: /\S+@\S+\.\S+/,
+                              message:
+                                'Поле Email должно быть в формате example@domain.com',
+                            },
+                          })}
+                          id="username"
+                          name="username"
+                          required
+                          className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          onChange={(e) => handleFieldChange(e)}
+                          value={authState.username}
+                        />
+                        {errors.username && (
+                          <span className="text-sm text-red-600" role="alert">
+                            {errors.username.message}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div className="mt-2">
-                    <input
-                      {...register('password', {
-                        required: 'Поле Пароль обязательно для заполнения',
-                        minLength: {
-                          value: 1,
-                          message:
-                            'Поле Пароль должно содержать не менее 1 символов',
-                        },
-                      })}
-                      id="password"
-                      name="password"
-                      type="password"
-                      autoComplete="current-password"
-                      required
-                      className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      onChange={(e) => handleFieldChange(e)}
-                      value={authState.password}
-                    />
-                    {errors.password && (
-                      <span className="text-sm text-red-600" role="alert">
-                        {errors.password.message}
-                      </span>
-                    )}
-                  </div>
-                </div>
 
-                <div>
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <label
+                          htmlFor="password"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Password
+                        </label>
+                        <div className="text-sm">
+                          <Link
+                            href="/reset-pass"
+                            className="font-semibold text-indigo-600 hover:text-indigo-500"
+                          >
+                            Forgot password?
+                          </Link>
+                        </div>
+                      </div>
+                      <div className="mt-2">
+                        <input
+                          {...register('password', {
+                            required: 'Поле Пароль обязательно для заполнения',
+                            minLength: {
+                              value: 1,
+                              message:
+                                'Поле Пароль должно содержать не менее 1 символов',
+                            },
+                          })}
+                          id="password"
+                          name="password"
+                          type="password"
+                          autoComplete="current-password"
+                          required
+                          className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          onChange={(e) => handleFieldChange(e)}
+                          value={authState.password}
+                        />
+                        {errors.password && (
+                          <span className="text-sm text-red-600" role="alert">
+                            {errors.password.message}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div>
+                      <button
+                        className="mt-8 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        type="submit"
+                        disabled={pageState.processing}
+                      >
+                        Sign in
+                      </button>
+                    </div>
+                  </form>
+
                   <button
-                    className="mt-8 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    type="submit"
-                    disabled={pageState.processing}
+                    className="mt-3 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    onClick={() =>
+                      addProduct({
+                        context: {
+                          headers: authorizationHeader,
+                        },
+                      })
+                    }
                   >
-                    Sign in
+                    Add product
                   </button>
+                  <span className="mt-3 inline-block">
+                    <span>Don&apos;t have an account? </span>
+                    <Link
+                      className="text-blue-600 hover:text-gray-900"
+                      href="/register"
+                    >
+                      Sign up
+                    </Link>
+                  </span>
                 </div>
-              </form>
-
-              <button
-                className="mt-3 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                onClick={() =>
-                  addProduct({
-                    context: {
-                      headers: authorizationHeader,
-                    },
-                  })
-                }
-              >
-                Add product
-              </button>
-              <span className="mt-3 inline-block">
-                <span>Don&apos;t have an account? </span>
-                <Link
-                  className="text-blue-600 hover:text-gray-900"
-                  href="/register"
-                >
-                  Sign up
-                </Link>
-              </span>
+              </div>
             </div>
-          </div>
+          </Container>
         </div>
-      </Container>
-    </div>
+      ) : null}
+    </>
   );
 }

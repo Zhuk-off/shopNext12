@@ -1,28 +1,63 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
-import LoginModal from '@/src/components/auth/loginModal';
 import { useRouter } from 'next/router';
+import { signOut, useSession } from 'next-auth/react';
+import Link from 'next/link';
+import { CartContext } from '@/src/contex/CartContex';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
 export default function AccountButton() {
+  const [cart] = useContext(CartContext);
   const router = useRouter();
-  const [loginModal, setLoginModal] = useState<boolean>(false);
+  const { data: session } = useSession();
 
   const handleLogin = () => {
     router.push('/login');
-    // setLoginModal(!loginModal);
   };
 
-  // console.log(loginModal);
+  const handleSignOut = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('sessionToken');
+    signOut();
+  };
 
-  useEffect(() => {
-    // console.log('loginModal change');
-    // console.log(loginModal);
-  }, [loginModal]);
+  const Basket = (
+    <Menu.Item>
+      {({ active }) => (
+        <Link
+          href="/order"
+          className={classNames(
+            active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+            'flex items-center gap-1 px-4 py-2 text-sm'
+          )}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="h-4 w-4"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
+            />
+          </svg>
+          Корзина
+          <div className="order-last ml-auto rounded-full bg-pink-700 px-1 text-xs text-white">
+            {cart ? cart?.totalQty : null}
+          </div>
+        </Link>
+      )}
+    </Menu.Item>
+  );
 
   return (
     <>
@@ -65,93 +100,78 @@ export default function AccountButton() {
         >
           <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className="py-1">
-              <div className="my-2 flex flex-col gap-y-2">
-                <div className="">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.0}
-                    stroke="currentColor"
-                    className="mx-auto h-10 w-10 text-gray-900"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
+              {!session ? (
+                <div className="my-2 flex flex-col gap-y-2">
+                  <div className="">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.0}
+                      stroke="currentColor"
+                      className="mx-auto h-10 w-10 text-gray-900"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="text-center">
+                    <Menu.Item>
+                      <button
+                        onClick={() => handleLogin()}
+                        className="rounded-full border bg-pink-700 px-6 py-1 font-medium text-white transition hover:bg-pink-800 hover:text-white  focus:outline-none"
+                      >
+                        Войти
+                      </button>
+                    </Menu.Item>
+                  </div>
+                  {Basket}
                 </div>
-                <div className="text-center">
+              ) : (
+                <>
+                  <div className="order-last mb-1 ml-auto px-4 py-2 text-center text-sm font-medium text-gray-900">
+                    {session.user.email}
+                  </div>
+                  {Basket}
                   <Menu.Item>
-                    <button
-                      onClick={() => handleLogin()}
-                      className="rounded-full border bg-pink-700 px-6 py-1 font-medium text-white transition hover:bg-pink-800 hover:text-white  focus:outline-none"
-                    >
-                      Войти
-                    </button>
+                    {({ active }) => (
+                      <Link
+                        href="/my-account"
+                        className={classNames(
+                          active
+                            ? 'bg-gray-100 text-gray-900'
+                            : 'text-gray-700',
+                          'block px-4 py-2 text-sm'
+                        )}
+                      >
+                        Личные данные
+                      </Link>
+                    )}
                   </Menu.Item>
-                </div>
-              </div>
-              <Menu.Item>
-                {({ active }) => (
-                  <a
-                    href="#"
-                    className={classNames(
-                      active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                      'block px-4 py-2 text-sm'
+                  <Menu.Item>
+                    {({ active }) => (
+                      <button
+                        onClick={() => handleSignOut()}
+                        className={classNames(
+                          active
+                            ? 'bg-gray-100 text-gray-900'
+                            : 'text-gray-700',
+                          'block w-full px-4 py-2 text-left text-sm'
+                        )}
+                      >
+                        Выход
+                      </button>
                     )}
-                  >
-                    Account settings
-                  </a>
-                )}
-              </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <a
-                    href="#"
-                    className={classNames(
-                      active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                      'block px-4 py-2 text-sm'
-                    )}
-                  >
-                    Support
-                  </a>
-                )}
-              </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <a
-                    href="#"
-                    className={classNames(
-                      active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                      'block px-4 py-2 text-sm'
-                    )}
-                  >
-                    License
-                  </a>
-                )}
-              </Menu.Item>
-              <form method="POST" action="#">
-                <Menu.Item>
-                  {({ active }) => (
-                    <button
-                      type="submit"
-                      className={classNames(
-                        active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                        'block w-full px-4 py-2 text-left text-sm'
-                      )}
-                    >
-                      Sign out
-                    </button>
-                  )}
-                </Menu.Item>
-              </form>
+                  </Menu.Item>
+                </>
+              )}
             </div>
           </Menu.Items>
         </Transition>
       </Menu>
-      {/* <LoginModal isOpen={loginModal} setIsOpen={setLoginModal} /> */}
     </>
   );
 }

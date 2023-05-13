@@ -150,13 +150,6 @@ export default function Register() {
     // window.location.reload();
   }
 
-  const handleSignOut = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('sessionToken');
-    signOut();
-  };
-
   const authToken =
     typeof localStorage !== 'undefined'
       ? localStorage.getItem('authToken')
@@ -183,12 +176,6 @@ export default function Register() {
     <>
       {session === null ? (
         <div className="fixed inset-0 overflow-y-auto">
-          <div>
-            {/* <p>Signed in as {session && session?.user?.name}</p> */}
-            <button className="border p-2" onClick={() => handleSignOut()}>
-              Sign out
-            </button>
-          </div>
           <Container>
             <Link
               href={'/'}
