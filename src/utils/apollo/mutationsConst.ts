@@ -30,3 +30,24 @@ mutation RegisterCustomer($email: String!, $firstName: String, $password: String
   }
 }
 `;
+
+export const SEND_PASSWORD_RESET_EMAIL = gql`
+mutation sendPasswordResetEmail ($username: String! ) {
+  sendPasswordResetEmail(input: {username: $username}) {
+    success
+  }
+}
+`;
+
+
+export const IS_EXISTS_CUSTOMER_EMAIL = gql`
+query isExistsCustomerEmail($email: String!) {
+  customers(where: {email: $email}) {
+    edges {
+      node {
+        id
+      }
+    }
+  }
+}
+`;

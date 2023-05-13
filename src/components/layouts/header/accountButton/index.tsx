@@ -2,26 +2,28 @@ import { Fragment, useEffect, useState } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import LoginModal from '@/src/components/auth/loginModal';
+import { useRouter } from 'next/router';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
 export default function AccountButton() {
+  const router = useRouter();
   const [loginModal, setLoginModal] = useState<boolean>(false);
 
   const handleLogin = () => {
-    setLoginModal(!loginModal);
+    router.push('/login');
+    // setLoginModal(!loginModal);
   };
 
   // console.log(loginModal);
 
-  useEffect (()=> {
-// console.log('loginModal change');
-// console.log(loginModal);
+  useEffect(() => {
+    // console.log('loginModal change');
+    // console.log(loginModal);
+  }, [loginModal]);
 
-  },[loginModal])
-  
   return (
     <>
       <Menu as="div" className="relative inline-block text-left">
@@ -149,7 +151,7 @@ export default function AccountButton() {
           </Menu.Items>
         </Transition>
       </Menu>
-      <LoginModal isOpen={loginModal} setIsOpen={setLoginModal} />
+      {/* <LoginModal isOpen={loginModal} setIsOpen={setLoginModal} /> */}
     </>
   );
 }
