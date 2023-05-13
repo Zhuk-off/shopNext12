@@ -13,7 +13,7 @@ export async function login(username: string, password: string) {
 
     // response.data содержит данные из серверного ответа
 
-    const { authToken, refreshToken, sessionToken, user,customer } = response.data.login;
+    const { authToken, refreshToken, sessionToken, customer } = response.data.login;
 
     return response.data.login
   } catch (error) {

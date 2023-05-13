@@ -2,6 +2,7 @@ import { ADD_PRODUCT_TO_CART } from '@/src/utils/apollo/queriesConst';
 import { useApolloClient, useMutation } from '@apollo/client';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { Fragment, useEffect, useState } from 'react';
 
@@ -198,6 +199,12 @@ export default function Login() {
             >
               Add product
             </button>
+            <span className="mt-3 inline-block">
+              <span>Don&apos;t have an account? </span>
+              <Link className="text-blue-600 hover:text-gray-900" href="/register">
+                Sign up
+              </Link>
+            </span>
           </div>
         </div>
       </div>

@@ -10,8 +10,13 @@ export const authOptions = {
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        username: { label: 'Username', type: 'text', placeholder: 'jsmith' },
+        username: {
+          label: 'Email',
+          type: 'text',
+          placeholder: 'jsmith@gmail.com',
+        },
         password: { label: 'Password', type: 'password' },
+        // firstName: { label: 'Full Name', type: 'text' },
       },
       async authorize(credentials, req) {
         const response = await login(
@@ -19,15 +24,14 @@ export const authOptions = {
           credentials ? credentials?.password : ''
         );
         if (response) {
-          const { authToken, refreshToken, sessionToken, user, customer } =
-            response;
-          const name = user.name;
+          const { authToken, refreshToken, sessionToken, customer } = response;
+          const name = customer.firstName;
           const id = customer.id;
           // localStorage.setItem('tokenAuth', tokenAuth);
           return {
             id,
             name,
-            email: response?.user.email,
+            email: customer?.email,
             authToken,
             refreshToken,
             sessionToken,
