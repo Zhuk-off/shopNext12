@@ -1,4 +1,5 @@
 import Container from '@/src/components/container';
+import { Spinner } from '@/src/components/spinner';
 import { REGISTER_CUSTOMER } from '@/src/utils/apollo/mutationsConst';
 import { useApolloClient, useMutation } from '@apollo/client';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
@@ -18,6 +19,7 @@ type Inputs = {
 };
 
 export default function Register() {
+  // hooks start -----------------------------------------------
   const {
     register,
     handleSubmit,
@@ -77,14 +79,17 @@ export default function Register() {
           }));
         });
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addNewCustomerData]);
+  // hooks end -----------------------------------------------
 
+  // Обработка ввода  -----------------------------------------------
   const handleFieldChange = (e: { target: { id: string; value: string } }) => {
     setAuthState((old) => ({ ...old, [e.target.id]: e.target.value }));
   };
+  // конец Обработка ввода  -----------------------------------------------
 
+  // Обработка ошибок  -----------------------------------------------
   // добавление ошибок из Apollo в стейт для отображения. !Ошибки формы отрабатываются отдельно!
   if (error && error.message && pageState.error === '') {
     setPageState((prev) => ({ ...prev, error: error.message }));
@@ -107,11 +112,12 @@ export default function Register() {
     };
     return errorMap[errorValidate] ?? error;
   };
+  // конец Обработка ошибок  -----------------------------------------------
 
   const handleAuth = async () => {
     setPageState((old) => ({ ...old, processing: true, error: '' }));
 
-    addNewCustomer({
+    await addNewCustomer({
       variables: {
         email: authState.username,
         password: authState.password,
@@ -127,9 +133,6 @@ export default function Register() {
       }));
     }
   };
-
-  // console.log(authState.username, authState.password)
-  console.log('session', session);
 
   // для обновления кеша в Apollo
   const apolloClient = useApolloClient();
@@ -174,215 +177,229 @@ export default function Register() {
   // Надо для проверки паролей на совпадение, иначе не видно переменной password
   const password = watch('password', '');
 
-  console.log('authState', authState);
+  console.log('session', session);
 
   return (
-    <div className="fixed inset-0 overflow-y-auto">
-      <div>
-        <p>Signed in as {session && session?.user?.name}</p>
-        <button className="border p-2" onClick={() => handleSignOut()}>
-          Sign out
-        </button>
-      </div>
-      <Container>
-        <Link
-          href={'/'}
-          className="flex items-center gap-1 font-medium text-indigo-600 hover:text-gray-900"
-        >
-          <ArrowLeftIcon width={15} height={15} /> На главную
-        </Link>
-        <div className="flex min-h-full items-center justify-center p-4 text-center">
-          <div className="justify-cent7er flex min-h-full flex-1 flex-col px-6 py-12 lg:px-8">
-            <div className="mb-12">Sign up to your account</div>
-            <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-              <Image
-                className="m-auto h-8 w-auto sm:h-10"
-                src="/logo.svg"
-                alt="spec1.by"
-                width={126}
-                height={24}
-              />
-            </div>
-            <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-              {pageState.error !== '' && (
-                <p className="text-red-500">{simplifyError(pageState.error)}</p>
-              )}
-              {error && error.message}
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <div>
-                  <label
-                    htmlFor="username"
-                    className="block text-left text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Email
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      {...register('username', {
-                        required: 'Поле Email обязательно для заполнения',
-                        pattern: {
-                          value: /\S+@\S+\.\S+/,
-                          message:
-                            'Поле Email должно быть в формате example@domain.com',
-                        },
-                      })}
-                      id="username"
-                      name="username"
-                      type="email"
-                      className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      onChange={(e) => handleFieldChange(e)}
-                      value={authState.username}
-                    />
-                    {errors.username && (
-                      <span className="text-sm text-red-600" role="alert">
-                        {errors.username.message}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div>
-                  <label
-                    htmlFor="fullname"
-                    className="block text-left text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Full name
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      {...register('fullname', {
-                        required: 'Поле Full name обязательно для заполнения',
-                        minLength: 2,
-                      })}
-                      id="fullname"
-                      name="fullname"
-                      className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      onChange={(e) => handleFieldChange(e)}
-                      value={authState.fullname}
-                    />
-                    {errors.fullname && (
-                      <span className="text-sm text-red-600" role="alert">
-                        {errors.fullname.message}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div>
-                  <div className="flex items-center justify-between">
-                    <label
-                      htmlFor="password"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Password
-                    </label>
-                  </div>
-                  <div className="mt-2">
-                    <input
-                      {...register('password', {
-                        required: 'Поле Пароль обязательно для заполнения',
-                        minLength: {
-                          value: 1,
-                          message:
-                            'Поле Пароль должно содержать не менее 1 символов',
-                        },
-                      })}
-                      id="password"
-                      name="password"
-                      type="password"
-                      autoComplete="current-password"
-                      className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      onChange={(e) => handleFieldChange(e)}
-                      value={authState.password}
-                    />
-                    {errors.password && (
-                      <span className="text-sm text-red-600" role="alert">
-                        {errors.password.message}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <label
-                      htmlFor="confirmPassword"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Confirm Password
-                    </label>
-                  </div>
-                  <div className="mt-2">
-                    <input
-                      {...register('confirmPassword', {
-                        validate: (value) =>
-                          value === password || 'Пароли не совпадают',
-                      })}
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type="password"
-                      autoComplete="current-password"
-                      className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      onChange={(e) => handleFieldChange(e)}
-                      value={authState.confirmPassword}
-                    />
-                    {errors.confirmPassword && (
-                      <span className="text-sm text-red-600" role="alert">
-                        {errors.confirmPassword.message}
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <div className="mt-8 flex gap-2 ">
-                  <input
-                    className="h-4 w-4"
-                    {...register('policy', {
-                      required:
-                        'Вы должны согласиться с политикой конфиденциальности',
-                    })}
-                    type="checkbox"
-                    checked={authState.policy}
-                    name="policy"
-                    id="policy"
-                    onChange={() =>
-                      setAuthState((old) => ({
-                        ...old,
-                        policy: !authState.policy,
-                      }))
-                    }
-                  />
-
-                  <span className="shrink-1 block text-left text-sm text-gray-600">
-                    Email me about product updates and resources. If this box is
-                    checked, Stripe will occasionally send helpful and relevant
-                    emails. You can unsubscribe at any time. Privacy Policy
-                  </span>
-                </div>
-                {errors.policy && (
-                  <span className="text-sm text-red-600" role="alert">
-                    {errors.policy.message}
-                  </span>
-                )}
-
-                <div>
-                  <button
-                    className="mt-8 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    // onClick={handleAuth}
-                    disabled={pageState.processing}
-                    type="submit"
-                  >
-                    Sign up
-                  </button>
-                </div>
-              </form>
-              <span className="mt-3 inline-block">
-                <span>Have an account? </span>
-                <Link
-                  className="text-indigo-600 hover:text-gray-900"
-                  href="/login"
-                >
-                  Sign in
-                </Link>
-              </span>
-            </div>
+    <>
+      {session === null ? (
+        <div className="fixed inset-0 overflow-y-auto">
+          <div>
+            {/* <p>Signed in as {session && session?.user?.name}</p> */}
+            <button className="border p-2" onClick={() => handleSignOut()}>
+              Sign out
+            </button>
           </div>
+          <Container>
+            <Link
+              href={'/'}
+              className="flex items-center gap-1 font-medium text-indigo-600 hover:text-gray-900"
+            >
+              <ArrowLeftIcon width={15} height={15} /> На главную
+            </Link>
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <div className="justify-cent7er flex min-h-full flex-1 flex-col px-6 py-12 lg:px-8">
+                <div className="mb-12">Sign up to your account</div>
+                <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+                  <Image
+                    className="m-auto h-8 w-auto sm:h-10"
+                    src="/logo.svg"
+                    alt="spec1.by"
+                    width={126}
+                    height={24}
+                  />
+                </div>
+                <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                  {pageState.error !== '' && (
+                    <p className="text-red-500">
+                      {simplifyError(pageState.error)}
+                    </p>
+                  )}
+                  {error && error.message}
+                  <form onSubmit={handleSubmit(onSubmit)}>
+                    <div>
+                      <label
+                        htmlFor="username"
+                        className="block text-left text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Email
+                      </label>
+                      <div className="mt-2">
+                        <input
+                          {...register('username', {
+                            required: 'Поле Email обязательно для заполнения',
+                            pattern: {
+                              value: /\S+@\S+\.\S+/,
+                              message:
+                                'Поле Email должно быть в формате example@domain.com',
+                            },
+                          })}
+                          id="username"
+                          name="username"
+                          type="email"
+                          className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          onChange={(e) => handleFieldChange(e)}
+                          value={authState.username}
+                        />
+                        {errors.username && (
+                          <span className="text-sm text-red-600" role="alert">
+                            {errors.username.message}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="fullname"
+                        className="block text-left text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Full name
+                      </label>
+                      <div className="mt-2">
+                        <input
+                          {...register('fullname', {
+                            required:
+                              'Поле Full name обязательно для заполнения',
+                            minLength: 2,
+                          })}
+                          id="fullname"
+                          name="fullname"
+                          className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          onChange={(e) => handleFieldChange(e)}
+                          value={authState.fullname}
+                        />
+                        {errors.fullname && (
+                          <span className="text-sm text-red-600" role="alert">
+                            {errors.fullname.message}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <label
+                          htmlFor="password"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Password
+                        </label>
+                      </div>
+                      <div className="mt-2">
+                        <input
+                          {...register('password', {
+                            required: 'Поле Пароль обязательно для заполнения',
+                            minLength: {
+                              value: 1,
+                              message:
+                                'Поле Пароль должно содержать не менее 1 символов',
+                            },
+                          })}
+                          id="password"
+                          name="password"
+                          type="password"
+                          autoComplete="current-password"
+                          className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          onChange={(e) => handleFieldChange(e)}
+                          value={authState.password}
+                        />
+                        {errors.password && (
+                          <span className="text-sm text-red-600" role="alert">
+                            {errors.password.message}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <label
+                          htmlFor="confirmPassword"
+                          className="block text-sm font-medium leading-6 text-gray-900"
+                        >
+                          Confirm Password
+                        </label>
+                      </div>
+                      <div className="mt-2">
+                        <input
+                          {...register('confirmPassword', {
+                            validate: (value) =>
+                              value === password || 'Пароли не совпадают',
+                          })}
+                          id="confirmPassword"
+                          name="confirmPassword"
+                          type="password"
+                          autoComplete="current-password"
+                          className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          onChange={(e) => handleFieldChange(e)}
+                          value={authState.confirmPassword}
+                        />
+                        {errors.confirmPassword && (
+                          <span className="text-sm text-red-600" role="alert">
+                            {errors.confirmPassword.message}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="mt-8 flex gap-2 ">
+                      <input
+                        className="h-4 w-4"
+                        {...register('policy', {
+                          required:
+                            'Вы должны согласиться с политикой конфиденциальности',
+                        })}
+                        type="checkbox"
+                        checked={authState.policy}
+                        name="policy"
+                        id="policy"
+                        onChange={() =>
+                          setAuthState((old) => ({
+                            ...old,
+                            policy: !authState.policy,
+                          }))
+                        }
+                      />
+
+                      <span className="shrink-1 block text-left text-sm text-gray-600">
+                        Email me about product updates and resources. If this
+                        box is checked, Stripe will occasionally send helpful
+                        and relevant emails. You can unsubscribe at any time.
+                        Privacy Policy
+                      </span>
+                    </div>
+                    {errors.policy && (
+                      <span className="text-sm text-red-600" role="alert">
+                        {errors.policy.message}
+                      </span>
+                    )}
+
+                    <div>
+                      <button
+                        className="mt-8 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        // onClick={handleAuth}
+                        disabled={pageState.processing}
+                        type="submit"
+                      >
+                        {pageState.processing ? (
+                          <div className="pt-1">
+                            <Spinner />
+                          </div>
+                        ) : (
+                          'Sign up'
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                  <span className="mt-3 inline-block">
+                    <span>Have an account? </span>
+                    <Link
+                      className="text-indigo-600 hover:text-gray-900"
+                      href="/login"
+                    >
+                      Sign in
+                    </Link>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Container>
         </div>
-      </Container>
-    </div>
+      ) : null}
+    </>
   );
 }
