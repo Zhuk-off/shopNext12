@@ -7,14 +7,16 @@ function ListItem({
   image,
   label,
   data,
+  email,
   ModalWindowType,
 }: {
   image: ReactNode;
   label: string;
   data: ReactNode;
+  email?: string;
   ModalWindowType: ModalWindowType;
 }) {
-  const ref = useRef(null)
+  const ref = useRef(null);
   let [isOpen, setIsOpen] = useState(false);
   function closeModal() {
     setIsOpen(false);
@@ -77,9 +79,9 @@ function ListItem({
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-  
                 <ModalWindowData
                   ModalWindowType={ModalWindowType}
+                  email={email ? email : ''}
                   setIsOpen={setIsOpen}
                   ref={ref}
                 />

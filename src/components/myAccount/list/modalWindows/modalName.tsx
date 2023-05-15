@@ -1,6 +1,8 @@
+import { Spinner } from '@/src/components/spinner';
 import { gql, useMutation } from '@apollo/client';
 import { Dialog } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { useSession } from 'next-auth/react';
 import React, { forwardRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
@@ -10,8 +12,8 @@ type Inputs = {
 };
 
 export const CHANGE = gql`
-  mutation MyMutation($id: ID = "Y3VzdG9tZXI6MjA=", $firstName: String!) {
-    updateCustomer(input: {id: $id, firstName: $firstName}) {
+  mutation MyMutation($id: ID!, $firstName: String!) {
+    updateCustomer(input: { id: $id, firstName: $firstName }) {
       authToken
       refreshToken
     }
@@ -22,6 +24,7 @@ function ModalName(
   { closeModal }: { closeModal: () => void },
   ref: React.Ref<HTMLDivElement>
 ) {
+  const { data: session } = useSession();
   const [name, setName] = useState('');
   const [policy, setPolicy] = useState(false);
   const {
@@ -30,8 +33,9 @@ function ModalName(
     watch,
     formState: { errors },
   } = useForm<Inputs>();
-  const [changeName, { data: changeNameData, loading: loadingProduct ,error}] =
-    useMutation(CHANGE,{ errorPolicy: 'all' });
+
+  const [changeName, { data: changeNameData, loading, error }] =
+    useMutation(CHANGE);
 
   const refreshToken =
     typeof localStorage !== 'undefined'
@@ -51,6 +55,7 @@ function ModalName(
     console.log(data);
     changeName({
       variables: {
+        id: session?.user.info.id,
         firstName: data.name,
       },
       context: {
@@ -58,6 +63,10 @@ function ModalName(
       },
     });
   };
+
+  if (changeNameData) {
+    closeModal();
+  }
 
   console.log('authorizationHeader', authorizationHeader);
   console.log('changeNameData', changeNameData);
@@ -139,7 +148,13 @@ function ModalName(
             className="inline-flex justify-center rounded-md border border-transparent bg-indigo-100 px-4 py-2 text-sm font-medium text-indigo-900 hover:bg-indigo-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
             // onClick={closeModal}
           >
-            Сохранить
+            {loading ? (
+              <div className="px-[25px]">
+                <Spinner />
+              </div>
+            ) : (
+              'Сохранить'
+            )}
           </button>
         </div>
       </form>

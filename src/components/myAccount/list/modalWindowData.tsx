@@ -1,10 +1,5 @@
 import { ModalWindowType } from '@/src/interfaces/account/account.interface';
-import { Dialog, Transition } from '@headlessui/react';
-import {
-  Dispatch,
-  SetStateAction,
-  forwardRef,
-} from 'react';
+import { Dispatch, SetStateAction, forwardRef } from 'react';
 import ModalName from './modalWindows/modalName';
 import ModalPassword from './modalWindows/modalPassword';
 import ModalPhone from './modalWindows/modalPhone';
@@ -15,9 +10,11 @@ function ModalWindowData(
   {
     setIsOpen,
     ModalWindowType,
+    email,
   }: {
     ModalWindowType: ModalWindowType;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
+    email?: string;
   },
   ref: React.Ref<HTMLDivElement>
 ) {
@@ -34,7 +31,13 @@ function ModalWindowData(
         return <ModalEmail closeModal={closeModal} ref={ref} />;
       case 'PASSWORD':
         // return <p ref={ref}>test PASSWORD</p>;
-        return <ModalPassword closeModal={closeModal} ref={ref} />;
+        return (
+          <ModalPassword
+            closeModal={closeModal}
+            ref={ref}
+            email={email ? email : ''}
+          />
+        );
       case 'PHONE':
         // return <p ref={ref}>test PHONE</p>;
         return <ModalPhone closeModal={closeModal} ref={ref} />;
@@ -53,5 +56,6 @@ export default forwardRef<
   {
     ModalWindowType: ModalWindowType;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
+    email: string;
   }
 >(ModalWindowData);

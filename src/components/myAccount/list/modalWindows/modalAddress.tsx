@@ -1,5 +1,8 @@
+import { Spinner } from '@/src/components/spinner';
+import { gql, useMutation } from '@apollo/client';
 import { Dialog } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { useSession } from 'next-auth/react';
 import React, { forwardRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
@@ -8,18 +11,39 @@ type Inputs = {
   policy: boolean;
 };
 
+export const CHANGE = gql`
+  mutation MyMutation($id: ID!, $address1: String!) {
+    updateCustomer(input: { id: $id, billing: { address1: $address1 } }) {
+      authToken
+      refreshToken
+    }
+  }
+`;
+
 function ModalAddress(
   { closeModal }: { closeModal: () => void },
   ref: React.Ref<HTMLDivElement>
 ) {
+  const { data: session } = useSession();
   const [address, setAddress] = useState('');
   const [policy, setPolicy] = useState(false);
+  const [changeAddress, { data: changeAddressData, loading, error }] =
+    useMutation(CHANGE);
+
   const {
     register,
     handleSubmit,
     watch,
     formState: { errors },
   } = useForm<Inputs>();
+
+  const refreshToken =
+    typeof localStorage !== 'undefined'
+      ? localStorage.getItem('refreshToken')
+      : null;
+  const authorizationHeader = refreshToken
+    ? { authorization: `Bearer ${refreshToken}` }
+    : {};
 
   const handleAddress = (e: {
     target: { value: React.SetStateAction<string> };
@@ -29,7 +53,20 @@ function ModalAddress(
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.log(data);
+    changeAddress({
+      variables: {
+        id: session?.user.info.id,
+        address1: data.address,
+      },
+      context: {
+        headers: authorizationHeader,
+      },
+    });
   };
+
+  if (changeAddressData) {
+    closeModal();
+  }
 
   return (
     <Dialog.Panel
@@ -107,7 +144,13 @@ function ModalAddress(
             className="inline-flex justify-center rounded-md border border-transparent bg-indigo-100 px-4 py-2 text-sm font-medium text-indigo-900 hover:bg-indigo-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
             // onClick={closeModal}
           >
-            Сохранить
+            {loading ? (
+              <div className="px-[25px]">
+                <Spinner />
+              </div>
+            ) : (
+              'Сохранить'
+            )}
           </button>
         </div>
       </form>

@@ -1,3 +1,5 @@
+import { Spinner } from '@/src/components/spinner';
+import { gql, useMutation } from '@apollo/client';
 import { Dialog } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useSession } from 'next-auth/react';
@@ -9,12 +11,24 @@ type Inputs = {
   policy: boolean;
 };
 
+export const CHANGE = gql`
+  mutation MyMutation($id: ID!, $phone: String!) {
+    updateCustomer(input: { id: $id, billing: { phone: $phone } }) {
+      authToken
+      refreshToken
+    }
+  }
+`;
+
 function ModalPhone(
   { closeModal }: { closeModal: () => void },
   ref: React.Ref<HTMLDivElement>
 ) {
+  const { data: session } = useSession();
   const [phone, setPhone] = useState('');
   const [policy, setPolicy] = useState(false);
+  const [changePhone, { data: changePhoneData, loading, error }] =
+    useMutation(CHANGE);
 
   const {
     register,
@@ -22,6 +36,14 @@ function ModalPhone(
     watch,
     formState: { errors },
   } = useForm<Inputs>();
+
+  const refreshToken =
+    typeof localStorage !== 'undefined'
+      ? localStorage.getItem('refreshToken')
+      : null;
+  const authorizationHeader = refreshToken
+    ? { authorization: `Bearer ${refreshToken}` }
+    : {};
 
   const handlePhone = (e: {
     target: { value: React.SetStateAction<string> };
@@ -31,7 +53,20 @@ function ModalPhone(
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.log(data);
+    changePhone({
+      variables: {
+        id: session?.user.info.id,
+        phone: data.phone,
+      },
+      context: {
+        headers: authorizationHeader,
+      },
+    });
   };
+
+  if (changePhoneData) {
+    closeModal();
+  }
 
   return (
     <Dialog.Panel
@@ -118,7 +153,13 @@ function ModalPhone(
             className="inline-flex justify-center rounded-md border border-transparent bg-indigo-100 px-4 py-2 text-sm font-medium text-indigo-900 hover:bg-indigo-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
             // onClick={closeModal}
           >
-            Сохранить
+            {loading ? (
+              <div className="px-[25px]">
+                <Spinner />
+              </div>
+            ) : (
+              'Сохранить'
+            )}
           </button>
         </div>
       </form>

@@ -65,6 +65,7 @@ export default function PersonalData() {
             ></rect>
           </svg>
         }
+        email={data?.customer.email ? data?.customer.email : ''}
         ModalWindowType="PASSWORD"
       />
       <ListItem

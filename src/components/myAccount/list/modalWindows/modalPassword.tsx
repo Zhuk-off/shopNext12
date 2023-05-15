@@ -1,6 +1,9 @@
+import { Spinner } from '@/src/components/spinner';
+import { gql, useMutation } from '@apollo/client';
 import { Dialog } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import React, { forwardRef, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import React, { forwardRef, useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 type Inputs = {
@@ -16,10 +19,33 @@ type Pass = {
   confirmNewPass: string;
 };
 
+export const CHANGE = gql`
+  mutation MyMutation($id: ID!, $password: String!) {
+    updateCustomer(input: { id: $id, password: $password }) {
+      authToken
+      refreshToken
+    }
+  }
+`;
+
+export const LOGIN = gql`
+  mutation Login($password: String!, $username: String!) {
+    login(input: { password: $password, username: $username }) {
+      refreshToken
+      authToken
+    }
+  }
+`;
+
 function ModalPassword(
-  { closeModal }: { closeModal: () => void },
+  { closeModal, email }: { closeModal: () => void; email: string },
   ref: React.Ref<HTMLDivElement>
 ) {
+  const [pageState, setPageState] = useState({
+    error: '',
+    processing: false,
+  });
+  const { data: session } = useSession();
   const [pass, setPass] = useState<Pass>({
     pass: '',
     newPass: '',
@@ -33,14 +59,78 @@ function ModalPassword(
     watch,
     formState: { errors },
   } = useForm<Inputs>();
+  const [changePassword, { data: changePasswordData, loading, error }] =
+    useMutation(CHANGE);
+  const [login, { data: loginData, loading: loginLoading, error: loginError }] =
+    useMutation(LOGIN);
 
   const handleFieldChange = (e: { target: { id: string; value: string } }) => {
     setPass((old) => ({ ...old, [e.target.id]: e.target.value }));
   };
 
-  const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
+  const refreshToken =
+    typeof localStorage !== 'undefined'
+      ? localStorage.getItem('refreshToken')
+      : null;
+  const authorizationHeader = refreshToken
+    ? { authorization: `Bearer ${refreshToken}` }
+    : {};
+
+  const simplifyError = (error: string) => {
+    const errorMap: { [key: string]: string } = {
+      incorrect_password: 'Не верный пароль',
+    };
+    return errorMap[error] ?? 'Не известная ошибка';
   };
+
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    // Проверяем действующий пароль
+    await login({
+      variables: {
+        username: email,
+        password: data.pass,
+      },
+      context: {
+        headers: authorizationHeader,
+      },
+    })
+      .then(() => {
+        // если действующий пароль верен, то меняем пароль
+        changePassword({
+          variables: {
+            id: session?.user.info.id,
+            password: data.newPass,
+          },
+          context: {
+            headers: authorizationHeader,
+          },
+        })
+          .then(() => {
+            // если пароль поменяли, то закрываем окно
+            closeModal();
+          })
+          .catch((error) => {
+            setPageState((old) => ({
+              ...old,
+              error: error.message ?? 'Что-то пошло не так...',
+            }));
+          });
+      })
+      .catch((error) => {
+        setPageState((old) => ({
+          ...old,
+          error: error.message ?? 'Что-то пошло не так...',
+        }));
+      });
+  };
+
+  if (loginError && pageState.error === '') {
+    setPageState((old) => ({
+      ...old,
+      processing: false,
+      error: loginError.message ? loginError.message : '',
+    }));
+  }
 
   // Надо для проверки паролей на совпадение, иначе не видно переменной password
   const password = watch('newPass', '');
@@ -92,6 +182,11 @@ function ModalPassword(
           {errors.pass && (
             <span className="text-sm text-red-600" role="alert">
               {errors.pass.message}
+            </span>
+          )}
+          {pageState.error !== '' && (
+            <span className="text-sm text-red-600">
+              {simplifyError(pageState.error)}
             </span>
           )}
         </div>
@@ -185,7 +280,13 @@ function ModalPassword(
             className="inline-flex justify-center rounded-md border border-transparent bg-indigo-100 px-4 py-2 text-sm font-medium text-indigo-900 hover:bg-indigo-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
             // onClick={closeModal}
           >
-            Сохранить
+            {loading || loginLoading ? (
+              <div className="px-[25px]">
+                <Spinner />
+              </div>
+            ) : (
+              'Сохранить'
+            )}
           </button>
         </div>
       </form>
@@ -193,6 +294,7 @@ function ModalPassword(
   );
 }
 
-export default forwardRef<HTMLDivElement, { closeModal: () => void }>(
-  ModalPassword
-);
+export default forwardRef<
+  HTMLDivElement,
+  { closeModal: () => void; email: string }
+>(ModalPassword);

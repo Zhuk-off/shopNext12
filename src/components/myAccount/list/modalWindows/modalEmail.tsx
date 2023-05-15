@@ -1,3 +1,5 @@
+import { Spinner } from '@/src/components/spinner';
+import { gql, useMutation } from '@apollo/client';
 import { Dialog } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useSession } from 'next-auth/react';
@@ -5,19 +7,30 @@ import React, { forwardRef, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 type Inputs = {
-  name: string;
+  email: string;
   password: string;
   policy: boolean;
 };
+
+export const CHANGE = gql`
+  mutation MyMutation($id: ID!, $email: String!) {
+    updateCustomer(input: { id: $id, email: $email }) {
+      authToken
+      refreshToken
+    }
+  }
+`;
 
 function ModalEmail(
   { closeModal }: { closeModal: () => void },
   ref: React.Ref<HTMLDivElement>
 ) {
-  const [name, setName] = useState('');
-  const [pass, setPass] = useState('');
-  const [policy, setPolicy] = useState(false);
   const { data: session } = useSession();
+  const [name, setName] = useState('');
+  // const [pass, setPass] = useState('');
+  const [policy, setPolicy] = useState(false);
+  const [changeEmail, { data: changeEmailData, loading, error }] =
+    useMutation(CHANGE);
 
   const {
     register,
@@ -26,21 +39,42 @@ function ModalEmail(
     formState: { errors },
   } = useForm<Inputs>();
 
+  const refreshToken =
+    typeof localStorage !== 'undefined'
+      ? localStorage.getItem('refreshToken')
+      : null;
+  const authorizationHeader = refreshToken
+    ? { authorization: `Bearer ${refreshToken}` }
+    : {};
+
   const handleName = (e: {
     target: { value: React.SetStateAction<string> };
   }) => {
     setName(e.target.value);
   };
-  const handlePass = (e: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
-    setPass(e.target.value);
-  };
+
+  // const handlePass = (e: {
+  //   target: { value: React.SetStateAction<string> };
+  // }) => {
+  //   setPass(e.target.value);
+  // };
+
+  if (changeEmailData) {
+    closeModal()
+  }
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.log(data);
+    changeEmail({
+      variables: {
+        id: session?.user.info.id,
+        email: data.email,
+      },
+      context: {
+        headers: authorizationHeader,
+      },
+    });
   };
-  console.log(session);
 
   return (
     <Dialog.Panel
@@ -53,11 +87,9 @@ function ModalEmail(
       >
         Изменение почты
       </Dialog.Title>
-      <p className="mt-2 text-sm">
-        Для изменения вашей почты
-        <span> {session ? session?.user.email : null} </span>
-        нужно ввести текущий пароль.
-      </p>
+      {/* <p className="mt-2 text-sm">
+        Для изменения вашей почты нужно ввести текущий пароль.
+      </p> */}
       <button
         className="absolute right-5 top-4 text-gray-600"
         onClick={closeModal}
@@ -67,20 +99,23 @@ function ModalEmail(
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mt-3 flex items-center justify-between">
           <label
-            htmlFor="name"
+            htmlFor="email"
             className="block text-sm leading-6 text-gray-400"
           >
-            Почта
+            Новая почта
           </label>
         </div>
         <div className="mt-1">
           <input
-            {...register('name', {
-              required: 'Поле Имя обязательно для заполнения',
-              minLength: 2,
+            {...register('email', {
+              required: 'Поле Email обязательно для заполнения',
+              pattern: {
+                value: /\S+@\S+\.\S+/,
+                message: 'Поле Email должно быть в формате example@domain.com',
+              },
             })}
-            name="name"
-            id="name"
+            name="email"
+            id="email"
             type="text"
             placeholder="example@gmail.com"
             value={name}
@@ -88,13 +123,13 @@ function ModalEmail(
             className="block w-full rounded-md border border-gray-300 bg-white px-4 py-2 leading-5 placeholder-gray-500 focus:border-blue-500 focus:placeholder-gray-400 focus:outline-none focus:ring-blue-500 sm:text-sm"
             autoFocus
           />
-          {errors.name && (
+          {errors.email && (
             <span className="text-sm text-red-600" role="alert">
-              {errors.name.message}
+              {errors.email.message}
             </span>
           )}
         </div>
-        <div className="mt-3 flex items-center justify-between">
+        {/* <div className="mt-3 flex items-center justify-between">
           <label
             htmlFor="password"
             className="block text-sm leading-6 text-gray-400"
@@ -125,7 +160,7 @@ function ModalEmail(
               {errors.password.message}
             </span>
           )}
-        </div>
+        </div> */}
         <div className="mt-4 flex gap-2 ">
           <input
             className="h-4 w-4 cursor-pointer"
@@ -155,7 +190,13 @@ function ModalEmail(
             className="inline-flex justify-center rounded-md border border-transparent bg-indigo-100 px-4 py-2 text-sm font-medium text-indigo-900 hover:bg-indigo-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
             // onClick={closeModal}
           >
-            Сохранить
+            {loading ? (
+              <div className="px-[25px]">
+                <Spinner />
+              </div>
+            ) : (
+              'Сохранить'
+            )}
           </button>
         </div>
       </form>
