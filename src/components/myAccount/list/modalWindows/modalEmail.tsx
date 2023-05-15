@@ -53,7 +53,7 @@ function ModalEmail(
       >
         Изменение почты
       </Dialog.Title>
-      <p className="text-sm mt-2">
+      <p className="mt-2 text-sm">
         Для изменения вашей почты
         <span> {session ? session?.user.email : null} </span>
         нужно ввести текущий пароль.
@@ -70,7 +70,7 @@ function ModalEmail(
             htmlFor="name"
             className="block text-sm leading-6 text-gray-400"
           >
-            Имя
+            Почта
           </label>
         </div>
         <div className="mt-1">
@@ -82,7 +82,7 @@ function ModalEmail(
             name="name"
             id="name"
             type="text"
-            placeholder="Имя"
+            placeholder="example@gmail.com"
             value={name}
             onChange={handleName}
             className="block w-full rounded-md border border-gray-300 bg-white px-4 py-2 leading-5 placeholder-gray-500 focus:border-blue-500 focus:placeholder-gray-400 focus:outline-none focus:ring-blue-500 sm:text-sm"

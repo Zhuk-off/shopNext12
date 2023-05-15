@@ -25,13 +25,15 @@ export const authOptions = {
         );
         if (response) {
           const { authToken, refreshToken, sessionToken, customer } = response;
-          const name = customer.firstName;
-          const id = customer.id;
+          const { id, firstName: name, email, billing } = customer;
+          const { address1: address, phone } = billing;
           // localStorage.setItem('tokenAuth', tokenAuth);
           return {
             id,
             name,
-            email: customer?.email,
+            email,
+            address,
+            phone,
             authToken,
             refreshToken,
             sessionToken,
@@ -54,14 +56,18 @@ export const authOptions = {
         token.authToken = user.authToken;
         token.refreshToken = user.refreshToken;
         token.sessionToken = user.sessionToken;
+        token.address= user.address;
+        token.phone=user.phone ;
       }
       return token;
     },
     async session({
       session,
+      // user,
       token,
     }: {
       session: any | undefined;
+      // user: any | undefined;
       token: any | undefined;
     }) {
       if (session && token) {
@@ -70,7 +76,12 @@ export const authOptions = {
           refreshToken: token.refreshToken,
           sessionToken: token.sessionToken,
         };
+        session.user.info = {
+          address: token.address,
+          phone: token.phone,
+        };
       }
+
       return session;
     },
   },

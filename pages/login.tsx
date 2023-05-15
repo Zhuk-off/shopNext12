@@ -23,8 +23,8 @@ export default function Login() {
   } = useForm<Inputs>();
   const router = useRouter();
   const [authState, setAuthState] = useState({
-    username: '',
-    password: '',
+    username: 'zhukoffweb@gmail.com',
+    password: '1',
   });
   const { data: session } = useSession();
   const [addProduct, { data: addProductData, loading: loadingProduct }] =

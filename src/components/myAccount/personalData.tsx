@@ -1,22 +1,21 @@
-import { CartContext } from '@/src/contex/CartContex';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import React, { useContext } from 'react';
+import { useSession } from 'next-auth/react';
 import ListItem from './list/listItem';
 
 export default function PersonalData() {
+  const { data: session } = useSession();
+  console.log(session);
   return (
     <ul role="list" className="divide-y divide-gray-100">
       <ListItem
         image={<></>}
         label="Имя"
-        data="Александр"
+        data={session?.user.name}
         ModalWindowType="NAME"
       />
       <ListItem
         image={<></>}
         label="Почта"
-        data="zhukoff.alex@gmi"
+        data={session?.user.email}
         ModalWindowType="EMAIL"
       />
       <ListItem
@@ -50,13 +49,13 @@ export default function PersonalData() {
       <ListItem
         image={<></>}
         label="Основной телефон для связи"
-        data="+375 (29) 211-64-45"
+        data={session?.user.info.phone}
         ModalWindowType="PHONE"
       />
       <ListItem
         image={<></>}
         label="Адрес"
-        data="г. Витебск ул. Богатырева д. 10"
+        data={session?.user.info.address}
         ModalWindowType="ADDRESS"
       />
     </ul>

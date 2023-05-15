@@ -1,27 +1,27 @@
+
 export interface IDataLogin {
   login: Login;
 }
 
 export interface Login {
-  authToken:        string;
+  authToken: string;
   clientMutationId: null;
-  refreshToken:     string;
-  sessionToken:     string;
-  customer:         Customer;
-  user:             User;
-  __typename:       string;
-}
-
-export interface Customer {
-  id:         string;
-  username:   string;
-  role:       string;
+  refreshToken: string;
+  sessionToken: string;
+  customer: Customer;
   __typename: string;
 }
 
-export interface User {
-  name:       string;
-  lastName:   null;
-  nickname:   string;
+export interface Customer {
+  id: string;
+  firstName: string;
+  email: string;
+  billing: Billing;
+  __typename: string;
+}
+
+export interface Billing {
+  address1: string;
+  phone: string;
   __typename: string;
 }

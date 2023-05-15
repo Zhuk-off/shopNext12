@@ -12,7 +12,10 @@ declare module 'next-auth' {
         refreshToken: string;
         sessionToken: string;
       };
+      info: {
+        address: string;
+        phone: string;
+      };
     } & DefaultSession['user'];
-    
   }
 }

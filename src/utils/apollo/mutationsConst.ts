@@ -11,6 +11,10 @@ mutation MyMutation($password: String!, $username: String!) {
       id
       firstName
       email
+      billing {
+        address1
+        phone
+      }
     }
   }
 }
