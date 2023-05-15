@@ -15,7 +15,7 @@ type Inputs = {
   fullname: string;
   password: string;
   confirmPassword: string;
-  policy: string;
+  policy: boolean;
 };
 
 export default function Register() {
