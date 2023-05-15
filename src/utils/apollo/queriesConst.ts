@@ -407,32 +407,44 @@ export const GET_PRODUCTS_BY_IDS_ORDER_CARD = gql`
   }
 `;
 export const GET_CART_TOTAL = gql`
- query GetCartTotal {
+  query GetCartTotal {
     cart {
-    total
-    contents {
-      edges {
-        node {
-          quantity
-          product {
-            node {
-              name
+      total
+      contents {
+        edges {
+          node {
+            quantity
+            product {
+              node {
+                name
+              }
             }
           }
         }
       }
     }
   }
-}
 `;
 export const ADD_PRODUCT_TO_CART = gql`
-mutation MyMutation {
-  addToCart(input: {productId: 42037, quantity: 1}) {
-    cart {
-      total
+  mutation MyMutation {
+    addToCart(input: { productId: 42037, quantity: 1 }) {
+      cart {
+        total
+      }
     }
   }
-}
 `;
 
-
+// Данные для страницы /my-acount
+export const GET_CUSTOMER_DATA = gql`
+  query getCustomerData($id: ID) {
+    customer(id: $id) {
+      email
+      firstName
+      billing {
+        address1
+        phone
+      }
+    }
+  }
+`;

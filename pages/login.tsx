@@ -42,8 +42,8 @@ export default function Login() {
     setRefreshToken(refreshTokenFromLocalStorage);
   }, []);
 
-  if(session){
-    router.push('/')
+  if (session) {
+    router.push('/');
   }
 
   const handleFieldChange = (e: { target: { id: string; value: string } }) => {

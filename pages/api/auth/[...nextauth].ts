@@ -56,8 +56,9 @@ export const authOptions = {
         token.authToken = user.authToken;
         token.refreshToken = user.refreshToken;
         token.sessionToken = user.sessionToken;
-        token.address= user.address;
-        token.phone=user.phone ;
+        token.address = user.address;
+        token.phone = user.phone;
+        token.id = user.id;
       }
       return token;
     },
@@ -79,6 +80,7 @@ export const authOptions = {
         session.user.info = {
           address: token.address,
           phone: token.phone,
+          id: token.id,
         };
       }
 

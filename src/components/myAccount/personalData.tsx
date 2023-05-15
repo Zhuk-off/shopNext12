@@ -1,21 +1,42 @@
 import { useSession } from 'next-auth/react';
 import ListItem from './list/listItem';
+import { GET_CUSTOMER_DATA } from '@/src/utils/apollo/queriesConst';
+import { useQuery } from '@apollo/client';
+import { ICustomerData } from '@/src/interfaces/apollo/login.interface';
 
 export default function PersonalData() {
   const { data: session } = useSession();
-  console.log(session);
+  const refreshToken =
+    typeof localStorage !== 'undefined'
+      ? localStorage.getItem('refreshToken')
+      : null;
+  const authorizationHeader = refreshToken
+    ? { authorization: `Bearer ${refreshToken}` }
+    : {};
+
+  const { loading, error, data } = useQuery<ICustomerData>(GET_CUSTOMER_DATA, {
+    variables: {
+      id: session ? session.user.info.id : '',
+    },
+    context: {
+      headers: authorizationHeader,
+    },
+    pollInterval: 5000,
+  });
+
   return (
     <ul role="list" className="divide-y divide-gray-100">
+      {/* <button onClick={() => handleButton()}>get data</button> */}
       <ListItem
         image={<></>}
         label="Имя"
-        data={session?.user.name}
+        data={data?.customer.firstName ? data?.customer.firstName : '-'}
         ModalWindowType="NAME"
       />
       <ListItem
         image={<></>}
         label="Почта"
-        data={session?.user.email}
+        data={data?.customer.email ? data?.customer.email : '-'}
         ModalWindowType="EMAIL"
       />
       <ListItem
@@ -49,13 +70,17 @@ export default function PersonalData() {
       <ListItem
         image={<></>}
         label="Основной телефон для связи"
-        data={session?.user.info.phone}
+        data={data?.customer.billing.phone ? data?.customer.billing.phone : '-'}
         ModalWindowType="PHONE"
       />
       <ListItem
         image={<></>}
         label="Адрес"
-        data={session?.user.info.address}
+        data={
+          data?.customer.billing.address1
+            ? data?.customer.billing.address1
+            : '-'
+        }
         ModalWindowType="ADDRESS"
       />
     </ul>

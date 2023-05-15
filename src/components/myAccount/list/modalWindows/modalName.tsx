@@ -1,3 +1,4 @@
+import { gql, useMutation } from '@apollo/client';
 import { Dialog } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import React, { forwardRef, useState } from 'react';
@@ -7,6 +8,15 @@ type Inputs = {
   name: string;
   policy: boolean;
 };
+
+export const CHANGE = gql`
+  mutation MyMutation($id: ID = "Y3VzdG9tZXI6MjA=", $firstName: String!) {
+    updateCustomer(input: {id: $id, firstName: $firstName}) {
+      authToken
+      refreshToken
+    }
+  }
+`;
 
 function ModalName(
   { closeModal }: { closeModal: () => void },
@@ -20,6 +30,16 @@ function ModalName(
     watch,
     formState: { errors },
   } = useForm<Inputs>();
+  const [changeName, { data: changeNameData, loading: loadingProduct ,error}] =
+    useMutation(CHANGE,{ errorPolicy: 'all' });
+
+  const refreshToken =
+    typeof localStorage !== 'undefined'
+      ? localStorage.getItem('refreshToken')
+      : null;
+  const authorizationHeader = refreshToken
+    ? { authorization: `Bearer ${refreshToken}` }
+    : {};
 
   const handleName = (e: {
     target: { value: React.SetStateAction<string> };
@@ -29,7 +49,19 @@ function ModalName(
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.log(data);
+    changeName({
+      variables: {
+        firstName: data.name,
+      },
+      context: {
+        headers: authorizationHeader,
+      },
+    });
   };
+
+  console.log('authorizationHeader', authorizationHeader);
+  console.log('changeNameData', changeNameData);
+  console.log('error', error);
 
   return (
     <Dialog.Panel

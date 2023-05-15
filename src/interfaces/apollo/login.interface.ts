@@ -1,4 +1,3 @@
-
 export interface IDataLogin {
   login: Login;
 }
@@ -24,4 +23,20 @@ export interface Billing {
   address1: string;
   phone: string;
   __typename: string;
+}
+
+// Данные для страницы /my-acount
+export interface ICustomerData {
+  customer: Customer;
+}
+
+export interface Customer {
+  email: string;
+  firstName: string;
+  billing: Billing;
+}
+
+export interface Billing {
+  address1: string;
+  phone: string;
 }

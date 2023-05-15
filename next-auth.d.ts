@@ -15,6 +15,7 @@ declare module 'next-auth' {
       info: {
         address: string;
         phone: string;
+        id: string;
       };
     } & DefaultSession['user'];
   }

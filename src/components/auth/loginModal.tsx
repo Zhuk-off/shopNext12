@@ -77,7 +77,7 @@ export default function LoginModal({
 
   if (data) {
     console.log('dataAuth', data);
-    console.log('name', data.login.user.name);
+    // console.log('name', data.login.user.name);
   }
 
   return (
