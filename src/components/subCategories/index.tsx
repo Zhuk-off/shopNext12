@@ -1,8 +1,9 @@
 import { ChildSlugNameByCategory } from '@/src/interfaces/apollo/getCatigories.interface';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DividerV } from '../divider';
+import { useRouter } from 'next/router';
 
 const SubCategories = ({
   childrenSlugName,
@@ -10,7 +11,19 @@ const SubCategories = ({
   childrenSlugName: ChildSlugNameByCategory[];
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
+  const router = useRouter();
   const MAX_SUBCATEGORY_OPEN = 8;
+
+  // закрыть showDropdown при переходе на другую страницу
+  useEffect(() => {
+    function handleRouteChange() {
+      setShowDropdown(false);
+    }
+    router.events.on('routeChangeStart', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+  }, [router]);
 
   const handleDropdownToggle = () => {
     setShowDropdown(!showDropdown);
@@ -20,16 +33,17 @@ const SubCategories = ({
     <nav className="text-sm font-medium">
       {childrenSlugName && childrenSlugName?.length !== 0 ? (
         <ol className="inline-flex list-none flex-wrap gap-x-4 gap-y-2 font-medium">
-          {childrenSlugName && childrenSlugName.slice(0, MAX_SUBCATEGORY_OPEN).map((item) => (
-            <li key={item.name}>
-              <Link
-                href={item.slug}
-                className="text-blue-500 underline hover:text-red-500"
-              >
-                {item.name}
-              </Link>
-            </li>
-          ))}
+          {childrenSlugName &&
+            childrenSlugName.slice(0, MAX_SUBCATEGORY_OPEN).map((item) => (
+              <li key={item.name}>
+                <Link
+                  href={item.slug}
+                  className="text-blue-500 underline hover:text-red-500"
+                >
+                  {item.name}
+                </Link>
+              </li>
+            ))}
           {childrenSlugName.length > MAX_SUBCATEGORY_OPEN &&
             showDropdown &&
             childrenSlugName.map((item, index) => (

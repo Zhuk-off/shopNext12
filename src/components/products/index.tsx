@@ -1,5 +1,5 @@
 import { IGetProductsSimple } from '@/src/interfaces/apollo/getProducts.interface';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import ProductCardHorisontal from './ProductCardHorisontal';
 import Container from '../container';
 import ProductCardVertical from './ProductCardVertical';
@@ -8,7 +8,6 @@ import ProductsPerPageDropdown from './productsPerPagePageDropdown';
 import { SortPriceButton } from './SortPriceButton';
 import { SortNameButton } from './SortNameButton';
 import { FilterPrice } from './filterPrice';
-import { DividerH } from '../divider';
 import { ControlBarContext, IControlBar } from '@/src/contex/ControlBarContext';
 
 const ProductsBoard = ({
@@ -32,7 +31,7 @@ const ProductsBoard = ({
       <section>
         <Container>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-4 flex items-center justify-end gap-2"></div>
+            <div className="skeleton mb-8 h-[65px] rounded-md border border-gray-200" />
             <ul className="flex flex-col gap-2">
               {controlBarFaster.viewProducts === 'list' ? (
                 arraySceleton.map((item, index) => {
@@ -71,22 +70,22 @@ const ProductsBoard = ({
   // если товаров нет во входящих параметрах, то не отображаем
   if (products === null) return null;
 
-// console.log('ProductsBoard', controlBar);
+  // console.log('ProductsBoard', controlBar);
 
   return (
     <section>
       <Container>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 ">
-          <div className="mb-8 flex items-center justify-end flex-col xl:flex-row border border-gray-200">
+          <div className="mb-8 flex flex-col items-center justify-end rounded-md border border-gray-200 xl:flex-row">
             <div className="my-4 lg:my-2">
               <FilterPrice />
             </div>
-            <div className="py-4 lg:py-2 pl-4 border-l border-gray-200">
-              <span className="pr-2 lg:py-2 inline-block">Сортировать по:</span>
+            <div className="border-l border-gray-200 py-4 pl-4 lg:py-2">
+              <span className="inline-block pr-2 lg:py-2">Сортировать по:</span>
               <SortNameButton />
               <SortPriceButton />
             </div>
-            <div className='flex pl-4 border-l border-gray-200 gap-4'>
+            <div className="flex gap-4 border-l border-gray-200 pl-4">
               <ProductsPerPageDropdown />
               <ViewButton />
             </div>

@@ -20,8 +20,6 @@ export const formatBelarusianCurrency = (currencyString: string) => {
 // преобразование входных данных для отображения в карточке товара
 export const productDataConversion = (product: IProductCat) => {
   const image = product.image?.sourceUrl
-    ? product.image?.sourceUrl
-    : DEFAULT_IMG_URL;
   const alt = product.image?.altText ? product.image?.altText : '';
   const title = product.name ? product.name : '';
   const description = product.shortDescription ? product.shortDescription : '';

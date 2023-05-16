@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import { CartAddButton } from './cartAddButton';
+import { DEFAULT_IMG_URL_224x168 } from '@/src/utils/constants/images';
 
 const ProductCardHorisontal = ({
   product,
@@ -38,7 +39,7 @@ const ProductCardHorisontal = ({
     <div className="grid h-48 grid-cols-5 overflow-hidden rounded-md bg-white p-4 shadow-md hover:shadow-lg">
       <Link href={uri} className="col-span-1 self-center justify-self-center">
         <Image
-          src={image}
+          src={image ? image : DEFAULT_IMG_URL_224x168}
           alt={alt}
           width={160}
           height={160}
@@ -48,7 +49,7 @@ const ProductCardHorisontal = ({
       <div className="col-span-3 flex border-l border-gray-200 px-4">
         <div className="flex-1 overflow-hidden">
           <Link href={uri}>
-            <h2 className="line-clamp-3 text-lg  font-medium text-blue-500 underline hover:text-red-500 lg:line-clamp-2">
+            <h2 className="line-clamp-3 text-lg font-medium text-blue-500 underline hover:text-red-500 lg:line-clamp-4">
               {title}
             </h2>
           </Link>

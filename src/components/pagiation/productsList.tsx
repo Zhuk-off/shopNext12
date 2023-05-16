@@ -1,11 +1,4 @@
-import {
-  Dispatch,
-  SetStateAction,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Pagination from '.';
 import { useQuery } from '@apollo/client';
 import ProductsBoard from '../products';
@@ -21,14 +14,8 @@ import {
   PRODUCTS_TEST_SORT_FILTER_BY_MIN_PRICE,
 } from '@/src/utils/apollo/queriesConst';
 import { useRouter } from 'next/router';
-import {
-  PerPage,
-  SortName,
-  SortPrice,
-  ViewType,
-} from '@/src/interfaces/productsView.interface';
+import { PerPage } from '@/src/interfaces/productsView.interface';
 import { ControlBarContext } from '@/src/contex/ControlBarContext';
-
 
 export interface IVariables {
   offset: number;
@@ -156,6 +143,7 @@ function ProductsList({
   // получение данных о товарах
   const { loading, error, data } = useQuery(queryFunc(), {
     variables: variablesFunc(),
+    pollInterval: 2000,
   });
 
   // действия, для выполнения, когда переключается страница
@@ -207,7 +195,9 @@ function ProductsList({
     );
 
   /**@TODO Добавить описание ошибки и красивую страницу */
-  if (error) return <p>Error :(</p>;
+  if (error) {
+    console.error(error.message);
+  }
 
   const products: IGetProductsSimple = data;
 

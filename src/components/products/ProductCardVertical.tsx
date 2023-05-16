@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import { CartAddButton } from './cartAddButton';
+import { DEFAULT_IMG_URL } from '@/src/utils/constants/images';
 
 const ProductCardVertical = ({
   product,
@@ -28,7 +29,7 @@ const ProductCardVertical = ({
     <div className="flex h-[416px] flex-col overflow-hidden rounded-md bg-white p-4 shadow-md hover:shadow-lg">
       <Link href={uri} className="self-center justify-self-center">
         <Image
-          src={image}
+          src={image ? image : DEFAULT_IMG_URL}
           alt={alt}
           width={160}
           height={160}
