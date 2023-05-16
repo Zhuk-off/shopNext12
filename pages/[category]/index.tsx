@@ -10,7 +10,12 @@ import { client } from '@/src/utils/apollo/apolloClient';
 import { GET_CATEGORY_DATA } from '@/src/utils/apollo/queriesConst';
 import buildMenu from '@/src/utils/buildMenu';
 import { HEADER_FOOTER_ENDPOINT } from '@/src/utils/constants/endpoints';
-import { ApolloQueryResult, gql, useQuery } from '@apollo/client';
+import {
+  ApolloQueryResult,
+  gql,
+  useQuery,
+  useReactiveVar,
+} from '@apollo/client';
 import axios from 'axios';
 import { Inter } from 'next/font/google';
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from 'next';
@@ -26,8 +31,11 @@ import Container from '@/src/components/container';
 import ProductsList from '@/src/components/pagiation/productsList';
 import Search from '@/src/components/search';
 import { getAllCategories } from '@/src/utils/apollo/queries';
+import { cartVar } from '@/src/utils/apollo/reactiveVar';
+import { ICartLocalStorage } from '@/src/interfaces/cart.interface';
 
 const inter = Inter({ subsets: ['latin'] });
+
 
 export default function Category({
   headerFooter,
@@ -42,6 +50,7 @@ export default function Category({
   childrenSlugName: ChildSlugNameByCategory[];
   allSlugs: string[];
 }) {
+
   return (
     <main className="">
       <Layout headerFooter={headerFooter || {}} menu={menu}>

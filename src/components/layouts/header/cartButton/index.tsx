@@ -1,4 +1,6 @@
 import { CartContext } from '@/src/contex/CartContex';
+import { cartVar } from '@/src/utils/apollo/reactiveVar';
+import { useReactiveVar } from '@apollo/client';
 import { Menu } from '@headlessui/react';
 import { useRouter } from 'next/router';
 import { useContext } from 'react';
@@ -8,7 +10,9 @@ import { useContext } from 'react';
 // }
 
 export default function CartButton() {
-  const [cart] = useContext(CartContext);
+  // const [cart] = useContext(CartContext);
+  const cartA = useReactiveVar(cartVar);
+
   const router = useRouter();
   return (
     <Menu as="div" className="relative inline-block text-left">
@@ -34,7 +38,7 @@ export default function CartButton() {
         </svg>
         {/* <CartCounter className='absolute left-24 top-1'/> */}
         <div className="bg absolute left-24 top-0 rounded-full bg-pink-700 px-1 text-xs text-white">
-          {cart ? cart?.totalQty : null}
+          {cartA.totalQty}
         </div>
         Корзина
       </Menu.Button>

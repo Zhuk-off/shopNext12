@@ -5,13 +5,17 @@ import { useRouter } from 'next/router';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { CartContext } from '@/src/contex/CartContex';
+import { useReactiveVar } from '@apollo/client';
+import { cartVar } from '@/src/utils/apollo/reactiveVar';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
 export default function AccountButton() {
-  const [cart] = useContext(CartContext);
+  const cartA = useReactiveVar(cartVar);
+
+  // const [cart] = useContext(CartContext);
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -52,7 +56,7 @@ export default function AccountButton() {
           </svg>
           Корзина
           <div className="order-last ml-auto rounded-full bg-pink-700 px-1 text-xs text-white">
-            {cart ? cart?.totalQty : null}
+          {cartA.totalQty}
           </div>
         </Link>
       )}

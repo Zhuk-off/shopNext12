@@ -5,6 +5,7 @@ import { getSumProducts, sumToStringWithComa } from '@/src/utils/helpers';
 import { useQuery } from '@apollo/client';
 import { useContext, useEffect } from 'react';
 import { Spinner } from '../spinner';
+import Link from 'next/link';
 
 export const TotalCard = ({
   sum,
@@ -33,9 +34,12 @@ export const TotalCard = ({
           <span>{!loading ? sumWithComa : <Spinner />}</span>
         </div>
       </div>
-      <button className="mt-5 w-full rounded-md bg-pink-700 p-3 font-semibold text-white transition hover:bg-pink-800">
-        <div className="">Оформить заказ</div>
-      </button>
+      <Link
+        href={'#'}
+        className="mt-5 block w-full rounded-md bg-pink-700 p-3 font-semibold text-white transition hover:bg-pink-800"
+      >
+        <div className="text-center">Оформить заказ</div>
+      </Link>
       <div className="mt-4 flex text-sm font-medium leading-tight text-gray-400">
         <span className="inline-block">*</span>
         <p className="inline-block ">

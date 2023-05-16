@@ -1,10 +1,14 @@
 import { CartContext } from '@/src/contex/CartContex';
+import { cartVar } from '@/src/utils/apollo/reactiveVar';
+import { useReactiveVar } from '@apollo/client';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useContext } from 'react';
 
 export default function MyAccountNavMenu() {
-  const [cart] = useContext(CartContext);
+  // const [cart] = useContext(CartContext);
+  const cartA = useReactiveVar(cartVar);
+
   const router = useRouter();
   return (
     <nav className="">
@@ -27,7 +31,7 @@ export default function MyAccountNavMenu() {
             </svg>
             Корзина
             <div className="order-last ml-auto rounded-full bg-pink-700 px-1 text-xs text-white">
-              {cart ? cart?.totalQty : null}
+              {cartA.totalQty}
             </div>
           </Link>
         </li>

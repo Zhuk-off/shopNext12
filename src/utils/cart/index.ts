@@ -19,6 +19,8 @@ import { getSession, storeSession } from './session';
 import { Dispatch, SetStateAction } from 'react';
 import { addItem } from '../helpers';
 import { updateContextLocalStorage } from './updateContextLocalStorage';
+import { makeVar } from '@apollo/client';
+import { cartVar } from '../apollo/reactiveVar';
 
 export const addToCart = async (
   productId: string,
@@ -48,57 +50,25 @@ export const addToCart = async (
       totalPrice: 0,
       totalQty: addProductToCart.quantity,
     };
+    cartVar(cartLocalStorageNew); //запись в переменную аполло
     setCart(cartLocalStorageNew);
   } else {
-    const cartLocalStorageUpdate: ICartLocalStorage = { ...cartItemsLocalStorage };
+    const cartLocalStorageUpdate: ICartLocalStorage = {
+      ...cartItemsLocalStorage,
+    };
     addItem(cartLocalStorageUpdate.cartItems, addProductToCart);
     const totalQuantity = cartLocalStorageUpdate.cartItems.reduce(
       (accumulator, currentItem) => accumulator + currentItem.quantity,
       0
     );
     cartLocalStorageUpdate.totalQty = totalQuantity;
+    cartVar(cartLocalStorageUpdate); //запись в переменную аполло
     setCart(cartLocalStorageUpdate);
   }
   if (setIsAddedToCart !== undefined) setIsAddedToCart(true);
   if (setLoading !== undefined) setLoading(false);
 };
 
-export const removeFromCart = async (
-  productId: string,
-  cart: ICartLocalStorage | null,
-  setCart: (cart: ICartLocalStorage) => void,
-  setIsRemovedToCart?: Dispatch<SetStateAction<boolean>>,
-  setLoading?: Dispatch<SetStateAction<boolean>>
-) => {
-  if (setLoading !== undefined) setLoading(true);
-  const cartItemsLocalStorage = cart;
-
-  if (cartItemsLocalStorage === null) {
-    return;
-  } else {
-    const cartLocalStorage: ICartLocalStorage = { ...cartItemsLocalStorage };
-    // console.log('cartLocalStorage sta',cartLocalStorage);
-
-    const index = cartLocalStorage.cartItems.findIndex(
-      (item) => item.id === productId
-    );
-    if (index !== -1) {
-      cartLocalStorage.cartItems.splice(index, 1);
-      const totalQuantity = cartLocalStorage.cartItems.reduce(
-        (accumulator, currentItem) => accumulator + currentItem.quantity,
-        0
-      );
-      // console.log('cartLocalStorage end',cartLocalStorage);
-      
-      cartLocalStorage.totalQty = totalQuantity;
-      // console.log('cartLocalStorage totalQuantity end',totalQuantity);
-
-      setCart(cartLocalStorage);
-    }
-  }
-  if (setIsRemovedToCart !== undefined) setIsRemovedToCart(false);
-  if (setLoading !== undefined) setLoading(false);
-};
 /**
  * View Cart Request Handler
  * тут мы хотим посчитать общую сумму корзины

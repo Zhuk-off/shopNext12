@@ -150,7 +150,7 @@ function ProductsListSearch() {
   // получение данных о товарах
   const { loading, error, data } = useQuery(queryFunc(), {
     variables: variablesFunc(),
-    pollInterval: 2000,
+    pollInterval: 10000,
   });
 
   // действия, для выполнения, когда переключается страница

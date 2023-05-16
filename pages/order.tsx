@@ -49,7 +49,7 @@ export default function Order({
       include: databaseIds,
       endCursor,
     },
-    pollInterval: 500, // каждые .5 секунд обновляет данные
+    pollInterval: 2000, // каждые .5 секунд обновляет данные
   });
 
   // const { loading, data, fetchMore } = useQuery(GET_PRODUCTS_BY_IDS_ORDER_CARD, {
@@ -181,6 +181,9 @@ export default function Order({
           <div className="relative cursor-pointer border-b font-semibold">
             <span className="inline-block border-b-2 border-black pb-5">
               Корзина
+            </span>
+            <span className="absolute left-16 top-0 inline-block text-xs font-bold">
+              <CounterOrderPage />
             </span>
             <span className="absolute left-16 top-0 inline-block text-xs font-bold">
               <CounterOrderPage />

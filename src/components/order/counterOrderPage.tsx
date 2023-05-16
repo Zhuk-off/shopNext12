@@ -1,8 +1,7 @@
-import { CartContext } from '@/src/contex/CartContex';
-import { useContext } from 'react';
+import { cartVar } from '@/src/utils/apollo/reactiveVar';
+import { useReactiveVar } from '@apollo/client';
 
 export const CounterOrderPage = () => {
-  const [cart] = useContext(CartContext);
-
-  return <>{cart ? cart?.totalQty : null}</>;
+  const cartA = useReactiveVar(cartVar);
+  return <>{cartA.totalQty}</>;
 };
