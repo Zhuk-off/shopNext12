@@ -1,6 +1,7 @@
 import Container from '@/src/components/container';
 import Layout from '@/src/components/layouts';
 import MyAccountNavMenu from '@/src/components/myAccount/myAccountNavMenu';
+import OrderHistory from '@/src/components/myAccount/orderHistory';
 import { CartContext } from '@/src/contex/CartContex';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
 import { IData } from '@/src/interfaces/footerHeaderRestAPIDataResponse';
@@ -26,11 +27,13 @@ export default function MyAccount({
   return (
     <Layout headerFooter={headerFooter || {}} menu={menu}>
       <Container>
-        <div className="grid grid-cols-4 bg-gray-100">
-          <div className="col-span-1 bg-green-100">
+        <div className="grid grid-cols-4">
+          <div className="col-span-1">
             <MyAccountNavMenu />
           </div>
-          <div className="col-span-3 bg-yellow-100"></div>
+          <div className="col-span-3">
+            <OrderHistory />{' '}
+          </div>
         </div>
       </Container>
     </Layout>

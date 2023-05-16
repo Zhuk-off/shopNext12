@@ -21,7 +21,7 @@ export default function PersonalData() {
     context: {
       headers: authorizationHeader,
     },
-    pollInterval: 5000,
+    pollInterval: 2000,
   });
 
   return (
