@@ -19,6 +19,7 @@ export default function AccountButton() {
   const router = useRouter();
   const { data: session } = useSession();
 
+  console.log('session Аккаунт', session?.user.tokens);
   const handleLogin = () => {
     router.push('/login');
   };
@@ -56,7 +57,7 @@ export default function AccountButton() {
           </svg>
           Корзина
           <div className="order-last ml-auto rounded-full bg-pink-700 px-1 text-xs text-white">
-          {cartA.totalQty}
+            {cartA.totalQty}
           </div>
         </Link>
       )}

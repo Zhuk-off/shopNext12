@@ -64,22 +64,20 @@ export default function Order({
   });
 
   // Если все позиции удалены(количество 0), то удалить их из массива
-  // Очистка массива и localstorage от данных с нулевым количеством
-  useEffect(() => {
+  // Очистка массива и localstorage от данных с нулевым количеством 
+  useEffect(()=>{
     if (
       cart &&
       cart.totalQty === 0 &&
       cart.cartItems?.length !== 0 &&
       cartVar().cartItems?.length !== 0
     ) {
-      const filteredItems = cart.cartItems.filter(
-        (item) => item.quantity !== 0
-      );
+      const filteredItems = cart.cartItems.filter((item) => item.quantity !== 0);
       const updateCart = { ...cart, cartItems: filteredItems };
       cartVar(updateCart);
       setCart(updateCart);
     }
-  }, [cart, setCart]);
+  },[cart, setCart])
 
   // console.log(data);
   // console.log(databaseIds);

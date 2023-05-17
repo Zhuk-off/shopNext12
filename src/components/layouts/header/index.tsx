@@ -6,7 +6,6 @@ import { IHeader } from '@/src/interfaces/footerHeaderRestAPIDataResponse';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
 import MainMenu from './categoryComponents/mainMenu';
 import SubMenu from './categoryComponents/subMenu';
-import MyModal from '../../auth/loginModal';
 
 interface Data {
   subMenuItems: MenuItem[];

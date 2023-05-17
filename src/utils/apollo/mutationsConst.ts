@@ -55,3 +55,20 @@ query isExistsCustomerEmail($email: String!) {
   }
 }
 `;
+
+export const EMPTY_CART = gql`
+mutation EmptyCart($clearPersistentCart: Boolean = true) {
+  emptyCart(input: {clearPersistentCart: $clearPersistentCart}) {
+    cart {
+      total
+    }
+  }
+}
+`;
+export const REFRESH_JWT_AUTH_TOKEN = gql`
+mutation RefreshJwtAuthToken($jwtRefreshToken: String!) {
+  refreshJwtAuthToken(input: {jwtRefreshToken: $jwtRefreshToken}) {
+    authToken
+  }
+}
+`;
