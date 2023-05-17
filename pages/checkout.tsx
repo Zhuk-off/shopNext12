@@ -12,7 +12,7 @@ import Container from '@/src/components/container';
 import { TotalCard } from '@/src/components/order/totalCard';
 import { useContext, useEffect, useState } from 'react';
 import { CartContext } from '@/src/contex/CartContex';
-import { useQuery, useReactiveVar } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import {
   IOrderDataProductCard,
   IOrderProduct,
@@ -21,77 +21,51 @@ import { GET_PRODUCTS_BY_IDS_ORDER_CARD } from '@/src/utils/apollo/queriesConst'
 import { IPproductsDataOrder } from '@/src/interfaces/cart.interface';
 import { CartOrderItems } from '@/src/components/order/cartOrderItems';
 import { useRouter } from 'next/router';
-import {
-  getDatabaseIds,
-  getProductsOrderView,
-  getTotalCountInStockProducts,
-  getTotalSumInStockProducts,
-} from '@/src/utils/helpers';
-import { cartVar } from '@/src/utils/apollo/reactiveVar';
 
 // const inter = Inter({ subsets: ['latin'] });
 
-export default function Order({
+export default function Checkout({
   headerFooter,
   menu,
 }: {
   headerFooter: IData | undefined;
   menu: MenuItem[];
 }) {
-  // const cartA = useReactiveVar(cartVar);
   const [cart, setCart] = useContext(CartContext);
   const router = useRouter();
-  const databaseIds = getDatabaseIds(cart);
+  const databaseIds = cart
+    ? cart?.cartItems.map((item) => item.databaseId)
+    : [0];
 
   let hasNextPage = false;
   let endCursor = '';
   let productsOrder: IOrderProduct[] = [];
 
-  const {
-    loading,
-    data: productsByIds,
-    fetchMore,
-  } = useQuery<
+  const { loading, data, fetchMore } = useQuery<
     IOrderDataProductCard,
     { include: number[] | undefined; endCursor: string }
   >(GET_PRODUCTS_BY_IDS_ORDER_CARD, {
     variables: {
-      include: databaseIds?.length !== 0 ? databaseIds : [0],
-      // include:  databaseIds,
+      include: databaseIds,
       endCursor,
     },
     pollInterval: 2000, // каждые .5 секунд обновляет данные
   });
 
-  // Если все позиции удалены(количество 0), то удалить их из массива
-  // Очистка массива и localstorage от данных с нулевым количеством
-  useEffect(() => {
-    if (
-      cart &&
-      cart.totalQty === 0 &&
-      cart.cartItems?.length !== 0 &&
-      cartVar().cartItems?.length !== 0
-    ) {
-      const filteredItems = cart.cartItems.filter(
-        (item) => item.quantity !== 0
-      );
-      const updateCart = { ...cart, cartItems: filteredItems };
-      cartVar(updateCart);
-      setCart(updateCart);
-    }
-  }, [cart, setCart]);
-
-  // console.log(data);
-  // console.log(databaseIds);
-  // console.log(cart);
-  // console.log(cartVar());
+  // const { loading, data, fetchMore } = useQuery(GET_PRODUCTS_BY_IDS_ORDER_CARD, {
+  //   variables: {
+  //     include: databaseIds,
+  //     endCursor,
+  //   },
+  //   pollInterval: 500,
+  // });
 
   // я не знаю как это работает, но работает как нужно
   const loadMore = () => {
-    if (productsByIds) {
+    if (data) {
       fetchMore({
         variables: {
-          endCursor: productsByIds.products.pageInfo.endCursor,
+          endCursor: data.products.pageInfo.endCursor,
         },
 
         updateQuery: (prevResult, { fetchMoreResult }) => {
@@ -114,58 +88,90 @@ export default function Order({
   // обновляет отрисовку объекта, загружая новые данные, загрузив обновляет снова, и так, пока
   // data.products.pageInfo.hasNextPage не будет равно false
   // может не корректная реализация, но работает как ожидалось
-  if (productsByIds && productsByIds.products.pageInfo.hasNextPage) {
+  if (data && data.products.pageInfo.hasNextPage) {
     loadMore();
   }
 
-  console.log(cart);
-
   // При переходе на другую страницу надо очистить скрытые элементы, которые удалили
-  // useEffect(() => {
+  useEffect(() => {
+    function handleRouteChange() {
+      if (!cart) return;
+      if (typeof window !== 'undefined') {
+        const filteredObj = cart.cartItems.filter(
+          (item) => item.quantity !== 0
+        );
 
-  //   function handleRouteChange() {
-  //     if (!cart) return;
-  //     if (typeof window !== 'undefined') {
-  //       const filteredObj = cart.cartItems.filter(
-  //         (item) => item.quantity !== 0
-  //       );
+        const getlocalStorage = localStorage.getItem('cartItems');
+        const getLocalStorageParsed =
+          getlocalStorage !== null ? JSON.parse(getlocalStorage) : null;
+        /** если количество равно в контексте и в localStorage, то обноляем контекст
+         * это может произойти если в соседней вкладке добавили товары, а в корзине
+         * не обновили. Чтобы не перезаписать корзину старвыми данными нужна эта проверка
+         */
+        if (getLocalStorageParsed.totalQty !== cart.totalQty) {
+          setCart(getLocalStorageParsed);
+        }
+        const cartClean = { ...cart };
+        cartClean.cartItems = filteredObj;
+        // console.log('cartClean', cartClean);
+        // console.log('getLocalStorageParsed', getLocalStorageParsed);
+        // console.log('cartClean', cartClean);
+        setCart(cartClean);
+      }
+    }
 
-  //       const getlocalStorage = localStorage.getItem('cartItems');
-  //       const getLocalStorageParsed =
-  //         getlocalStorage !== null ? JSON.parse(getlocalStorage) : null;
-  //       /** если количество равно в контексте и в localStorage, то обноляем контекст
-  //        * это может произойти если в соседней вкладке добавили товары, а в корзине
-  //        * не обновили. Чтобы не перезаписать корзину старвыми данными нужна эта проверка
-  //        */
-  //       if (getLocalStorageParsed.totalQty !== cart.totalQty) {
-  //         setCart(getLocalStorageParsed);
-  //       }
-  //       const cartClean = { ...cart };
-  //       cartClean.cartItems = filteredObj;
-  //       // console.log('cartClean', cartClean);
-  //       // console.log('getLocalStorageParsed', getLocalStorageParsed);
-  //       // console.log('cartClean', cartClean);
-  //       setCart(cartClean);
-  //     }
-  //   }
+    router.events.on('routeChangeStart', handleRouteChange);
 
-  //   router.events.on('routeChangeStart', handleRouteChange);
-
-  //   return () => {
-  //     router.events.off('routeChangeStart', handleRouteChange);
-  //   };
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChange);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   let sum = 0;
   let totalCount = 0;
   let productsDataOrder: IPproductsDataOrder[] = [];
-
   // собираем новый массив с объектами для order страницы
-  if (!loading && productsByIds !== undefined && cart) {
-    productsDataOrder = getProductsOrderView(cart, productsByIds);
-    sum = getTotalSumInStockProducts(productsDataOrder);
-    totalCount = getTotalCountInStockProducts(productsDataOrder);
+  if (!loading && data !== undefined && cart) {
+    productsDataOrder = cart.cartItems.map<IPproductsDataOrder>((item) => {
+      const product = data.products.edges.find(
+        (edge) => edge.node.id === item.id
+      )?.node;
+      // console.log('product', product);
+
+      return {
+        id: item.id,
+        quantity: item.quantity,
+        databaseId: item.databaseId,
+        stockStatus:
+          product && product?.stockStatus
+            ? product?.stockStatus
+            : 'OUT_OF_STOCK',
+        price: product?.price,
+        uri: product?.uri,
+        imageUrl: product?.image?.sourceUrl,
+        altImage: product?.image?.altText,
+        name: product?.name ? product?.name : '',
+      };
+    });
+
+    sum =
+      productsDataOrder.reduce(
+        (acc, obj) =>
+          acc +
+          (obj.stockStatus === 'IN_STOCK'
+            ? obj.quantity *
+              parseInt(
+                obj.price ? obj.price.replace('Br', '').replace(',', '') : ''
+              )
+            : 0),
+        0
+      ) / 100;
+
+    totalCount = productsDataOrder.reduce(
+      (acc, obj) => acc + (obj.stockStatus === 'IN_STOCK' ? obj.quantity : 0),
+      0
+    );
   }
 
   return (
@@ -179,10 +185,13 @@ export default function Order({
             <span className="absolute left-16 top-0 inline-block text-xs font-bold">
               <CounterOrderPage />
             </span>
+            <span className="absolute left-16 top-0 inline-block text-xs font-bold">
+              <CounterOrderPage />
+            </span>
           </div>
           <div className="mt-8 flex flex-grow">
             <ul className="w-full flex-grow">
-              {productsByIds && databaseIds && databaseIds?.length !== 0 && (
+              {data && databaseIds && databaseIds?.length !== 0 && (
                 <CartOrderItems productsDataOrder={productsDataOrder} />
               )}
             </ul>

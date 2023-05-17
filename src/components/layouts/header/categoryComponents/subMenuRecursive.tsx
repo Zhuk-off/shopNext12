@@ -32,7 +32,7 @@ const SubMenuRecursive = ({
             </Link>
           </li>
         ))}
-      {items && items.length > MAX_SUBCATEGORY_OPEN && (
+      {items && items?.length > MAX_SUBCATEGORY_OPEN && (
         <li>
           {showDropdown && (
             <ul className="flex w-full flex-col items-start">

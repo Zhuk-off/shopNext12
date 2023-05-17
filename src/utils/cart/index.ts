@@ -1,14 +1,3 @@
-/**
- * Add To Cart Request Handler.
- *
- * @param {int} productId Product Id.
- * @param {int} qty Product Quantity.
- * @param {Function} setCart
- * @param {Function} setIsAddedToCart
- * @param {Function} setLoading
- *
- */
-
 import {
   ICart,
   ICartItemLocalStorage,
@@ -34,37 +23,56 @@ export const addToCart = async (
   // const storedSession = getSession();
   // const addOrViewCartConfig = getApiCartConfig();
 
-  const addProductToCart: ICartItemLocalStorage = {
+  const productForAdd: ICartItemLocalStorage = {
     id: productId,
     quantity: qty,
     databaseId,
   };
   // console.log('databaseId',databaseId);
 
+  const localStorageData = localStorage.getItem('cartItems');
+  const parsedLocalStorageData =
+    localStorageData !== null ? JSON.parse(localStorageData) : null;
+
   if (setLoading !== undefined) setLoading(true);
   // updateContextLocalStorage(cart,setCart)
-  const cartItemsLocalStorage = cart;
-  if (cartItemsLocalStorage === null) {
+
+  if (cart === null) {
     const cartLocalStorageNew: ICartLocalStorage = {
-      cartItems: [addProductToCart],
+      cartItems: [productForAdd],
       totalPrice: 0,
-      totalQty: addProductToCart.quantity,
+      totalQty: productForAdd.quantity,
     };
-    cartVar(cartLocalStorageNew); //запись в переменную аполло
-    setCart(cartLocalStorageNew);
+    if (parsedLocalStorageData === null) {
+      cartVar(cartLocalStorageNew); //запись в переменную аполло
+      setCart(cartLocalStorageNew);
+    } else {
+      cartVar(parsedLocalStorageData); //запись в переменную аполло
+      setCart(parsedLocalStorageData);
+    }
   } else {
-    const cartLocalStorageUpdate: ICartLocalStorage = {
-      ...cartItemsLocalStorage,
+    const cartLocalStorage: ICartLocalStorage = {
+      ...parsedLocalStorageData,
     };
-    addItem(cartLocalStorageUpdate.cartItems, addProductToCart);
-    const totalQuantity = cartLocalStorageUpdate.cartItems.reduce(
+    console.log('cartLocalStorage', cartLocalStorage);
+
+    const cartItemsUpdated = addItem(cartLocalStorage.cartItems, productForAdd);
+    const totalQuantity = cartItemsUpdated.reduce(
       (accumulator, currentItem) => accumulator + currentItem.quantity,
       0
     );
-    cartLocalStorageUpdate.totalQty = totalQuantity;
+
+    const cartLocalStorageUpdate: ICartLocalStorage = {
+      ...cartLocalStorage,
+      cartItems: cartItemsUpdated,
+      totalQty: totalQuantity,
+    };
+    console.log('cartLocalStorageUpdate', cartLocalStorageUpdate);
+
     cartVar(cartLocalStorageUpdate); //запись в переменную аполло
     setCart(cartLocalStorageUpdate);
   }
+
   if (setIsAddedToCart !== undefined) setIsAddedToCart(true);
   if (setLoading !== undefined) setLoading(false);
 };

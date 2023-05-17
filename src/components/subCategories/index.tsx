@@ -44,7 +44,7 @@ const SubCategories = ({
                 </Link>
               </li>
             ))}
-          {childrenSlugName.length > MAX_SUBCATEGORY_OPEN &&
+          {childrenSlugName?.length > MAX_SUBCATEGORY_OPEN &&
             showDropdown &&
             childrenSlugName.map((item, index) => (
               <li key={item.slug + index.toString()}>
@@ -56,7 +56,7 @@ const SubCategories = ({
                 </Link>
               </li>
             ))}
-          {childrenSlugName.length > MAX_SUBCATEGORY_OPEN ? (
+          {childrenSlugName?.length > MAX_SUBCATEGORY_OPEN ? (
             <button onClick={handleDropdownToggle}>
               {showDropdown ? (
                 <div className="flex gap-1 text-blue-500 hover:text-red-600">

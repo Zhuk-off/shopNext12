@@ -23,13 +23,13 @@ const Breadcrumbs: FC<BreadcrumbsProps> = ({ breadcrumbs }) => {
               {index !== 0 && (
                 <ChevronDoubleRightIcon width={10} className="mx-1" />
               )}
-              {index === breadcrumbs.length - 1 ? (
+              {index === breadcrumbs?.length - 1 ? (
                 breadcrumb.text
               ) : (
                 <Link
                   href={slug !== homePageSlug ? slug : '/'}
                   className={`${
-                    index === breadcrumbs.length - 1
+                    index === breadcrumbs?.length - 1
                       ? 'text-gray-700 underline'
                       : 'text-gray-500 underline hover:text-gray-700'
                   }`}

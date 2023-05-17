@@ -16,7 +16,6 @@ export const authOptions = {
           placeholder: 'jsmith@gmail.com',
         },
         password: { label: 'Password', type: 'password' },
-        // firstName: { label: 'Full Name', type: 'text' },
       },
       async authorize(credentials, req) {
         const response = await login(
@@ -27,7 +26,6 @@ export const authOptions = {
           const { authToken, refreshToken, sessionToken, customer } = response;
           const { id, firstName: name, email, billing } = customer;
           const { address1: address, phone } = billing;
-          // localStorage.setItem('tokenAuth', tokenAuth);
           return {
             id,
             name,
@@ -64,11 +62,9 @@ export const authOptions = {
     },
     async session({
       session,
-      // user,
       token,
     }: {
       session: any | undefined;
-      // user: any | undefined;
       token: any | undefined;
     }) {
       if (session && token) {

@@ -5,7 +5,7 @@ import { DataContext } from '..';
 
 const SubMenu = ({ toggleDropdown }: { toggleDropdown: any }) => {
   const { subMenuItems } = useContext(DataContext);
-  if (!subMenuItems || subMenuItems.length === 0) return null;
+  if (!subMenuItems || subMenuItems?.length === 0) return null;
 
   return (
     <menu className="grid grid-cols-3 gap-4">
@@ -18,7 +18,7 @@ const SubMenu = ({ toggleDropdown }: { toggleDropdown: any }) => {
           >
             <span>{menuItem.name}</span>
           </Link>
-          {menuItem?.children && menuItem?.children.length !== 0 ? (
+          {menuItem?.children && menuItem?.children?.length !== 0 ? (
             <SubMenuRecursive
               key={menuItem.slug}
               items={menuItem?.children}

@@ -16,7 +16,7 @@ export const getAllChildSlugsAndName = (
   obj: MenuItem
 ): ChildSlugNameByCategory[] => {
   let childObj: ChildSlugNameByCategory[] = [];
-  if (obj.children && obj.children.length > 0) {
+  if (obj.children && obj.children?.length > 0) {
     obj.children.forEach((child) => {
       childObj.push({ slug: child.slug, name: child.name });
       childObj = [...childObj, ...getAllChildSlugsAndName(child)];
@@ -38,8 +38,8 @@ export const findObjectById = (
   if (obj.slug === slug) {
     return obj;
   }
-  if (obj.children && obj.children.length > 0) {
-    for (let i = 0; i < obj.children.length; i++) {
+  if (obj.children && obj.children?.length > 0) {
+    for (let i = 0; i < obj.children?.length; i++) {
       const found = findObjectById(obj.children[i], slug);
       if (found) {
         return found;
