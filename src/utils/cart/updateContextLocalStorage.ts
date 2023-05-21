@@ -10,7 +10,7 @@ export const updateContextLocalStorage = (
   // console.log('typeof window !== undefined && cart');
 
     const getlocalStorage = localStorage.getItem('cartItems');
-    const localStorageParsed =
+    const localStorageParsed:ICartLocalStorage =
       getlocalStorage !== null ? JSON.parse(getlocalStorage) : null;
     /** если количество равно в контексте и в localStorage, то обноляем контекст
      * это может произойти если в соседней вкладке добавили товары, а в корзине

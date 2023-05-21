@@ -3,6 +3,7 @@ import {
   IOrderDataTotal,
 } from '../interfaces/apollo/getOrderData.interfase';
 import { IProductCat } from '../interfaces/apollo/getProducts.interface';
+import { FillCartMutationData } from '../interfaces/apollo/helpers.interface';
 import {
   ICartItemLocalStorage,
   ICartLocalStorage,
@@ -145,3 +146,15 @@ export const getProductsOrderView = (
 // Cart utils helpers---------------------------
 
 // End Cart utils helpers---------------------------
+
+// преобразование объекта cartItams из localStorage в массив объектов для передачи в мутацию fillCard
+export const convertedCartToFillMutation = (
+  cartData: ICartLocalStorage
+): FillCartMutationData[] => {
+  return cartData.cartItems
+    .filter((item) => item.quantity > 0)
+    .map((item) => ({
+      productId: item.databaseId,
+      quantity: item.quantity,
+    }));
+};

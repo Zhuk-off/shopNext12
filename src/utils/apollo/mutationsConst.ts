@@ -72,3 +72,22 @@ mutation RefreshJwtAuthToken($jwtRefreshToken: String!) {
   }
 }
 `;
+export const FILL_CART = gql`
+mutation RefreshJwtAuthToken($items: [CartItemInput] ) {
+  fillCart(input: {items: $items}) {
+    cart {
+      total
+    }
+    added {
+      total
+      quantity
+      product {
+        node {
+          databaseId
+          id
+        }
+      }
+    }
+  }
+}
+`;

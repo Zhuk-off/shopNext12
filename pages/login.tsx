@@ -1,16 +1,29 @@
 import Container from '@/src/components/container';
+import { CartContext } from '@/src/contex/CartContex';
+import { IFillCart, IGetCart } from '@/src/interfaces/apollo/getCart.interface';
+import { FillCartMutationData } from '@/src/interfaces/apollo/helpers.interface';
 import {
   EMPTY_CART,
+  FILL_CART,
   REFRESH_JWT_AUTH_TOKEN,
 } from '@/src/utils/apollo/mutationsConst';
-import { ADD_PRODUCT_TO_CART } from '@/src/utils/apollo/queriesConst';
-import { useApolloClient, useMutation } from '@apollo/client';
+import {
+  ADD_PRODUCT_TO_CART,
+  GET_CART_SERVER,
+} from '@/src/utils/apollo/queriesConst';
+import { cartVar } from '@/src/utils/apollo/reactiveVar';
+import { convertedCartToFillMutation } from '@/src/utils/helpers';
+import {
+  getLocalStorageCartItems,
+  transformedCartForLocalStorage,
+} from '@/src/utils/helpers/localStorageHelpers';
+import { useApolloClient, useLazyQuery, useMutation } from '@apollo/client';
 import { ArrowLeftIcon } from '@heroicons/react/20/solid';
 import { signIn, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 type Inputs = {
@@ -19,12 +32,15 @@ type Inputs = {
 };
 
 export default function Login() {
+  const [cart, setCart] = useContext(CartContext);
+
   /* isNeedJwtAuthToken - устанавливает флаг надо ли обновить токен auth, 
   его надо обновить если прилетает определенная ошибка при запросе */
   const [isNeedJwtAuthToken, setIsNeedJwtAuthToken] = useState(false);
   /* retry - устанавливает флаг retry - надо повторить запрос, меняется 
   когда обновлен токен auth */
   const [retry, setRetry] = useState(false);
+  const [syncCart, setSyncCart] = useState(false);
   const apolloClient = useApolloClient();
 
   const {
@@ -69,6 +85,20 @@ export default function Login() {
     fetchPolicy: 'network-only', // Doesn't check cache before making a network request
     errorPolicy: 'all',
   });
+
+  const [
+    fillCart,
+    { data: fillCartData, error: fillCartError, loading: fillCartLoading },
+  ] = useMutation<IFillCart>(FILL_CART, {
+    fetchPolicy: 'network-only', // Doesn't check cache before making a network request
+    errorPolicy: 'all',
+  });
+
+  const [
+    getCartServer,
+    { loading: getCartLoading, error: getCartError, data: getCartData },
+  ] = useLazyQuery<IGetCart>(GET_CART_SERVER);
+
   /* End -- Apollo запросы и мутации */
 
   const [pageState, setPageState] = useState({
@@ -215,7 +245,7 @@ export default function Login() {
   /* Если ошибка запроса вызана не верным authToken, меняем флаг IsNeedJwtAuthToken, чтобы получить
   новый токен */
   if (
-    addProductError &&
+    (addProductError || getCartError) &&
     !retry &&
     // @ts-ignore
     addProductError?.graphQLErrors[0]?.debugMessage ===
@@ -223,6 +253,67 @@ export default function Login() {
     !isNeedJwtAuthToken
   ) {
     setIsNeedJwtAuthToken(true);
+    setSyncCart(false);
+  }
+
+  if (session && !syncCart) {
+    const cartData = getLocalStorageCartItems();
+    if (cartData && cartData?.totalQty > 0) {
+      const fillCartMutationData: FillCartMutationData[] =
+        convertedCartToFillMutation(cartData);
+      console.log('fillCartMutationData ', fillCartMutationData);
+      fillCart({
+        variables: { items: fillCartMutationData },
+        context: {
+          headers: authorizationHeader,
+        },
+      })
+        .then(({ data }) => {
+          if (data) {
+            getCartServer({
+              context: {
+                headers: authorizationHeader,
+              },
+            })
+              .then(({ data }) => {
+                // console.log('data cart',data?.cart.contents.edges);
+                console.log('data cart', data);
+
+                if (data) {
+                  const localStorageCart = transformedCartForLocalStorage(data);
+                  setCart(localStorageCart);
+                  cartVar(localStorageCart);
+                  console.log('local cart', localStorageCart);
+                }
+              })
+              .catch((err) => console.log('err cart'));
+            // const localStorageCart = transformedCartForLocalStorage(data);
+            // setCart(localStorageCart);
+            // cartVar(localStorageCart);
+            console.log('data fill', data);
+          }
+        })
+        .catch((err) => console.log('err fill'));
+    } else {
+      getCartServer({
+        context: {
+          headers: authorizationHeader,
+        },
+      })
+        .then(({ data }) => {
+          // console.log('data cart',data?.cart.contents.edges);
+          console.log('data cart', data);
+
+          if (data) {
+            const localStorageCart = transformedCartForLocalStorage(data);
+            setCart(localStorageCart);
+            cartVar(localStorageCart);
+            console.log('local cart', localStorageCart);
+          }
+        })
+        .catch((err) => console.log('err cart'));
+    }
+    setSyncCart(true);
   }
 
   return (

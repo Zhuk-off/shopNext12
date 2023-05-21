@@ -178,7 +178,7 @@ export default function Checkout({
     <main>
       <Layout headerFooter={headerFooter || {}} menu={menu}>
         <Container>
-          <div className="relative cursor-pointer border-b font-semibold">
+          <div className="relative border-b font-semibold">
             <span className="inline-block border-b-2 border-black pb-5">
               Корзина
             </span>

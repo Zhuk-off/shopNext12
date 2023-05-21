@@ -448,3 +448,24 @@ export const GET_CUSTOMER_DATA = gql`
     }
   }
 `;
+// Запрос содержимого корзины с сервера
+export const GET_CART_SERVER = gql`
+query MyQuery {
+  cart {
+    contents {
+      edges {
+        node {
+          quantity
+          product {
+            node {
+              name
+              databaseId
+              id
+            }
+          }
+        }
+      }
+    }
+  }
+}
+`;
