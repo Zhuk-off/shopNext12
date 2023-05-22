@@ -10,7 +10,7 @@ type CartContextType = [
 ];
 
 const context: [ICartLocalStorage, (cart: ICartLocalStorage) => void] = [
-  { cartItems: [], totalPrice: 0, totalQty: 0 },
+  { cartItems: [], totalPrice: 0, sync:false, totalQty: 0 },
   (): void => {},
 ];
 

@@ -450,7 +450,7 @@ export const GET_CUSTOMER_DATA = gql`
 `;
 // Запрос содержимого корзины с сервера
 export const GET_CART_SERVER = gql`
-query MyQuery {
+query GetCart {
   cart {
     contents {
       edges {

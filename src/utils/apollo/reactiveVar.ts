@@ -5,5 +5,6 @@ import { makeVar } from '@apollo/client';
 export const cartVar = makeVar<ICartLocalStorage>({
   cartItems: [],
   totalPrice: 0,
+  sync:false,
   totalQty: 0,
 });

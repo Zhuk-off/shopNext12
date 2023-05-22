@@ -41,6 +41,7 @@ export const addToCart = async (
     const cartLocalStorageNew: ICartLocalStorage = {
       cartItems: [productForAdd],
       totalPrice: 0,
+      sync:false,
       totalQty: productForAdd.quantity,
     };
     if (parsedLocalStorageData === null) {
@@ -65,6 +66,7 @@ export const addToCart = async (
     const cartLocalStorageUpdate: ICartLocalStorage = {
       ...cartLocalStorage,
       cartItems: cartItemsUpdated,
+      sync:false,
       totalQty: totalQuantity,
     };
     console.log('cartLocalStorageUpdate', cartLocalStorageUpdate);
@@ -238,7 +240,7 @@ export const addToCart = async (
 // // cartItems - An array of basket elements
 // const calculateCartQtyAndPrice = (cartItems: ICartItem[]): IQtyAndPrice => {
 //   const qtyAndPrice: IQtyAndPrice = {
-//     totalQty: 0,
+//     totalQty: 0, 
 //     totalPrice: 0,
 //   };
 

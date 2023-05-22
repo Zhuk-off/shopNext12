@@ -9,6 +9,7 @@ export interface ICart {
 export interface ICartLocalStorage {
   cartItems: ICartItemLocalStorage[];
   totalPrice: number;
+  sync:boolean
   totalQty: number;
 }
 

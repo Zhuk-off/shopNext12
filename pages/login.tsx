@@ -1,4 +1,5 @@
 import Container from '@/src/components/container';
+import { Spinner } from '@/src/components/spinner';
 import { CartContext } from '@/src/contex/CartContex';
 import { IFillCart, IGetCart } from '@/src/interfaces/apollo/getCart.interface';
 import { FillCartMutationData } from '@/src/interfaces/apollo/helpers.interface';
@@ -14,12 +15,18 @@ import {
 import { cartVar } from '@/src/utils/apollo/reactiveVar';
 import { convertedCartToFillMutation } from '@/src/utils/helpers';
 import {
+  getAuthorizationHeader,
+  getAuthorizationHeaderWithAuthToken,
   getLocalStorageCartItems,
+  getToken,
+  localStorageRemoveTokens,
+  setTokensInLocalStorage,
   transformedCartForLocalStorage,
 } from '@/src/utils/helpers/localStorageHelpers';
 import { useApolloClient, useLazyQuery, useMutation } from '@apollo/client';
 import { ArrowLeftIcon } from '@heroicons/react/20/solid';
-import { signIn, useSession } from 'next-auth/react';
+import { data } from 'autoprefixer';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -34,14 +41,18 @@ type Inputs = {
 export default function Login() {
   const [cart, setCart] = useContext(CartContext);
 
-  /* isNeedJwtAuthToken - устанавливает флаг надо ли обновить токен auth, 
-  его надо обновить если прилетает определенная ошибка при запросе */
-  const [isNeedJwtAuthToken, setIsNeedJwtAuthToken] = useState(false);
-  /* retry - устанавливает флаг retry - надо повторить запрос, меняется 
-  когда обновлен токен auth */
-  const [retry, setRetry] = useState(false);
-  const [syncCart, setSyncCart] = useState(false);
-  const apolloClient = useApolloClient();
+  const [
+    fillCart,
+    { data: fillCartData, error: fillCartError, loading: fillCartLoading },
+  ] = useMutation<IFillCart>(FILL_CART, {
+    fetchPolicy: 'network-only',
+    errorPolicy: 'all',
+  });
+  const [
+    getCartServer,
+    { loading: getCartLoading, error: getCartError, data: getCartData },
+  ] = useLazyQuery<IGetCart>(GET_CART_SERVER);
+  // const apolloClient = useApolloClient();
 
   const {
     register,
@@ -54,76 +65,11 @@ export default function Login() {
     password: '12345678',
   });
   const { data: session } = useSession();
-
-  /* Apollo запросы и мутации */
-  const [
-    addProduct,
-    { data: addProductData, error: addProductError, loading: loadingProduct },
-  ] = useMutation(ADD_PRODUCT_TO_CART, {
-    fetchPolicy: 'network-only', // Doesn't check cache before making a network request
-    errorPolicy: 'all',
-  });
-  const [
-    removeCartItems,
-    {
-      data: removeCartItemsData,
-      error: removeCartItemsError,
-      loading: removeCartItemsLoading,
-    },
-  ] = useMutation(EMPTY_CART, {
-    fetchPolicy: 'network-only', // Doesn't check cache before making a network request
-    errorPolicy: 'all',
-  });
-  const [
-    refreshJwtAuthToken,
-    {
-      data: refreshJwtAuthTokenData,
-      error: refreshJwtAuthTokenError,
-      loading: refreshJwtAuthTokenLoading,
-    },
-  ] = useMutation(REFRESH_JWT_AUTH_TOKEN, {
-    fetchPolicy: 'network-only', // Doesn't check cache before making a network request
-    errorPolicy: 'all',
-  });
-
-  const [
-    fillCart,
-    { data: fillCartData, error: fillCartError, loading: fillCartLoading },
-  ] = useMutation<IFillCart>(FILL_CART, {
-    fetchPolicy: 'network-only', // Doesn't check cache before making a network request
-    errorPolicy: 'all',
-  });
-
-  const [
-    getCartServer,
-    { loading: getCartLoading, error: getCartError, data: getCartData },
-  ] = useLazyQuery<IGetCart>(GET_CART_SERVER);
-
-  /* End -- Apollo запросы и мутации */
-
   const [pageState, setPageState] = useState({
     error: '',
+    status: '',
     processing: false,
   });
-  // Получим токен для будущей проверки есть ли он?
-  const [refreshToken, setRefreshToken] = useState<string | null>('');
-  useEffect(() => {
-    const refreshTokenFromLocalStorage = localStorage.getItem('refreshToken');
-    setRefreshToken(refreshTokenFromLocalStorage);
-  }, []);
-
-  useEffect(() => {
-    if (isNeedJwtAuthToken) {
-      getNewAuthToken();
-      setIsNeedJwtAuthToken(false);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isNeedJwtAuthToken]);
-
-  /* Если пользователь авторизован редиректим на главную */
-  if (session) {
-    // router.push('/');
-  }
 
   const handleFieldChange = (e: { target: { id: string; value: string } }) => {
     setAuthState((old) => ({ ...old, [e.target.id]: e.target.value }));
@@ -137,104 +83,71 @@ export default function Login() {
 
   /* Авторизация в NextAuth + установка токенов в localStorage + редирект */
   const handleAuth = async () => {
-    setPageState((old) => ({ ...old, processing: true, error: '' }));
-    await signIn('credentials', { ...authState, redirect: false })
-      .then((response) => {
-        // console.log(response);
-        if (response?.ok) {
-          // пользователь аторизован
-          if (session) {
-            const { authToken, refreshToken, sessionToken } =
-              session.user.tokens;
-            localStorage.setItem('authToken', authToken);
-            localStorage.setItem('refreshToken', refreshToken);
-            localStorage.setItem('sessionToken', sessionToken);
-            updateApolloCache();
-            window.location.reload();
-          }
-          // router.push('/');
-        } else {
-          setPageState((old) => ({
-            ...old,
-            processing: false,
-            error: response?.error ? response?.error : '',
-          }));
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        setPageState((old) => ({
-          ...old,
-          processing: false,
-          error: error.message ?? 'Что-то пошло не так...',
-        }));
-      })
-      .finally(() =>
-        setPageState((old) => ({
-          ...old,
-          processing: false,
-        }))
-      );
-    // window.location.reload();
+    setPageState((old) => ({
+      ...old,
+      processing: true,
+      status: '...авторизация',
+    }));
+    await signIn('credentials', { ...authState, redirect: false }).then(() =>
+      localStorageRemoveTokens()
+    );
   };
 
-  /* Обновить токен auth на основе refresh через запрос Apollo и записать в localStorage */
-  const getNewAuthToken = async () => {
-    await refreshJwtAuthToken({
-      variables: { jwtRefreshToken: refreshTokenFromLocal },
-    })
-      .then((res) => {
-        // console.log('res',res)
-        if (refreshJwtAuthTokenData) {
-          const authTokenUpdated =
-            refreshJwtAuthTokenData.refreshJwtAuthToken.authToken;
-          localStorage.setItem('authToken', authTokenUpdated);
-          authorizationHeader = authTokenUpdated
-            ? { authorization: `Bearer ${authTokenUpdated}` }
-            : {};
-          const authTokenNew =
-            typeof localStorage !== 'undefined'
-              ? localStorage.getItem('authToken')
-              : null;
-        }
-      })
-
-      .catch((err) => console.error(err));
-    setRetry(true);
-  };
-
-  // обновить кеш в Apollo
-  function updateApolloCache() {
-    apolloClient.resetStore();
-  }
-
+  const refreshToken = getToken('refreshToken');
   /*  хз, для дублируется в запросе на авторизацию, но почему-то тут в этом исполнении лучше работает */
-  if (session && (refreshToken === null || refreshToken === '')) {
-    const { authToken, refreshToken, sessionToken } = session.user.tokens;
-    localStorage.setItem('authToken', authToken);
-    localStorage.setItem('refreshToken', refreshToken);
-    localStorage.setItem('sessionToken', sessionToken);
-    updateApolloCache();
-    window.location.reload();
+  if (session && refreshToken === null) {
+    const { authToken } = session.user.tokens;
+    syncCart(authToken);
   }
-  // console.log('session login tokens', session?.user.tokens);
 
-  console.log('mutation', addProductData?.addToCart?.cart?.total);
+  async function syncCart(authToken: string) {
+    const header = getAuthorizationHeader(authToken);
+    const cartData = getLocalStorageCartItems();
+    if (cartData && cartData?.totalQty > 0) {
+      const fillCartMutationData: FillCartMutationData[] =
+        convertedCartToFillMutation(cartData);
+      await fillCart({
+        variables: { items: fillCartMutationData },
+        context: {
+          headers: header,
+        },
+      }).then(({ data }) => {
+        // console.log('fillCart', data?.fillCart.added);
+        getCartServerHandle(header);
+      });
+    } else {
+      await getCartServerHandle(header);
+    }
+  }
 
-  /* получить authToken */
-  const authToken =
-    typeof localStorage !== 'undefined'
-      ? localStorage.getItem('authToken')
-      : null;
-  let authorizationHeader = authToken
-    ? { authorization: `Bearer ${authToken}` }
-    : {};
-
-  /* получить refreshToken */
-  const refreshTokenFromLocal =
-    typeof localStorage !== 'undefined'
-      ? localStorage.getItem('refreshToken')
-      : null;
+  async function getCartServerHandle(
+    header: { authorization: string } | { authorization?: undefined }
+  ) {
+    if (header) {
+      await getCartServer({
+        context: {
+          headers: header,
+        },
+      })
+        .then(({ data }) => {
+          if (data) {
+            // console.log('getCartServer', data.cart.contents.edges);
+            if (data) {
+              const localStorageCart = transformedCartForLocalStorage(
+                data,
+                true
+              );
+              setCart(localStorageCart);
+              cartVar(localStorageCart);
+              // console.log('local cart', localStorageCart);
+            }
+          }
+        })
+        .finally(() =>
+          setPageState((old) => ({ ...old, processing: false, status: '' }))
+        );
+    }
+  }
 
   // Отправка формы ReactHookForm (входной параметр data не нужен, потому что все есть в state)
   const onSubmit: SubmitHandler<Inputs> = () => {
@@ -242,256 +155,213 @@ export default function Login() {
     handleAuth();
   };
 
-  /* Если ошибка запроса вызана не верным authToken, меняем флаг IsNeedJwtAuthToken, чтобы получить
-  новый токен */
+  const handleSignOut = () => {
+    signOut().then(() => localStorageRemoveTokens());
+  };
+  /* Если пользователь авторизован редиректим на главную */
+
   if (
-    (addProductError || getCartError) &&
-    !retry &&
-    // @ts-ignore
-    addProductError?.graphQLErrors[0]?.debugMessage ===
-      'invalid-secret-key | Expired token' &&
-    !isNeedJwtAuthToken
+    session &&
+    cart?.sync &&
+    getCartData &&
+    !getCartLoading &&
+    !fillCartLoading
   ) {
-    setIsNeedJwtAuthToken(true);
-    setSyncCart(false);
+    const { authToken, refreshToken, sessionToken } = session.user.tokens;
+    setTokensInLocalStorage(
+      authToken,
+      refreshToken,
+      sessionToken
+      // apolloClient // обновление Apollo кеша вызывает ошибку TypeError: Cannot read properties of undefined (reading 'data')
+    );
+    // console.log('router back done');
+    router.back();
   }
 
-  if (session && !syncCart) {
-    const cartData = getLocalStorageCartItems();
-    if (cartData && cartData?.totalQty > 0) {
-      const fillCartMutationData: FillCartMutationData[] =
-        convertedCartToFillMutation(cartData);
-      console.log('fillCartMutationData ', fillCartMutationData);
-      fillCart({
-        variables: { items: fillCartMutationData },
-        context: {
-          headers: authorizationHeader,
-        },
-      })
-        .then(({ data }) => {
-          if (data) {
-            getCartServer({
-              context: {
-                headers: authorizationHeader,
-              },
-            })
-              .then(({ data }) => {
-                // console.log('data cart',data?.cart.contents.edges);
-                console.log('data cart', data);
-
-                if (data) {
-                  const localStorageCart = transformedCartForLocalStorage(data);
-                  setCart(localStorageCart);
-                  cartVar(localStorageCart);
-                  console.log('local cart', localStorageCart);
-                }
-              })
-              .catch((err) => console.log('err cart'));
-            // const localStorageCart = transformedCartForLocalStorage(data);
-            // setCart(localStorageCart);
-            // cartVar(localStorageCart);
-            console.log('data fill', data);
-          }
-        })
-        .catch((err) => console.log('err fill'));
-    } else {
-      getCartServer({
-        context: {
-          headers: authorizationHeader,
-        },
-      })
-        .then(({ data }) => {
-          // console.log('data cart',data?.cart.contents.edges);
-          console.log('data cart', data);
-
-          if (data) {
-            const localStorageCart = transformedCartForLocalStorage(data);
-            setCart(localStorageCart);
-            cartVar(localStorageCart);
-            console.log('local cart', localStorageCart);
-          }
-        })
-        .catch((err) => console.log('err cart'));
-    }
-    setSyncCart(true);
+  if (session && refreshToken !== null) {
+    // console.log('router back  session && refreshToken !== null');
+    router.back();
   }
 
   return (
     <>
-      {
-        // session === null
-        true ? (
-          <div className="fixed inset-0 overflow-y-auto">
-            <Container>
-              <Link
-                href={'/'}
-                className="flex items-center gap-1 font-medium text-indigo-600 hover:text-gray-900"
-              >
-                <ArrowLeftIcon width={15} height={15} /> На главную
-              </Link>
-              <div className="flex min-h-full items-center justify-center p-4 text-center">
-                <div className="justify-cent7er flex min-h-full flex-1 flex-col px-6 py-12 lg:px-8">
-                  <div className="mb-12">Sign in to your account</div>
-                  {retry ? (
-                    <div className="text-red-500">Повторите ваш запрос</div>
-                  ) : null}
-                  <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                    <Image
-                      className="m-auto h-8 w-auto sm:h-10"
-                      src="/logo.svg"
-                      alt="spec1.by"
-                      width={126}
-                      height={24}
-                    />
-                  </div>
+      <div className="fixed inset-0 overflow-y-auto">
+        <Container>
+          <Link
+            href={'/'}
+            className="flex items-center gap-1 font-medium text-indigo-600 hover:text-gray-900"
+          >
+            <ArrowLeftIcon width={15} height={15} /> На главную
+          </Link>
+          {session === null ? (
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <div className="justify-cent7er flex min-h-full flex-1 flex-col px-6 py-12 lg:px-8">
+                <div className="mb-12">Sign in to your account</div>
+                <div className="sm:mx-auto sm:w-full sm:max-w-sm">
+                  <Image
+                    className="m-auto h-8 w-auto sm:h-10"
+                    src="/logo.svg"
+                    alt="spec1.by"
+                    width={126}
+                    height={24}
+                  />
+                </div>
+                {/* {session ? 'Sign In' : 'Sign Out'} */}
+                <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                  {pageState.error !== '' && (
+                    <p className="text-red-500">
+                      {simplifyError(pageState.error)}
+                    </p>
+                  )}
+                  <form onSubmit={handleSubmit(onSubmit)}>
+                    <div>
+                      <label
+                        htmlFor="username"
+                        className="block text-left text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Email
+                      </label>
+                      <div className="mt-2">
+                        <input
+                          {...register('username', {
+                            required: 'Поле Email обязательно для заполнения',
+                            pattern: {
+                              value: /\S+@\S+\.\S+/,
+                              message:
+                                'Поле Email должно быть в формате example@domain.com',
+                            },
+                          })}
+                          id="username"
+                          name="username"
+                          required
+                          className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          onChange={(e) => handleFieldChange(e)}
+                          value={authState.username}
+                        />
+                        {errors.username && (
+                          <span className="text-sm text-red-600" role="alert">
+                            {errors.username.message}
+                          </span>
+                        )}
+                      </div>
+                    </div>
 
-                  <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                    {pageState.error !== '' && (
-                      <p className="text-red-500">
-                        {simplifyError(pageState.error)}
-                      </p>
-                    )}
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                      <div>
+                    <div>
+                      <div className="flex items-center justify-between">
                         <label
-                          htmlFor="username"
-                          className="block text-left text-sm font-medium leading-6 text-gray-900"
+                          htmlFor="password"
+                          className="block text-sm font-medium leading-6 text-gray-900"
                         >
-                          Email
+                          Password
                         </label>
-                        <div className="mt-2">
-                          <input
-                            {...register('username', {
-                              required: 'Поле Email обязательно для заполнения',
-                              pattern: {
-                                value: /\S+@\S+\.\S+/,
-                                message:
-                                  'Поле Email должно быть в формате example@domain.com',
-                              },
-                            })}
-                            id="username"
-                            name="username"
-                            required
-                            className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            onChange={(e) => handleFieldChange(e)}
-                            value={authState.username}
-                          />
-                          {errors.username && (
-                            <span className="text-sm text-red-600" role="alert">
-                              {errors.username.message}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      <div>
-                        <div className="flex items-center justify-between">
-                          <label
-                            htmlFor="password"
-                            className="block text-sm font-medium leading-6 text-gray-900"
+                        <div className="text-sm">
+                          <Link
+                            href="/reset-pass"
+                            className="font-semibold text-indigo-600 hover:text-indigo-500"
                           >
-                            Password
-                          </label>
-                          <div className="text-sm">
-                            <Link
-                              href="/reset-pass"
-                              className="font-semibold text-indigo-600 hover:text-indigo-500"
-                            >
-                              Forgot password?
-                            </Link>
-                          </div>
-                        </div>
-                        <div className="mt-2">
-                          <input
-                            {...register('password', {
-                              required:
-                                'Поле Пароль обязательно для заполнения',
-                              minLength: {
-                                value: 1,
-                                message:
-                                  'Поле Пароль должно содержать не менее 1 символов',
-                              },
-                            })}
-                            id="password"
-                            name="password"
-                            type="password"
-                            autoComplete="current-password"
-                            required
-                            className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            onChange={(e) => handleFieldChange(e)}
-                            value={authState.password}
-                          />
-                          {errors.password && (
-                            <span className="text-sm text-red-600" role="alert">
-                              {errors.password.message}
-                            </span>
-                          )}
+                            Forgot password?
+                          </Link>
                         </div>
                       </div>
+                      <div className="mt-2">
+                        <input
+                          {...register('password', {
+                            required: 'Поле Пароль обязательно для заполнения',
+                            minLength: {
+                              value: 1,
+                              message:
+                                'Поле Пароль должно содержать не менее 1 символов',
+                            },
+                          })}
+                          id="password"
+                          name="password"
+                          type="password"
+                          autoComplete="current-password"
+                          required
+                          className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          onChange={(e) => handleFieldChange(e)}
+                          value={authState.password}
+                        />
+                        {errors.password && (
+                          <span className="text-sm text-red-600" role="alert">
+                            {errors.password.message}
+                          </span>
+                        )}
+                      </div>
+                    </div>
 
-                      <div>
-                        <button
+                    <div>
+                      <button
+                        className="mt-8 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        type="submit"
+                      >
+                        {pageState.processing ? (
+                          <div className="pt-1">
+                            <Spinner />
+                          </div>
+                        ) : (
+                          'Sign in'
+                        )}
+                      </button>
+                      <span className="block h-2 text-xs text-gray-500">
+                        {fillCartLoading || getCartLoading
+                          ? '...синхронизация корзины'
+                          : pageState.status}
+                      </span>
+
+                      {/* <button
+                        className="mt-8 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                        type="submit"
+                        onClick={() => handleSignOut()}
+                      >
+                        Sign out
+                      </button> */}
+                    </div>
+                  </form>
+                  <span className="mt-3 inline-block">
+                    <span>Don&apos;t have an account? </span>
+                    <Link
+                      className="text-blue-600 hover:text-gray-900"
+                      href="/register"
+                    >
+                      Sign up
+                    </Link>
+                  </span>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <div className="justify-cent7er flex min-h-full flex-1 flex-col px-6 py-12 lg:px-8">
+                <div className="mb-12 text-xl font-semibold text-green-500">
+                  <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+                    Authorization was successful!
+                    <span className="block h-2 text-xs text-gray-500">
+                      {fillCartLoading || getCartLoading
+                        ? '...синхронизация корзины'
+                        : pageState.status}
+                    </span>
+                    {/* <button
                           className="mt-8 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                           type="submit"
-                          disabled={pageState.processing}
+                          onClick={() => router.back()}
                         >
-                          Sign in
+                          Назад
                         </button>
-                      </div>
-                    </form>
-
                     <button
-                      className="mt-3 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                      onClick={() => {
-                        addProduct({
-                          context: {
-                            headers: authorizationHeader,
-                          },
-                        });
-                        setRetry(false);
-                      }}
-                    >
-                      Add product
-                    </button>
-                    <button
-                      className="mt-3 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                      onClick={() =>
-                        removeCartItems({
-                          context: {
-                            headers: authorizationHeader,
-                          },
-                        })
-                      }
-                    >
-                      removeCartItems
-                    </button>
-                    <button
-                      className="mt-3 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                      onClick={() =>
-                        refreshJwtAuthToken({
-                          variables: { jwtRefreshToken: refreshTokenFromLocal },
-                        })
-                      }
-                    >
-                      refreshJwtAuthToken
-                    </button>
-
-                    <span className="mt-3 inline-block">
-                      <span>Don&apos;t have an account? </span>
-                      <Link
-                        className="text-blue-600 hover:text-gray-900"
-                        href="/register"
-                      >
-                        Sign up
-                      </Link>
-                    </span>
+                          className="mt-8 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                          type="submit"
+                          onClick={() => handleSignOut()}
+                        >
+                          Sign out
+                        </button> */}
                   </div>
                 </div>
               </div>
-            </Container>
-          </div>
-        ) : null
-      }
+            </div>
+          )}
+        </Container>
+      </div>
     </>
   );
 }

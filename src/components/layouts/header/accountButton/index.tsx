@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { CartContext } from '@/src/contex/CartContex';
 import { useReactiveVar } from '@apollo/client';
 import { cartVar } from '@/src/utils/apollo/reactiveVar';
+import { localStorageRemoveTokens } from '@/src/utils/helpers/localStorageHelpers';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
@@ -25,10 +26,7 @@ export default function AccountButton() {
   };
 
   const handleSignOut = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('sessionToken');
-    signOut();
+    signOut().then(() => localStorageRemoveTokens());
   };
 
   const Basket = (
