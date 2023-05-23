@@ -3,34 +3,25 @@ import { Spinner } from '@/src/components/spinner';
 import { CartContext } from '@/src/contex/CartContex';
 import { IFillCart, IGetCart } from '@/src/interfaces/apollo/getCart.interface';
 import { FillCartMutationData } from '@/src/interfaces/apollo/helpers.interface';
-import {
-  EMPTY_CART,
-  FILL_CART,
-  REFRESH_JWT_AUTH_TOKEN,
-} from '@/src/utils/apollo/mutationsConst';
-import {
-  ADD_PRODUCT_TO_CART,
-  GET_CART_SERVER,
-} from '@/src/utils/apollo/queriesConst';
+import { FILL_CART } from '@/src/utils/apollo/mutationsConst';
+import { GET_CART_SERVER } from '@/src/utils/apollo/queriesConst';
 import { cartVar } from '@/src/utils/apollo/reactiveVar';
 import { convertedCartToFillMutation } from '@/src/utils/helpers';
 import {
   getAuthorizationHeader,
-  getAuthorizationHeaderWithAuthToken,
   getLocalStorageCartItems,
   getToken,
   localStorageRemoveTokens,
   setTokensInLocalStorage,
   transformedCartForLocalStorage,
 } from '@/src/utils/helpers/localStorageHelpers';
-import { useApolloClient, useLazyQuery, useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { ArrowLeftIcon } from '@heroicons/react/20/solid';
-import { data } from 'autoprefixer';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 
 type Inputs = {
@@ -151,15 +142,14 @@ export default function Login() {
 
   // Отправка формы ReactHookForm (входной параметр data не нужен, потому что все есть в state)
   const onSubmit: SubmitHandler<Inputs> = () => {
-    // запустим функцию для авторизации
     handleAuth();
   };
 
   const handleSignOut = () => {
     signOut().then(() => localStorageRemoveTokens());
   };
-  /* Если пользователь авторизован редиректим на главную */
 
+  /* Если пользователь авторизован редиректим на главную */
   if (
     session &&
     cart?.sync &&
@@ -179,8 +169,12 @@ export default function Login() {
   }
 
   if (session && refreshToken !== null) {
-    // console.log('router back  session && refreshToken !== null');
-    router.back();
+    console.log('router back  session && refreshToken !== null');
+    try {
+      router.back();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (

@@ -158,3 +158,23 @@ export const convertedCartToFillMutation = (
       quantity: item.quantity,
     }));
 };
+
+
+// простое отображение ошибок для registerPage
+export const simplifyError = (error: string) => {
+  let errorValidate = error;
+  if (
+    error ==
+    'Учётная запись под таким адресом электронной почты уже зарегистрирована. <a href="#" class="showlogin">Войти.</a>'
+  ) {
+    errorValidate = 'Такая учетная запись уже зарегистрирована';
+  }
+  const errorMap: { [key: string]: string } = {
+    CredentialsSignin: 'Не верный логин или пароль',
+    'Please provide a valid email address.':
+      'Пожалуйста, проверьте правильность введенного email',
+    'Такая учетная запись уже зарегистрирована':
+      'Такая учетная запись уже зарегистрирована',
+  };
+  return errorMap[errorValidate] ?? error;
+};

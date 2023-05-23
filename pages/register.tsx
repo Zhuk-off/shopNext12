@@ -1,13 +1,33 @@
 import Container from '@/src/components/container';
 import { Spinner } from '@/src/components/spinner';
-import { REGISTER_CUSTOMER } from '@/src/utils/apollo/mutationsConst';
-import { useApolloClient, useMutation } from '@apollo/client';
+import { CartContext } from '@/src/contex/CartContex';
+import { IFillCart, IGetCart } from '@/src/interfaces/apollo/getCart.interface';
+import { FillCartMutationData } from '@/src/interfaces/apollo/helpers.interface';
+import {
+  FILL_CART,
+  REGISTER_CUSTOMER,
+} from '@/src/utils/apollo/mutationsConst';
+import { GET_CART_SERVER } from '@/src/utils/apollo/queriesConst';
+import { cartVar } from '@/src/utils/apollo/reactiveVar';
+import {
+  convertedCartToFillMutation,
+  simplifyError,
+} from '@/src/utils/helpers';
+import {
+  getAuthorizationHeader,
+  getLocalStorageCartItems,
+  getToken,
+  localStorageRemoveTokens,
+  setTokensInLocalStorage,
+  transformedCartForLocalStorage,
+} from '@/src/utils/helpers/localStorageHelpers';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
 type Inputs = {
@@ -20,68 +40,52 @@ type Inputs = {
 
 export default function Register() {
   // hooks start -----------------------------------------------
+  const [cart, setCart] = useContext(CartContext);
+
+  const [
+    fillCart,
+    { data: fillCartData, error: fillCartError, loading: fillCartLoading },
+  ] = useMutation<IFillCart>(FILL_CART, {
+    fetchPolicy: 'network-only',
+    errorPolicy: 'all',
+  });
+  const [
+    getCartServer,
+    { loading: getCartLoading, error: getCartError, data: getCartData },
+  ] = useLazyQuery<IGetCart>(GET_CART_SERVER);
+  const [
+    addNewCustomer,
+    {
+      data: addNewCustomerData,
+      loading: addNewCustomerLoading,
+      error: addNewCustomerError,
+    },
+  ] = useMutation(REGISTER_CUSTOMER, { errorPolicy: 'all' });
+
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<Inputs>();
 
-  const router = useRouter();
   const [authState, setAuthState] = useState({
     password: '12345678',
     confirmPassword: '12345678',
-    username: 'Alex@gmai.com',
-    fullname: 'Alex Zhu',
+    username: 'zhukoffweb@gmail.com',
+    fullname: 'Александр',
     policy: true,
   });
+  const router = useRouter();
   const { data: session } = useSession();
-
-  const [
-    addNewCustomer,
-    { data: addNewCustomerData, loading: loadingNewCustomer, error },
-  ] = useMutation(REGISTER_CUSTOMER, { errorPolicy: 'all' });
-
   const [pageState, setPageState] = useState({
     error: '',
+    status: '',
     processing: false,
   });
 
-  // Получим токен для будущей проверки есть ли он?
-  const [refreshToken, setRefreshToken] = useState<string | null>('');
-  useEffect(() => {
-    const refreshTokenFromLocalStorage = localStorage.getItem('refreshToken');
-    setRefreshToken(refreshTokenFromLocalStorage);
-  }, []);
-  useEffect(() => {
-    if (addNewCustomerData && pageState.error === '' && !error) {
-      signIn('credentials', { ...authState, redirect: false })
-        .then((response) => {
-          // console.log(response);
-          if (response?.ok) {
-            // пользователь аторизован
-            // console.log(response);
-            //  router.push('/')
-          } else {
-            setPageState((old) => ({
-              ...old,
-              processing: false,
-              error: response?.error ? response?.error : '',
-            }));
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-          setPageState((old) => ({
-            ...old,
-            processing: false,
-            error: error.message ?? 'Что-то пошло не так...',
-          }));
-        });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addNewCustomerData]);
   // hooks end -----------------------------------------------
+
+  const refreshToken = getToken('refreshToken');
 
   // Обработка ввода  -----------------------------------------------
   const handleFieldChange = (e: { target: { id: string; value: string } }) => {
@@ -90,31 +94,19 @@ export default function Register() {
   // конец Обработка ввода  -----------------------------------------------
 
   // Обработка ошибок  -----------------------------------------------
-  // добавление ошибок из Apollo в стейт для отображения. !Ошибки формы отрабатываются отдельно!
-  if (error && error.message && pageState.error === '') {
-    setPageState((prev) => ({ ...prev, error: error.message }));
+  if (
+    addNewCustomerError &&
+    addNewCustomerError.message &&
+    pageState.error === ''
+  ) {
+    setPageState((old) => ({
+      ...old,
+      error: addNewCustomerError.message,
+      processing: false,
+    }));
   }
-  // простое отображение ошибок
-  const simplifyError = (error: string) => {
-    let errorValidate = error;
-    if (
-      error ==
-      'Учётная запись под таким адресом электронной почты уже зарегистрирована. <a href="#" class="showlogin">Войти.</a>'
-    ) {
-      errorValidate = 'Такая учетная запись уже зарегистрирована';
-    }
-    const errorMap: { [key: string]: string } = {
-      CredentialsSignin: 'Не верный логин или пароль',
-      'Please provide a valid email address.':
-        'Пожалуйста, проверьте правильность введенного email',
-      'Такая учетная запись уже зарегистрирована':
-        'Такая учетная запись уже зарегистрирована',
-    };
-    return errorMap[errorValidate] ?? error;
-  };
-  // конец Обработка ошибок  -----------------------------------------------
 
-  const handleAuth = async () => {
+  const handleRegister = async () => {
     setPageState((old) => ({ ...old, processing: true, error: '' }));
 
     await addNewCustomer({
@@ -123,54 +115,109 @@ export default function Register() {
         password: authState.password,
         firstName: authState.fullname,
       },
+    }).then(({ data }) => {
+      if (data && data?.registerCustomer) {
+        signIn('credentials', { ...authState, redirect: false })
+          .then((response) => {
+            localStorageRemoveTokens();
+            if (response?.ok) {
+              const { authToken } = data?.registerCustomer;
+              syncCart(authToken);
+            } else {
+              setPageState((old) => ({
+                ...old,
+                processing: false,
+                error: response?.error ? response?.error : '',
+              }));
+            }
+          })
+          .catch((error) => {
+            setPageState((old) => ({
+              ...old,
+              processing: false,
+              error: error.message ?? 'Что-то пошло не так...',
+            }));
+          })
+          .finally(() => {
+            setPageState((old) => ({
+              ...old,
+              processing: false,
+            }));
+          });
+      }
     });
-
-    if (error) {
-      setPageState((old) => ({
-        ...old,
-        processing: false,
-        error: error.message,
-      }));
-    }
   };
 
-  // для обновления кеша в Apollo
-  const apolloClient = useApolloClient();
-  function updateApolloCache() {
-    apolloClient.resetStore();
+  if (session && refreshToken === null) {
+    setTokens();
   }
 
-  if (session && (refreshToken === null || refreshToken === '')) {
-    const { authToken, refreshToken, sessionToken } = session.user.tokens;
-    localStorage.setItem('authToken', authToken);
-    localStorage.setItem('refreshToken', refreshToken);
-    localStorage.setItem('sessionToken', sessionToken);
-    updateApolloCache();
-    router.push('/');
-    // window.location.reload();
+  async function syncCart(authToken: string) {
+    const header = getAuthorizationHeader(authToken);
+    const cartData = getLocalStorageCartItems();
+    if (cartData && cartData?.totalQty > 0) {
+      const fillCartMutationData: FillCartMutationData[] =
+        convertedCartToFillMutation(cartData);
+      await fillCart({
+        variables: { items: fillCartMutationData },
+        context: {
+          headers: header,
+        },
+      }).then(({ data }) => {
+        getCartServerHandle(header);
+      });
+    }
   }
 
-  const authToken =
-    typeof localStorage !== 'undefined'
-      ? localStorage.getItem('authToken')
-      : null;
-  const authorizationHeader = authToken
-    ? { authorization: `Bearer ${authToken}` }
-    : {};
-
-  if (addNewCustomerData) {
-    console.log(addNewCustomerData);
+  async function getCartServerHandle(
+    header: { authorization: string } | { authorization?: undefined }
+  ) {
+    if (header) {
+      await getCartServer({
+        context: {
+          headers: header,
+        },
+      })
+        .then(({ data }) => {
+          if (data) {
+            if (data) {
+              const localStorageCart = transformedCartForLocalStorage(
+                data,
+                true
+              );
+              setCart(localStorageCart);
+              cartVar(localStorageCart);
+            }
+          }
+        })
+        .finally(() =>
+          setPageState((old) => ({ ...old, processing: false, status: '' }))
+        );
+    }
   }
 
   // Если форма заполнена верно, то произойдет отправка формы (входной параметр data не нужен, потому что все есть в state)
-  const onSubmit: SubmitHandler<Inputs> = () => {
-    // запустим функцию для создания покупателя
-    handleAuth();
+  const onSubmit: SubmitHandler<Inputs> = async () => {
+    await handleRegister();
   };
-  // Надо для проверки паролей на совпадение, иначе не видно переменной password
-  const password = watch('password', '');
 
-  console.log('session', session);
+  function setTokens() {
+    if (session) {
+      const { authToken, refreshToken, sessionToken } = session.user.tokens;
+      setTokensInLocalStorage(
+        authToken,
+        refreshToken,
+        sessionToken
+        // apolloClient // обновление Apollo кеша вызывает ошибку TypeError: Cannot read properties of undefined (reading 'data')
+      );
+    }
+  }
+
+  if (session && refreshToken !== null && !fillCartLoading && !getCartLoading) {
+    router.push('/');
+  }
+
+  // console.log('router',router)
 
   return (
     <>
@@ -201,7 +248,7 @@ export default function Register() {
                       {simplifyError(pageState.error)}
                     </p>
                   )}
-                  {error && error.message}
+                  {/* {addNewCustomerError && addNewCustomerError.message} */}
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div>
                       <label
@@ -306,7 +353,8 @@ export default function Register() {
                         <input
                           {...register('confirmPassword', {
                             validate: (value) =>
-                              value === password || 'Пароли не совпадают',
+                              value === authState.password ||
+                              'Пароли не совпадают',
                           })}
                           id="confirmPassword"
                           name="confirmPassword"
