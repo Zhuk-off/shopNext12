@@ -22,6 +22,7 @@ import {
 import { ICartLocalStorage } from '@/src/interfaces/cart.interface';
 import { FillCartMutationData } from '@/src/interfaces/apollo/helpers.interface';
 import { convertedCartToFillMutation } from '@/src/utils/helpers';
+import { syncCartWithServer } from '@/src/utils/helpers/serverQueryHelpers';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
@@ -52,65 +53,9 @@ export default function AccountButton() {
   });
 
   const handleSignOut = async () => {
-    const authToken = getToken('authToken');
-    const header = getAuthorizationHeader(authToken);
-    const cartData = getLocalStorageCartItems();
-    console.log('handleSignOut', authToken, header, cartData, session);
-
-    if (cartData && cartData?.totalQty > 0) {
-      await delCartServerHandle(header);
-    }
-    await signOut().then(() => localStorageRemoveTokens());
+    await syncCartWithServer(delCartServer, fillCart, setCart, cartVar);
+    signOut().then(() => localStorageRemoveTokens());
   };
-
-  // удалить корзину на сервере
-  async function delCartServerHandle(header: IAuthorizationHeader) {
-    delCartServer({
-      context: {
-        headers: header,
-      },
-    }).then((data) => {
-      console.log('delCartServer', data);
-      const cartData = getLocalStorageCartItems();
-      if (cartData) {
-        console.log('cartData for fill',cartData)
-        addLocalCartToServer(header, cartData);
-      }
-    });
-    console.log('delCartServerHandle');
-  }
-
-  // добавить local на сервер
-  async function addLocalCartToServer(
-    header: IAuthorizationHeader,
-    cartData: ICartLocalStorage
-  ) {
-    const fillCartMutationData: FillCartMutationData[] =
-      convertedCartToFillMutation(cartData);
-    await fillCart({
-      variables: { items: fillCartMutationData },
-      context: {
-        headers: header,
-      },
-    }).then(({ data }) => {
-      console.log('delCartServer', data);
-      delLocalCart()
-    });
-    console.log('addLocalCartToServer');
-  }
-
-  // удалить корзину с local
-  async function delLocalCart() {
-    const cartEmpty = {
-      cartItems: [],
-      totalPrice: 0,
-      sync: false,
-      totalQty: 0,
-    };
-    setCart(cartEmpty);
-    cartVar(cartEmpty);
-    console.log('delLocalCart');
-  }
 
   const handleLogin = () => {
     router.push('/login');
