@@ -6,6 +6,7 @@ export interface IGetCart {
 export interface Cart {
   __typename: string;
   contents: Contents;
+  total:string
 }
 
 export interface Contents {

@@ -1,5 +1,6 @@
 import Container from '@/src/components/container';
 import { Spinner } from '@/src/components/spinner';
+import CartButtons from '@/src/components/testComponents/cartButtons';
 import { CartContext } from '@/src/contex/CartContex';
 import { IFillCart, IGetCart } from '@/src/interfaces/apollo/getCart.interface';
 import { FillCartMutationData } from '@/src/interfaces/apollo/helpers.interface';
@@ -8,6 +9,7 @@ import { GET_CART_SERVER } from '@/src/utils/apollo/queriesConst';
 import { cartVar } from '@/src/utils/apollo/reactiveVar';
 import { convertedCartToFillMutation } from '@/src/utils/helpers';
 import {
+  IAuthorizationHeader,
   getAuthorizationHeader,
   getLocalStorageCartItems,
   getToken,
@@ -31,7 +33,7 @@ type Inputs = {
 
 export default function Login() {
   const [cart, setCart] = useContext(CartContext);
-
+  const [sync, setSync] = useState(false);
   const [
     fillCart,
     { data: fillCartData, error: fillCartError, loading: fillCartLoading },
@@ -41,8 +43,12 @@ export default function Login() {
   });
   const [
     getCartServer,
-    { loading: getCartLoading, error: getCartError, data: getCartData },
-  ] = useLazyQuery<IGetCart>(GET_CART_SERVER);
+    {
+      loading: getCartServerLoading,
+      error: getCartServerError,
+      data: getCartServerData,
+    },
+  ] = useLazyQuery<IGetCart>(GET_CART_SERVER, { fetchPolicy: 'network-only' });
   // const apolloClient = useApolloClient();
 
   const {
@@ -50,17 +56,18 @@ export default function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>();
+
   const router = useRouter();
   const [authState, setAuthState] = useState({
     username: 'zhukoffweb@gmail.com',
     password: '12345678',
   });
   const { data: session } = useSession();
-  const [pageState, setPageState] = useState({
-    error: '',
-    status: '',
-    processing: false,
-  });
+  // const [pageState, setPageState] = useState({
+  //   error: '',
+  //   status: '',
+  //   processing: false,
+  // });
 
   const handleFieldChange = (e: { target: { id: string; value: string } }) => {
     setAuthState((old) => ({ ...old, [e.target.id]: e.target.value }));
@@ -74,69 +81,78 @@ export default function Login() {
 
   /* Авторизация в NextAuth + установка токенов в localStorage + редирект */
   const handleAuth = async () => {
-    setPageState((old) => ({
-      ...old,
-      processing: true,
-      status: '...авторизация',
-    }));
+    // setPageState((old) => ({
+    //   ...old,
+    //   processing: true,
+    //   status: '...авторизация',
+    // }));
     await signIn('credentials', { ...authState, redirect: false }).then(() =>
       localStorageRemoveTokens()
     );
   };
 
   const refreshToken = getToken('refreshToken');
+
+  const syncCart = (authToken: string) => {
+    if (!fillCartLoading || fillCartData !== undefined || !fillCartError) {
+      const header = getAuthorizationHeader(authToken);
+      const cartData = getLocalStorageCartItems();
+      console.log('syncCart', header, cartData);
+      if (cartData && cartData?.totalQty > 0) {
+        const fillCartMutationData: FillCartMutationData[] =
+          convertedCartToFillMutation(cartData);
+        console.log('передаем в fillCart', fillCartMutationData);
+        fillCart({
+          variables: { items: fillCartMutationData },
+          context: {
+            headers: header,
+          },
+        }).then(({ data }) => {
+          console.log('fillCart, header', data?.fillCart?.added);
+
+          getCartServerHandle(header);
+        });
+      } else {
+        console.log('else');
+        getCartServerHandle(header);
+      }
+      // setPageState((old) => ({ ...old, processing: false, status: '' }))
+    }
+  };
   /*  хз, для дублируется в запросе на авторизацию, но почему-то тут в этом исполнении лучше работает */
-  if (session && refreshToken === null) {
+  // console.log('refreshToken', refreshToken);
+  if (session && refreshToken === null && !sync) {
+    console.log(
+      'session && refreshToken=null',
+      getCartServerLoading,
+      fillCartLoading,
+      getCartServerData,
+      fillCartError
+    );
     const { authToken } = session.user.tokens;
+    setSync(true);
     syncCart(authToken);
   }
 
-  async function syncCart(authToken: string) {
-    const header = getAuthorizationHeader(authToken);
-    const cartData = getLocalStorageCartItems();
-    if (cartData && cartData?.totalQty > 0) {
-      const fillCartMutationData: FillCartMutationData[] =
-        convertedCartToFillMutation(cartData);
-      await fillCart({
-        variables: { items: fillCartMutationData },
+  function getCartServerHandle(header: IAuthorizationHeader) {
+    if (header) {
+      console.log('getCartServerHandle');
+      getCartServer({
         context: {
           headers: header,
         },
       }).then(({ data }) => {
-        // console.log('fillCart', data?.fillCart.added);
-        getCartServerHandle(header);
-      });
-    } else {
-      await getCartServerHandle(header);
-    }
-  }
-
-  async function getCartServerHandle(
-    header: { authorization: string } | { authorization?: undefined }
-  ) {
-    if (header) {
-      await getCartServer({
-        context: {
-          headers: header,
-        },
-      })
-        .then(({ data }) => {
+        if (data) {
+          console.log('getCartServer data', data.cart.contents.edges);
           if (data) {
-            // console.log('getCartServer', data.cart.contents.edges);
-            if (data) {
-              const localStorageCart = transformedCartForLocalStorage(
-                data,
-                true
-              );
-              setCart(localStorageCart);
-              cartVar(localStorageCart);
-              // console.log('local cart', localStorageCart);
-            }
+            const localStorageCart = transformedCartForLocalStorage(data, true);
+            setCart(localStorageCart);
+            cartVar(localStorageCart);
+            console.log('новые LocalStorage', localStorageCart);
+            // console.log('local cart', localStorageCart);
           }
-        })
-        .finally(() =>
-          setPageState((old) => ({ ...old, processing: false, status: '' }))
-        );
+        }
+      });
     }
   }
 
@@ -145,16 +161,12 @@ export default function Login() {
     handleAuth();
   };
 
-  const handleSignOut = () => {
-    signOut().then(() => localStorageRemoveTokens());
-  };
-
   /* Если пользователь авторизован редиректим на главную */
   if (
     session &&
     cart?.sync &&
-    getCartData &&
-    !getCartLoading &&
+    getCartServerData &&
+    !getCartServerLoading &&
     !fillCartLoading
   ) {
     const { authToken, refreshToken, sessionToken } = session.user.tokens;
@@ -165,13 +177,19 @@ export default function Login() {
       // apolloClient // обновление Apollo кеша вызывает ошибку TypeError: Cannot read properties of undefined (reading 'data')
     );
     // console.log('router back done');
-    router.back();
+    // router.back();
   }
 
-  if (session && refreshToken !== null) {
+  if (
+    session &&
+    refreshToken !== null &&
+    !fillCartLoading &&
+    !getCartServerLoading
+  ) {
     console.log('router back  session && refreshToken !== null');
     try {
-      router.back();
+      // router.back();
+      // console.log('router back');
     } catch (error) {
       console.log(error);
     }
@@ -187,6 +205,7 @@ export default function Login() {
           >
             <ArrowLeftIcon width={15} height={15} /> На главную
           </Link>
+          <CartButtons />
           {session === null ? (
             <div className="flex min-h-full items-center justify-center p-4 text-center">
               <div className="justify-cent7er flex min-h-full flex-1 flex-col px-6 py-12 lg:px-8">
@@ -202,11 +221,11 @@ export default function Login() {
                 </div>
                 {/* {session ? 'Sign In' : 'Sign Out'} */}
                 <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                  {pageState.error !== '' && (
+                  {/* {pageState.error !== '' && (
                     <p className="text-red-500">
                       {simplifyError(pageState.error)}
                     </p>
-                  )}
+                  )} */}
                   <form onSubmit={handleSubmit(onSubmit)}>
                     <div>
                       <label
@@ -289,19 +308,19 @@ export default function Login() {
                         className="mt-8 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                         type="submit"
                       >
-                        {pageState.processing ? (
+                        {/* {pageState.processing ? (
                           <div className="pt-1">
                             <Spinner />
                           </div>
-                        ) : (
-                          'Sign in'
-                        )}
+                        ) : ( */}
+                        Sign in
+                        {/* )} */}
                       </button>
-                      <span className="block h-2 text-xs text-gray-500">
-                        {fillCartLoading || getCartLoading
+                      {/* <span className="block h-2 text-xs text-gray-500">
+                        {fillCartLoading || getCartServerLoading
                           ? '...синхронизация корзины'
                           : pageState.status}
-                      </span>
+                      </span> */}
 
                       {/* <button
                         className="mt-8 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -330,11 +349,11 @@ export default function Login() {
                 <div className="mb-12 text-xl font-semibold text-green-500">
                   <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                     Authorization was successful!
-                    <span className="block h-2 text-xs text-gray-500">
-                      {fillCartLoading || getCartLoading
+                    {/* <span className="block h-2 text-xs text-gray-500">
+                      {fillCartLoading || getCartServerLoading
                         ? '...синхронизация корзины'
                         : pageState.status}
-                    </span>
+                    </span> */}
                     {/* <button
                           className="mt-8 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                           type="submit"

@@ -73,7 +73,12 @@ export const getToken = (
   return token;
 };
 
-export const getAuthorizationHeader = (authToken: string | null) => {
+export interface IAuthorizationHeader {
+  authorization?: string;
+}
+export const getAuthorizationHeader = (
+  authToken: string | null
+): IAuthorizationHeader => {
   const header = authToken ? { authorization: `Bearer ${authToken}` } : {};
   return header;
 };

@@ -5,9 +5,23 @@ import { useRouter } from 'next/router';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { CartContext } from '@/src/contex/CartContex';
-import { useReactiveVar } from '@apollo/client';
+import { useMutation, useReactiveVar } from '@apollo/client';
 import { cartVar } from '@/src/utils/apollo/reactiveVar';
-import { localStorageRemoveTokens } from '@/src/utils/helpers/localStorageHelpers';
+import {
+  IAuthorizationHeader,
+  getAuthorizationHeader,
+  getLocalStorageCartItems,
+  getToken,
+  localStorageRemoveTokens,
+} from '@/src/utils/helpers/localStorageHelpers';
+import { IFillCart } from '@/src/interfaces/apollo/getCart.interface';
+import {
+  FILL_CART,
+  REMOVE_CART_ITEMS,
+} from '@/src/utils/apollo/mutationsConst';
+import { ICartLocalStorage } from '@/src/interfaces/cart.interface';
+import { FillCartMutationData } from '@/src/interfaces/apollo/helpers.interface';
+import { convertedCartToFillMutation } from '@/src/utils/helpers';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
@@ -15,18 +29,91 @@ function classNames(...classes: string[]) {
 
 export default function AccountButton() {
   const cartA = useReactiveVar(cartVar);
-
-  // const [cart] = useContext(CartContext);
   const router = useRouter();
   const { data: session } = useSession();
+  const [cart, setCart] = useContext(CartContext);
+  const [
+    fillCart,
+    { data: fillCartData, error: fillCartError, loading: fillCartLoading },
+  ] = useMutation<IFillCart>(FILL_CART, {
+    fetchPolicy: 'network-only',
+    errorPolicy: 'all',
+  });
+  const [
+    delCartServer,
+    {
+      data: delCartServerData,
+      error: delCartServerError,
+      loading: delCartServerLoading,
+    },
+  ] = useMutation(REMOVE_CART_ITEMS, {
+    fetchPolicy: 'network-only',
+    errorPolicy: 'all',
+  });
 
-  console.log('session Аккаунт', session?.user.tokens);
-  const handleLogin = () => {
-    router.push('/login');
+  const handleSignOut = async () => {
+    const authToken = getToken('authToken');
+    const header = getAuthorizationHeader(authToken);
+    const cartData = getLocalStorageCartItems();
+    console.log('handleSignOut', authToken, header, cartData, session);
+
+    if (cartData && cartData?.totalQty > 0) {
+      await delCartServerHandle(header);
+    }
+    await signOut().then(() => localStorageRemoveTokens());
   };
 
-  const handleSignOut = () => {
-    signOut().then(() => localStorageRemoveTokens());
+  // удалить корзину на сервере
+  async function delCartServerHandle(header: IAuthorizationHeader) {
+    delCartServer({
+      context: {
+        headers: header,
+      },
+    }).then((data) => {
+      console.log('delCartServer', data);
+      const cartData = getLocalStorageCartItems();
+      if (cartData) {
+        console.log('cartData for fill',cartData)
+        addLocalCartToServer(header, cartData);
+      }
+    });
+    console.log('delCartServerHandle');
+  }
+
+  // добавить local на сервер
+  async function addLocalCartToServer(
+    header: IAuthorizationHeader,
+    cartData: ICartLocalStorage
+  ) {
+    const fillCartMutationData: FillCartMutationData[] =
+      convertedCartToFillMutation(cartData);
+    await fillCart({
+      variables: { items: fillCartMutationData },
+      context: {
+        headers: header,
+      },
+    }).then(({ data }) => {
+      console.log('delCartServer', data);
+      delLocalCart()
+    });
+    console.log('addLocalCartToServer');
+  }
+
+  // удалить корзину с local
+  async function delLocalCart() {
+    const cartEmpty = {
+      cartItems: [],
+      totalPrice: 0,
+      sync: false,
+      totalQty: 0,
+    };
+    setCart(cartEmpty);
+    cartVar(cartEmpty);
+    console.log('delLocalCart');
+  }
+
+  const handleLogin = () => {
+    router.push('/login');
   };
 
   const Basket = (

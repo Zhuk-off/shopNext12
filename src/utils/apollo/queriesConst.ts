@@ -466,6 +466,7 @@ query GetCart {
         }
       }
     }
+    total
   }
 }
 `;

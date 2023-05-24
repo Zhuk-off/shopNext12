@@ -41,6 +41,7 @@ type Inputs = {
 export default function Register() {
   // hooks start -----------------------------------------------
   const [cart, setCart] = useContext(CartContext);
+  const [sync, setSync] = useState(false);
 
   const [
     fillCart,
@@ -51,8 +52,12 @@ export default function Register() {
   });
   const [
     getCartServer,
-    { loading: getCartLoading, error: getCartError, data: getCartData },
-  ] = useLazyQuery<IGetCart>(GET_CART_SERVER);
+    {
+      loading: getCartServerLoading,
+      error: getCartServerError,
+      data: getCartServerData,
+    },
+  ] = useLazyQuery<IGetCart>(GET_CART_SERVER, { fetchPolicy: 'network-only' });
   const [
     addNewCustomer,
     {
@@ -60,7 +65,10 @@ export default function Register() {
       loading: addNewCustomerLoading,
       error: addNewCustomerError,
     },
-  ] = useMutation(REGISTER_CUSTOMER, { errorPolicy: 'all' });
+  ] = useMutation(REGISTER_CUSTOMER, {
+    fetchPolicy: 'network-only',
+    errorPolicy: 'all',
+  });
 
   const {
     register,
@@ -213,7 +221,12 @@ export default function Register() {
     }
   }
 
-  if (session && refreshToken !== null && !fillCartLoading && !getCartLoading) {
+  if (
+    session &&
+    refreshToken !== null &&
+    !fillCartLoading &&
+    !getCartServerLoading
+  ) {
     router.push('/');
   }
 

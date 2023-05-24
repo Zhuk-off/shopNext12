@@ -40,3 +40,12 @@ export interface Billing {
   address1: string;
   phone: string;
 }
+
+export interface IRefreshJwtAuthToken {
+  refreshJwtAuthToken: RefreshJwtAuthToken;
+}
+
+export interface RefreshJwtAuthToken {
+  authToken:  string;
+  __typename: string;
+}

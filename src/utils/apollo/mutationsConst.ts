@@ -91,3 +91,12 @@ mutation RefreshJwtAuthToken($items: [CartItemInput] ) {
   }
 }
 `;
+export const REMOVE_CART_ITEMS = gql`
+mutation RemoveCartItems {
+  removeItemsFromCart(input: {all: true}) {
+    cart {
+      total
+    }
+  }
+}
+`;
