@@ -35,7 +35,7 @@ export const TotalCard = ({
         </div>
       </div>
       <Link
-        href={'#'}
+        href={'/checkout'}
         className="mt-5 block w-full rounded-md bg-pink-700 p-3 font-semibold text-white transition hover:bg-pink-800"
       >
         <div className="text-center">Оформить заказ</div>

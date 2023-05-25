@@ -88,6 +88,11 @@ export const getAuthorizationHeaderWithAuthToken = () => {
   const authorizationHeader = getAuthorizationHeader(authToken);
   return authorizationHeader;
 };
+export const getAuthorizationHeaderWithRefreshToken = () => {
+  const refreshToken = getToken('refreshToken');
+  const authorizationHeader = getAuthorizationHeader(refreshToken);
+  return authorizationHeader;
+};
 
 export const localStorageRemoveTokens = (): void => {
   localStorage.removeItem('authToken');

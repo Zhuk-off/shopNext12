@@ -88,7 +88,7 @@ export const getSumProducts = (data: IOrderDataTotal) => {
   return;
 };
 
-export const sumToStringWithComa = (sum: number) =>
+export const sumToStringWithComa = (sum: number | string) =>
   sum.toString().replace('.', ',');
 
 export const getDatabaseIds = (cart: ICartLocalStorage | null) =>

@@ -16,10 +16,17 @@ export interface Customer {
   firstName: string;
   email: string;
   billing: Billing;
+  shipping: Shipping;
   __typename: string;
 }
 
 export interface Billing {
+  address1: string;
+  phone: string;
+  __typename: string;
+}
+
+export interface Shipping {
   address1: string;
   phone: string;
   __typename: string;
@@ -46,6 +53,6 @@ export interface IRefreshJwtAuthToken {
 }
 
 export interface RefreshJwtAuthToken {
-  authToken:  string;
+  authToken: string;
   __typename: string;
 }

@@ -12,7 +12,7 @@ import Container from '@/src/components/container';
 import { TotalCard } from '@/src/components/order/totalCard';
 import { useContext, useEffect, useState } from 'react';
 import { CartContext } from '@/src/contex/CartContex';
-import { useQuery } from '@apollo/client';
+import { useQuery, useReactiveVar } from '@apollo/client';
 import {
   IOrderDataProductCard,
   IOrderProduct,
@@ -21,51 +21,80 @@ import { GET_PRODUCTS_BY_IDS_ORDER_CARD } from '@/src/utils/apollo/queriesConst'
 import { IPproductsDataOrder } from '@/src/interfaces/cart.interface';
 import { CartOrderItems } from '@/src/components/order/cartOrderItems';
 import { useRouter } from 'next/router';
+import {
+  getDatabaseIds,
+  getProductsOrderView,
+  getTotalCountInStockProducts,
+  getTotalSumInStockProducts,
+} from '@/src/utils/helpers';
+import { cartVar } from '@/src/utils/apollo/reactiveVar';
+import { CartCheckoutItems } from '@/src/components/checkout/cartCheckoutItems';
+import { ChekcoutInfo } from '@/src/components/checkout/checkoutInfo';
+import { useSession } from 'next-auth/react';
 
 // const inter = Inter({ subsets: ['latin'] });
 
-export default function Checkout({
+export default function Order({
   headerFooter,
   menu,
 }: {
   headerFooter: IData | undefined;
   menu: MenuItem[];
 }) {
+  const { data: session } = useSession();
+
+  // const cartA = useReactiveVar(cartVar);
   const [cart, setCart] = useContext(CartContext);
   const router = useRouter();
-  const databaseIds = cart
-    ? cart?.cartItems.map((item) => item.databaseId)
-    : [0];
+  const databaseIds = getDatabaseIds(cart);
 
   let hasNextPage = false;
   let endCursor = '';
   let productsOrder: IOrderProduct[] = [];
 
-  const { loading, data, fetchMore } = useQuery<
+  const {
+    loading,
+    data: productsByIds,
+    fetchMore,
+  } = useQuery<
     IOrderDataProductCard,
     { include: number[] | undefined; endCursor: string }
   >(GET_PRODUCTS_BY_IDS_ORDER_CARD, {
     variables: {
-      include: databaseIds,
+      include: databaseIds?.length !== 0 ? databaseIds : [0],
+      // include:  databaseIds,
       endCursor,
     },
     pollInterval: 2000, // каждые .5 секунд обновляет данные
   });
 
-  // const { loading, data, fetchMore } = useQuery(GET_PRODUCTS_BY_IDS_ORDER_CARD, {
-  //   variables: {
-  //     include: databaseIds,
-  //     endCursor,
-  //   },
-  //   pollInterval: 500,
-  // });
+  // Если все позиции удалены(количество 0), то удалить их из массива
+  // Очистка массива и localstorage от данных с нулевым количеством 
+  useEffect(()=>{
+    if (
+      cart &&
+      cart.totalQty === 0 &&
+      cart.cartItems?.length !== 0 &&
+      cartVar().cartItems?.length !== 0
+    ) {
+      const filteredItems = cart.cartItems.filter((item) => item.quantity !== 0);
+      const updateCart = { ...cart, cartItems: filteredItems };
+      cartVar(updateCart);
+      setCart(updateCart);
+    }
+  },[cart, setCart])
+
+  // console.log(data);
+  // console.log(databaseIds);
+  // console.log(cart);
+  // console.log(cartVar());
 
   // я не знаю как это работает, но работает как нужно
   const loadMore = () => {
-    if (data) {
+    if (productsByIds) {
       fetchMore({
         variables: {
-          endCursor: data.products.pageInfo.endCursor,
+          endCursor: productsByIds.products.pageInfo.endCursor,
         },
 
         updateQuery: (prevResult, { fetchMoreResult }) => {
@@ -88,90 +117,58 @@ export default function Checkout({
   // обновляет отрисовку объекта, загружая новые данные, загрузив обновляет снова, и так, пока
   // data.products.pageInfo.hasNextPage не будет равно false
   // может не корректная реализация, но работает как ожидалось
-  if (data && data.products.pageInfo.hasNextPage) {
+  if (productsByIds && productsByIds.products.pageInfo.hasNextPage) {
     loadMore();
   }
 
+  console.log(cart);
+
   // При переходе на другую страницу надо очистить скрытые элементы, которые удалили
-  useEffect(() => {
-    function handleRouteChange() {
-      if (!cart) return;
-      if (typeof window !== 'undefined') {
-        const filteredObj = cart.cartItems.filter(
-          (item) => item.quantity !== 0
-        );
+  // useEffect(() => {
 
-        const getlocalStorage = localStorage.getItem('cartItems');
-        const getLocalStorageParsed =
-          getlocalStorage !== null ? JSON.parse(getlocalStorage) : null;
-        /** если количество равно в контексте и в localStorage, то обноляем контекст
-         * это может произойти если в соседней вкладке добавили товары, а в корзине
-         * не обновили. Чтобы не перезаписать корзину старвыми данными нужна эта проверка
-         */
-        if (getLocalStorageParsed.totalQty !== cart.totalQty) {
-          setCart(getLocalStorageParsed);
-        }
-        const cartClean = { ...cart };
-        cartClean.cartItems = filteredObj;
-        // console.log('cartClean', cartClean);
-        // console.log('getLocalStorageParsed', getLocalStorageParsed);
-        // console.log('cartClean', cartClean);
-        setCart(cartClean);
-      }
-    }
+  //   function handleRouteChange() {
+  //     if (!cart) return;
+  //     if (typeof window !== 'undefined') {
+  //       const filteredObj = cart.cartItems.filter(
+  //         (item) => item.quantity !== 0
+  //       );
 
-    router.events.on('routeChangeStart', handleRouteChange);
+  //       const getlocalStorage = localStorage.getItem('cartItems');
+  //       const getLocalStorageParsed =
+  //         getlocalStorage !== null ? JSON.parse(getlocalStorage) : null;
+  //       /** если количество равно в контексте и в localStorage, то обноляем контекст
+  //        * это может произойти если в соседней вкладке добавили товары, а в корзине
+  //        * не обновили. Чтобы не перезаписать корзину старвыми данными нужна эта проверка
+  //        */
+  //       if (getLocalStorageParsed.totalQty !== cart.totalQty) {
+  //         setCart(getLocalStorageParsed);
+  //       }
+  //       const cartClean = { ...cart };
+  //       cartClean.cartItems = filteredObj;
+  //       // console.log('cartClean', cartClean);
+  //       // console.log('getLocalStorageParsed', getLocalStorageParsed);
+  //       // console.log('cartClean', cartClean);
+  //       setCart(cartClean);
+  //     }
+  //   }
 
-    return () => {
-      router.events.off('routeChangeStart', handleRouteChange);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  //   router.events.on('routeChangeStart', handleRouteChange);
+
+  //   return () => {
+  //     router.events.off('routeChangeStart', handleRouteChange);
+  //   };
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   let sum = 0;
   let totalCount = 0;
   let productsDataOrder: IPproductsDataOrder[] = [];
+
   // собираем новый массив с объектами для order страницы
-  if (!loading && data !== undefined && cart) {
-    productsDataOrder = cart.cartItems.map<IPproductsDataOrder>((item) => {
-      const product = data.products.edges.find(
-        (edge) => edge.node.id === item.id
-      )?.node;
-      // console.log('product', product);
-
-      return {
-        id: item.id,
-        quantity: item.quantity,
-        databaseId: item.databaseId,
-        stockStatus:
-          product && product?.stockStatus
-            ? product?.stockStatus
-            : 'OUT_OF_STOCK',
-        price: product?.price,
-        uri: product?.uri,
-        imageUrl: product?.image?.sourceUrl,
-        altImage: product?.image?.altText,
-        name: product?.name ? product?.name : '',
-      };
-    });
-
-    sum =
-      productsDataOrder.reduce(
-        (acc, obj) =>
-          acc +
-          (obj.stockStatus === 'IN_STOCK'
-            ? obj.quantity *
-              parseInt(
-                obj.price ? obj.price.replace('Br', '').replace(',', '') : ''
-              )
-            : 0),
-        0
-      ) / 100;
-
-    totalCount = productsDataOrder.reduce(
-      (acc, obj) => acc + (obj.stockStatus === 'IN_STOCK' ? obj.quantity : 0),
-      0
-    );
+  if (!loading && productsByIds !== undefined && cart) {
+    productsDataOrder = getProductsOrderView(cart, productsByIds);
+    sum = getTotalSumInStockProducts(productsDataOrder);
+    totalCount = getTotalCountInStockProducts(productsDataOrder);
   }
 
   return (
@@ -180,23 +177,20 @@ export default function Checkout({
         <Container>
           <div className="relative border-b font-semibold">
             <span className="inline-block border-b-2 border-black pb-5">
-              Корзина
+              Оформить
             </span>
             <span className="absolute left-16 top-0 inline-block text-xs font-bold">
-              <CounterOrderPage />
-            </span>
-            <span className="absolute left-16 top-0 inline-block text-xs font-bold">
-              <CounterOrderPage />
+              {/* <CounterOrderPage /> */}
             </span>
           </div>
           <div className="mt-8 flex flex-grow">
             <ul className="w-full flex-grow">
-              {data && databaseIds && databaseIds?.length !== 0 && (
-                <CartOrderItems productsDataOrder={productsDataOrder} />
+              {productsByIds && databaseIds && databaseIds?.length !== 0 && (
+                <CartCheckoutItems productsDataOrder={productsDataOrder} sum={sum} totalCount={totalCount} loading={loading}/>
               )}
             </ul>
             <div className="ml-12 rounded-lg shadow-lg">
-              <TotalCard sum={sum} totalCount={totalCount} loading={loading} />
+              <ChekcoutInfo sum={sum} totalCount={totalCount} loading={loading} />
             </div>
           </div>
         </Container>

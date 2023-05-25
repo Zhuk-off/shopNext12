@@ -437,16 +437,20 @@ export const ADD_PRODUCT_TO_CART = gql`
 
 // Данные для страницы /my-acount
 export const GET_CUSTOMER_DATA = gql`
-  query getCustomerData($id: ID) {
-    customer(id: $id) {
-      email
-      firstName
-      billing {
-        address1
-        phone
-      }
+query getCustomerData($id: ID) {
+  customer(id: $id) {
+    email
+    firstName
+    billing {
+      address1
+      phone
+    }
+    shipping {
+      address1
+      phone
     }
   }
+}
 `;
 // Запрос содержимого корзины с сервера
 export const GET_CART_SERVER = gql`
