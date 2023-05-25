@@ -197,58 +197,64 @@ export default function Order({
               {/* <CounterOrderPage /> */}
             </span>
           </div>
-          {personalData.orderStatus !== 'success' ? (
-            <div className="mt-8 flex flex-grow">
-              <ul className="w-full flex-grow">
-                {productsByIds && databaseIds && databaseIds?.length !== 0 ? (
-                  <CartCheckoutItems
-                    productsDataOrder={productsDataOrder}
+          {!loading ? (
+            personalData.orderStatus !== 'success' ? (
+              <div className="mt-8 flex flex-grow">
+                <ul className="w-full flex-grow">
+                  {productsByIds && databaseIds && databaseIds?.length !== 0 ? (
+                    <CartCheckoutItems
+                      productsDataOrder={productsDataOrder}
+                      sum={sum}
+                      totalCount={totalCount}
+                      loading={loading}
+                    />
+                  ) : (
+                    <div className="border-b-2 border-b-pink-700 text-center text-lg font-semibold text-pink-700">
+                      Нет товаров в корзине
+                    </div>
+                  )}
+                </ul>
+                <div className="ml-12 rounded-lg shadow-lg">
+                  <ChekcoutInfo
                     sum={sum}
                     totalCount={totalCount}
                     loading={loading}
+                    personalData={personalData}
+                    setPersonalData={setPersonalData}
                   />
-                ) : (
-                  <div className="border-b-2 border-b-pink-700 text-center text-lg font-semibold text-pink-700">
-                    Нет товаров в корзине
-                  </div>
-                )}
-              </ul>
-              <div className="ml-12 rounded-lg shadow-lg">
-                <ChekcoutInfo
-                  sum={sum}
-                  totalCount={totalCount}
-                  loading={loading}
-                  personalData={personalData}
-                  setPersonalData={setPersonalData}
-                />
-              </div>
-            </div>
-          ) : (
-            <div className="h-screen">
-              <div className="mx-auto mt-8 max-w-4xl text-center text-2xl font-medium   text-green-600">
-                Спасибо за заказ! Ваш заказ{' '}
-                <span className="font-bold text-green-700">
-                  №{personalData.orderNumber}
-                </span>{' '}
-                отправлен.{' '}
-                <div className="mt-1 text-xl">
-                  В ближайшее время мы начнем его комплектовать.
                 </div>
               </div>
-              <div className="mx-auto mt-4 flex max-w-lg space-x-5">
-                <Link
-                  href={'/'}
-                  className="mt-8 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  На Главную
-                </Link>
-                <Link
-                  href={'/my-account/history'}
-                  className="mt-8 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  В Кабинет
-                </Link>
+            ) : (
+              <div className="h-screen">
+                <div className="mx-auto mt-8 max-w-4xl text-center text-2xl font-medium   text-green-600">
+                  Спасибо за заказ! Ваш заказ{' '}
+                  <span className="font-bold text-green-700">
+                    №{personalData.orderNumber}
+                  </span>{' '}
+                  отправлен.{' '}
+                  <div className="mt-1 text-xl">
+                    В ближайшее время мы начнем его комплектовать.
+                  </div>
+                </div>
+                <div className="mx-auto mt-4 flex max-w-lg space-x-5">
+                  <Link
+                    href={'/'}
+                    className="mt-8 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  >
+                    На Главную
+                  </Link>
+                  <Link
+                    href={'/my-account/history'}
+                    className="mt-8 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                  >
+                    В Кабинет
+                  </Link>
+                </div>
               </div>
+            )
+          ) : (
+            <div className="mt-8 h-[520px] font-medium text-gray-600">
+              Обновление корзины...
             </div>
           )}
         </Container>

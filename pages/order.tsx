@@ -180,20 +180,30 @@ export default function Order({
               <CounterOrderPage />
             </span>
           </div>
-          <div className="mt-8 flex flex-grow">
-            <ul className="w-full flex-grow">
-              {productsByIds && databaseIds && databaseIds?.length !== 0 ? (
-                <CartOrderItems productsDataOrder={productsDataOrder} />
-              ) : (
-                <div className="border-b-2 border-b-pink-700 text-center text-lg font-semibold text-pink-700">
-                  Нет товаров в корзине
-                </div>
-              )}
-            </ul>
-            <div className="ml-12 rounded-lg shadow-lg">
-              <TotalCard sum={sum} totalCount={totalCount} loading={loading} />
+          {!loading ? (
+            <div className="mt-8 flex flex-grow">
+              <ul className="w-full flex-grow">
+                {productsByIds && databaseIds && databaseIds?.length !== 0 ? (
+                  <CartOrderItems productsDataOrder={productsDataOrder} />
+                ) : (
+                  <div className="border-b-2 border-b-pink-700 text-center text-lg font-semibold text-pink-700">
+                    Нет товаров в корзине
+                  </div>
+                )}
+              </ul>
+              <div className="ml-12 rounded-lg shadow-lg">
+                <TotalCard
+                  sum={sum}
+                  totalCount={totalCount}
+                  loading={loading}
+                />
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="mt-8 h-[326px] font-medium text-gray-600">
+              Обновление корзины...
+            </div>
+          )}
         </Container>
       </Layout>
     </main>
