@@ -4,6 +4,7 @@ import {
 } from '../interfaces/apollo/getOrderData.interfase';
 import { IProductCat } from '../interfaces/apollo/getProducts.interface';
 import { FillCartMutationData } from '../interfaces/apollo/helpers.interface';
+import { Status } from '../interfaces/apollo/historyPage.interface';
 import {
   ICartItemLocalStorage,
   ICartLocalStorage,
@@ -159,7 +160,6 @@ export const convertedCartToFillMutation = (
     }));
 };
 
-
 // простое отображение ошибок для registerPage
 export const simplifyError = (error: string) => {
   let errorValidate = error;
@@ -177,4 +177,28 @@ export const simplifyError = (error: string) => {
       'Такая учетная запись уже зарегистрирована',
   };
   return errorMap[errorValidate] ?? error;
+};
+
+// Преобразование статуса, который идет из истории заказов в русский язык
+export const getStatusLabel = (status: Status): string => {
+  switch (status) {
+    case Status.Pending:
+      return 'ожидается оплата';
+    case Status.Processing:
+      return 'обработка';
+    case Status.Completed:
+      return 'выполнен';
+    case Status.OnHold:
+      return 'на удержании';
+    case Status.Cancelled:
+      return 'отменен';
+    case Status.Refunded:
+      return 'возвращен';
+    case Status.Failed:
+      return 'не удался';
+    case Status.CheckoutDraft:
+      return 'черновик';
+    default:
+      return '';
+  }
 };

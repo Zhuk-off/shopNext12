@@ -437,40 +437,76 @@ export const ADD_PRODUCT_TO_CART = gql`
 
 // Данные для страницы /my-acount
 export const GET_CUSTOMER_DATA = gql`
-query getCustomerData($id: ID) {
-  customer(id: $id) {
-    email
-    firstName
-    billing {
-      address1
-      phone
-    }
-    shipping {
-      address1
-      phone
+  query getCustomerData($id: ID) {
+    customer(id: $id) {
+      email
+      firstName
+      billing {
+        address1
+        phone
+      }
+      shipping {
+        address1
+        phone
+      }
     }
   }
-}
 `;
 // Запрос содержимого корзины с сервера
 export const GET_CART_SERVER = gql`
-query GetCart {
-  cart {
-    contents {
-      edges {
-        node {
-          quantity
-          product {
-            node {
-              name
-              databaseId
-              id
+  query GetCart {
+    cart {
+      contents {
+        edges {
+          node {
+            quantity
+            product {
+              node {
+                name
+                databaseId
+                id
+              }
             }
           }
         }
       }
+      total
     }
-    total
   }
-}
+`;
+// Запрос содержимого корзины с сервера
+export const GET_ORDERS = gql`
+  query MyQuery {
+    orders(first: 100) {
+      edges {
+        node {
+          total
+          id
+          status
+          orderNumber
+          lineItems {
+            edges {
+              node {
+                product {
+                  node {
+                    ... on SimpleProduct {
+                      id
+                      name
+                      price
+                      image {
+                        altText
+                        sourceUrl
+                      }
+                    }
+                  }
+                }
+                quantity
+              }
+            }
+          }
+          date
+        }
+      }
+    }
+  }
 `;
