@@ -100,3 +100,22 @@ mutation RemoveCartItems {
   }
 }
 `;
+export const CREATE_ORDER = gql`
+mutation Checkout($phone: String , $firstName: String, $email: String , $address1: String , $customerNote: String, $paymentMethod: String) {
+  checkout(
+    input: {customerNote: $customerNote, paymentMethod: $paymentMethod, billing: {address1: $address1, email: $email, phone: $phone, firstName: $firstName}}
+  ) {
+    result
+    order {
+      orderNumber
+    }
+  }
+}
+`;
+// export const CREATE_ORDER = gql`
+// mutation MyMutation {
+//   createOrder(input: {billing: {address1: "1231231231", phone: "123123123123"}}) {
+//     orderId
+//   }
+// }
+// `;

@@ -31,6 +31,8 @@ import { cartVar } from '@/src/utils/apollo/reactiveVar';
 import { CartCheckoutItems } from '@/src/components/checkout/cartCheckoutItems';
 import { ChekcoutInfo } from '@/src/components/checkout/checkoutInfo';
 import { useSession } from 'next-auth/react';
+import { IPersonalData } from '@/src/interfaces/apollo/checkout.interface';
+import Link from 'next/link';
 
 // const inter = Inter({ subsets: ['latin'] });
 
@@ -41,6 +43,16 @@ export default function Order({
   headerFooter: IData | undefined;
   menu: MenuItem[];
 }) {
+  const [personalData, setPersonalData] = useState<IPersonalData>({
+    username: '',
+    email: '',
+    phone: '',
+    address1Billing: '',
+    comments: '',
+    change: false,
+    orderNumber: '640012',
+    orderStatus: '',
+  });
   const { data: session } = useSession();
 
   // const cartA = useReactiveVar(cartVar);
@@ -69,20 +81,22 @@ export default function Order({
   });
 
   // Если все позиции удалены(количество 0), то удалить их из массива
-  // Очистка массива и localstorage от данных с нулевым количеством 
-  useEffect(()=>{
+  // Очистка массива и localstorage от данных с нулевым количеством
+  useEffect(() => {
     if (
       cart &&
       cart.totalQty === 0 &&
       cart.cartItems?.length !== 0 &&
       cartVar().cartItems?.length !== 0
     ) {
-      const filteredItems = cart.cartItems.filter((item) => item.quantity !== 0);
+      const filteredItems = cart.cartItems.filter(
+        (item) => item.quantity !== 0
+      );
       const updateCart = { ...cart, cartItems: filteredItems };
       cartVar(updateCart);
       setCart(updateCart);
     }
-  },[cart, setCart])
+  }, [cart, setCart]);
 
   // console.log(data);
   // console.log(databaseIds);
@@ -183,16 +197,60 @@ export default function Order({
               {/* <CounterOrderPage /> */}
             </span>
           </div>
-          <div className="mt-8 flex flex-grow">
-            <ul className="w-full flex-grow">
-              {productsByIds && databaseIds && databaseIds?.length !== 0 && (
-                <CartCheckoutItems productsDataOrder={productsDataOrder} sum={sum} totalCount={totalCount} loading={loading}/>
-              )}
-            </ul>
-            <div className="ml-12 rounded-lg shadow-lg">
-              <ChekcoutInfo sum={sum} totalCount={totalCount} loading={loading} />
+          {personalData.orderStatus !== 'success' ? (
+            <div className="mt-8 flex flex-grow">
+              <ul className="w-full flex-grow">
+                {productsByIds && databaseIds && databaseIds?.length !== 0 ? (
+                  <CartCheckoutItems
+                    productsDataOrder={productsDataOrder}
+                    sum={sum}
+                    totalCount={totalCount}
+                    loading={loading}
+                  />
+                ) : (
+                  <div className="border-b-2 border-b-pink-700 text-center text-lg font-semibold text-pink-700">
+                    Нет товаров в корзине
+                  </div>
+                )}
+              </ul>
+              <div className="ml-12 rounded-lg shadow-lg">
+                <ChekcoutInfo
+                  sum={sum}
+                  totalCount={totalCount}
+                  loading={loading}
+                  personalData={personalData}
+                  setPersonalData={setPersonalData}
+                />
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="h-screen">
+              <div className="mx-auto mt-8 max-w-4xl text-center text-2xl font-medium   text-green-600">
+                Спасибо за заказ! Ваш заказ{' '}
+                <span className="font-bold text-green-700">
+                  №{personalData.orderNumber}
+                </span>{' '}
+                отправлен.{' '}
+                <div className="mt-1 text-xl">
+                  В ближайшее время мы начнем его комплектовать.
+                </div>
+              </div>
+              <div className="mx-auto mt-4 flex max-w-lg space-x-5">
+                <Link
+                  href={'/'}
+                  className="mt-8 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  На Главную
+                </Link>
+                <Link
+                  href={'/my-account/history'}
+                  className="mt-8 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  В Кабинет
+                </Link>
+              </div>
+            </div>
+          )}
         </Container>
       </Layout>
     </main>

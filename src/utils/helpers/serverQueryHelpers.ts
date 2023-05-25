@@ -58,13 +58,20 @@ export const syncCartWithServer = async (
         headers: header,
       },
     });
-    const cartEmpty = {
-      cartItems: [],
-      totalPrice: 0,
-      sync: false,
-      totalQty: 0,
-    };
-    setCart(cartEmpty);
-    cartVar(cartEmpty);
+    clearCartLocal(setCart,cartVar)
   }
+};
+
+export const clearCartLocal = (
+  setCart: (cart: ICartLocalStorage) => void,
+  cartVar: ReactiveVar<ICartLocalStorage>
+): void => {
+  const cartEmpty = {
+    cartItems: [],
+    totalPrice: 0,
+    sync: false,
+    totalQty: 0,
+  };
+  setCart(cartEmpty);
+  cartVar(cartEmpty);
 };

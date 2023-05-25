@@ -64,20 +64,22 @@ export default function Order({
   });
 
   // Если все позиции удалены(количество 0), то удалить их из массива
-  // Очистка массива и localstorage от данных с нулевым количеством 
-  useEffect(()=>{
+  // Очистка массива и localstorage от данных с нулевым количеством
+  useEffect(() => {
     if (
       cart &&
       cart.totalQty === 0 &&
       cart.cartItems?.length !== 0 &&
       cartVar().cartItems?.length !== 0
     ) {
-      const filteredItems = cart.cartItems.filter((item) => item.quantity !== 0);
+      const filteredItems = cart.cartItems.filter(
+        (item) => item.quantity !== 0
+      );
       const updateCart = { ...cart, cartItems: filteredItems };
       cartVar(updateCart);
       setCart(updateCart);
     }
-  },[cart, setCart])
+  }, [cart, setCart]);
 
   // console.log(data);
   // console.log(databaseIds);
@@ -180,8 +182,12 @@ export default function Order({
           </div>
           <div className="mt-8 flex flex-grow">
             <ul className="w-full flex-grow">
-              {productsByIds && databaseIds && databaseIds?.length !== 0 && (
+              {productsByIds && databaseIds && databaseIds?.length !== 0 ? (
                 <CartOrderItems productsDataOrder={productsDataOrder} />
+              ) : (
+                <div className="border-b-2 border-b-pink-700 text-center text-lg font-semibold text-pink-700">
+                  Нет товаров в корзине
+                </div>
               )}
             </ul>
             <div className="ml-12 rounded-lg shadow-lg">

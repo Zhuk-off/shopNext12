@@ -2,6 +2,7 @@ import { IFillCart, IGetCart } from '@/src/interfaces/apollo/getCart.interface';
 import { FillCartMutationData } from '@/src/interfaces/apollo/helpers.interface';
 import { IRefreshJwtAuthToken } from '@/src/interfaces/apollo/login.interface';
 import {
+  CREATE_ORDER,
   FILL_CART,
   REFRESH_JWT_AUTH_TOKEN,
   REMOVE_CART_ITEMS,
@@ -11,6 +12,7 @@ import { convertedCartToFillMutation } from '@/src/utils/helpers';
 import {
   getAuthorizationHeader,
   getAuthorizationHeaderWithAuthToken,
+  getAuthorizationHeaderWithRefreshToken,
   getLocalStorageCartItems,
   getToken,
   setTokensInLocalStorage,
@@ -58,6 +60,17 @@ function CartButtons() {
     fetchPolicy: 'network-only',
     errorPolicy: 'all',
   });
+  const [
+    createOrder,
+    {
+      data: createOrderData,
+      error: createOrderError,
+      loading: createOrderLoading,
+    },
+  ] = useMutation(CREATE_ORDER, {
+    fetchPolicy: 'network-only',
+    errorPolicy: 'all',
+  });
 
   const getCart = () => {
     getCartServer({
@@ -91,7 +104,7 @@ function CartButtons() {
           headers: getAuthorizationHeaderWithAuthToken(),
         },
       }).then(({ data }) => {
-        console.log('fillCart', data?.fillCart.cart);
+        console.log('fillCart', data?.fillCart?.cart);
       });
     }
   };
@@ -108,6 +121,23 @@ function CartButtons() {
       const authToken = data?.refreshJwtAuthToken.authToken;
       console.log(authToken);
       setTokensInLocalStorage(authToken);
+    });
+  };
+  const createOrderHandler = () => {
+    createOrder({
+      variables: {
+        phone: '+375292115454',
+        firstName: 'Александр',
+        email: 'xxxxxx.xx@gmail.com',
+        address1: 'г. витебск, ул. Большая д. 10',
+        customerNote: 'Примечание покупателя',
+        paymentMethod: 'cod',
+      },
+      context: {
+        headers: getAuthorizationHeaderWithRefreshToken(),
+      },
+    }).then(({data}) => {
+      console.log('createOrder', data);
     });
   };
 
@@ -128,6 +158,9 @@ function CartButtons() {
       </button>
       <button className="border p-3" onClick={() => refreshAuth()}>
         Refresh
+      </button>
+      <button className="border p-3" onClick={() => createOrderHandler()}>
+        createOrder
       </button>
     </div>
   );
