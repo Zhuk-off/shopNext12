@@ -191,6 +191,7 @@ edges {
       name
       price
       salePrice
+      slug
       regularPrice
       shortDescription
       image {
@@ -509,4 +510,51 @@ export const GET_ORDERS = gql`
       }
     }
   }
+`;
+// Запрос содержимого корзины с сервера
+export const GET_PRODUCTS_URI = gql`
+query GetProductsURI($first: Int, $cursor: String) {
+  products(first: $first, after: $cursor) {
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    edges {
+      cursor
+      node {
+        slug
+      }
+    }
+  }
+}
+`;
+// Запрос продукта, товара по slug для карточки товара
+export const GET_PRODUCT_DATA = gql`
+query MyQuery2($id: ID = "karman-v-bagazhnik-na-lipuchke-universalnyj-40h30-sm-rexant") {
+  product(id: $id, idType: SLUG) {
+    ... on SimpleProduct {
+      id
+      databaseId
+      name
+      price
+      salePrice
+      regularPrice
+      shortDescription
+      description
+      image {
+        altText
+        sourceUrl
+      }
+      galleryImages {
+        edges {
+          node {
+            altText
+            sourceUrl
+          }
+        }
+      }
+      stockStatus
+    }
+  }
+}
 `;

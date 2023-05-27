@@ -37,7 +37,10 @@ const ProductCardHorisontal = ({
 
   return (
     <div className="grid h-48 grid-cols-5 overflow-hidden rounded-md bg-white p-4 shadow-md hover:shadow-lg">
-      <Link href={uri} className="col-span-1 self-center justify-self-center">
+      <Link
+        href={`/product/${uri}`}
+        className="col-span-1 self-center justify-self-center"
+      >
         <Image
           src={image ? image : DEFAULT_IMG_URL_224x168}
           alt={alt}
@@ -48,7 +51,7 @@ const ProductCardHorisontal = ({
       </Link>
       <div className="col-span-3 flex border-l border-gray-200 px-4">
         <div className="flex-1 overflow-hidden">
-          <Link href={uri}>
+          <Link href={`/product/${uri}`}>
             <h2 className="line-clamp-3 text-lg font-medium text-blue-500 underline hover:text-red-500 lg:line-clamp-4">
               {title}
             </h2>

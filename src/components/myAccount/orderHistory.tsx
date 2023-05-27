@@ -44,6 +44,7 @@ function OrderHistory() {
   } = useQuery<IOrders>(GET_ORDERS, {
     errorPolicy: 'all',
     // fetchPolicy: 'network-only',
+    pollInterval: 60000,
     context: {
       headers: getAuthorizationHeaderWithAuthToken(),
     },

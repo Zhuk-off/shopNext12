@@ -39,7 +39,7 @@ export default function MyAccount({
     <Layout headerFooter={headerFooter || {}} menu={menu}>
       <Container>
         <div className="grid grid-cols-4">
-          <div className="col-span-1">
+          <div className="col-span-1 h-min-1/2">
             <MyAccountNavMenu />
           </div>
           <div className="col-span-3">

@@ -48,7 +48,7 @@ const Layout = ({
 				</Head> */}
       {/* <Header header={header} /> */}
       <Header header={header} menu={menu} />
-      <main className="min-h-50vh container mx-auto py-4">{children}</main>
+      <main className="min-h-50vh container mx-auto">{children}</main>
       <Footer footer={footer} />
     </div>
   );

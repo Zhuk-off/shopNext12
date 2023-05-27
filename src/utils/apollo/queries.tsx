@@ -64,6 +64,7 @@ export async function getAllCategories() {
 
   return categories;
 }
+
 export async function getAllOrderProducts(query: DocumentNode=GET_PRODUCTS_BY_IDS_TOTAL_COST) {
   let productsOrder: ICategory[] = [];
   let hasNextPage: boolean = true;

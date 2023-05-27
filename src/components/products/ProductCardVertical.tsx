@@ -27,7 +27,7 @@ const ProductCardVertical = ({
 
   return (
     <div className="flex h-[416px] flex-col overflow-hidden rounded-md bg-white p-4 shadow-md hover:shadow-lg">
-      <Link href={uri} className="self-center justify-self-center">
+      <Link href={`/product/${uri}`} className="self-center justify-self-center">
         <Image
           src={image ? image : DEFAULT_IMG_URL}
           alt={alt}
@@ -39,7 +39,7 @@ const ProductCardVertical = ({
 
       <div className="mt-2 flex px-4">
         <div className="flex-1 overflow-hidden">
-          <Link href={uri}>
+          <Link href={`/product/${uri}`}>
             <h2 className="line-clamp-3 min-h-[72px] text-center text-base font-medium text-blue-500 underline hover:text-red-500">
               {title}
             </h2>

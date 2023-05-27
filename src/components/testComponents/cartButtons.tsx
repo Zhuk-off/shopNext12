@@ -7,7 +7,10 @@ import {
   REFRESH_JWT_AUTH_TOKEN,
   REMOVE_CART_ITEMS,
 } from '@/src/utils/apollo/mutationsConst';
-import { GET_CART_SERVER } from '@/src/utils/apollo/queriesConst';
+import {
+  GET_CART_SERVER,
+  GET_PRODUCTS_URI,
+} from '@/src/utils/apollo/queriesConst';
 import { convertedCartToFillMutation } from '@/src/utils/helpers';
 import {
   getAuthorizationHeader,
@@ -23,6 +26,14 @@ import React from 'react';
 
 function CartButtons() {
   const { data: session } = useSession();
+  const [
+    getProductsURI,
+    {
+      loading: getProductsURILoading,
+      error: getProductsURIError,
+      data: getProductsURIData,
+    },
+  ] = useLazyQuery<any>(GET_PRODUCTS_URI, { fetchPolicy: 'network-only' });
   const [
     getCartServer,
     {
@@ -136,9 +147,44 @@ function CartButtons() {
       context: {
         headers: getAuthorizationHeaderWithRefreshToken(),
       },
-    }).then(({data}) => {
+    }).then(({ data }) => {
       console.log('createOrder', data);
     });
+  };
+
+  const getProductsURIHandler = async () => {
+    const paths = [];
+    const first = 100;
+    let cursor = null;
+
+    // await  getProductsURI({ variables: { first, cursor }}).then(({ data }) => {
+    //     console.log('getProductsURI', data);
+    //   });
+    let allProducts: any[] = [];
+    while (true) {
+      let products: any = [];
+      await getProductsURI({ variables: { first, cursor } }).then(
+        ({ data }) => {
+          products = data?.products;
+          console.log('getProductsURI', data);
+        }
+      );
+      console.log(products);
+
+      allProducts = allProducts?.concat(products?.edges);
+
+      if (!products?.pageInfo?.hasNextPage) {
+        break;
+      }
+      const pagePaths = products?.edges?.map(({ node }: { node: any }) => `/product/${node.slug }`);
+
+      paths.push(...pagePaths);
+
+      cursor = products?.pageInfo?.endCursor;
+      console.log('paths', paths);
+    }
+
+    return allProducts;
   };
 
   if (fillCartData) {
@@ -161,6 +207,9 @@ function CartButtons() {
       </button>
       <button className="border p-3" onClick={() => createOrderHandler()}>
         createOrder
+      </button>
+      <button className="border p-3" onClick={() => getProductsURIHandler()}>
+        getProductsURI
       </button>
     </div>
   );

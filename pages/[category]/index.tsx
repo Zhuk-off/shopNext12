@@ -82,7 +82,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const menu: ICategory[] = await getAllCategories();
   return {
     paths: menu.map((item) => `/${item.node.slug}`),
-    fallback: true,
+    fallback: false,
   };
 };
 
