@@ -2,14 +2,8 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
-import 'swiper/css/effect-cube';
-import {
-  Pagination,
-  Navigation,
-  Autoplay,
-  EffectCube,
-  EffectCards,
-} from 'swiper';
+import 'swiper/css/mousewheel';
+import { Pagination, Navigation, Autoplay, Mousewheel } from 'swiper';
 import Image from 'next/image';
 import Container from './container';
 import {
@@ -25,35 +19,30 @@ export const SliderProductPage = ({
   images: GalleryImage[];
 }) => {
   return (
-    <section className="pb-5 pt-3">
+    <section className="select-none">
       <Container>
         <Swiper
-          speed={1000}
-          effect={'cube'}
+          speed={300}
+          effect={'slide'}
           grabCursor={true}
           loop={true}
-          // autoplay={{
-          //   delay: 2500,
-          //   disableOnInteraction: false,
-          //   pauseOnMouseEnter: true,
-          // }}
-          cubeEffect={{
-            shadow: true,
-            slideShadows: true,
-            shadowOffset: 20,
-            shadowScale: 0.94,
+          autoplay={{
+            delay: 3000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
           }}
+          mousewheel
           navigation={true}
           pagination={true}
-          modules={[EffectCube, Pagination, Autoplay, Navigation, EffectCards]}
+          modules={[Pagination, Autoplay, Navigation, Mousewheel]}
           className="mySwiper"
         >
           <SwiperSlide>
             <div className="h-full w-full bg-white">
               <Image
                 src={coverImage?.sourceUrl}
-                width={1300}
-                height={300}
+                width={700}
+                height={400}
                 alt={coverImage?.altText}
                 className="h-96 w-full object-contain "
               />
@@ -62,11 +51,11 @@ export const SliderProductPage = ({
           {images
             ? images.map((image, index) => (
                 <SwiperSlide key={index}>
-                  <div className="h-full w-full bg-white px-6">
+                  <div className="h-full w-full bg-white">
                     <Image
                       src={image?.node?.sourceUrl}
-                      width={1300}
-                      height={300}
+                      width={700}
+                      height={400}
                       alt={image?.node?.altText}
                       className="h-96 w-full object-contain "
                     />

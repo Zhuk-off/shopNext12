@@ -45,6 +45,6 @@ export const getStaticProps: GetStaticProps = async () => {
       headerFooter: headerFooterData?.data ?? {},
       menu: menuObject,
     },
-    revalidate: 1,
+    revalidate: 1000,
   };
 };

@@ -3,7 +3,6 @@ import Link from 'next/link';
 import Container from '../../container';
 
 const Footer = ({ footer }: { footer: IFooter | undefined }) => {
-  // console.log('footer', footer);
 
   return (
     <footer className="bg-gray-900 py-10 text-gray-300">

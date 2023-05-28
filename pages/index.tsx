@@ -22,12 +22,6 @@ export default function Home({
   headerFooter: IData | undefined;
   menu: MenuItem[];
 }) {
-  // const foundObject = findObjectById(
-  //   menu[0],
-  //   'akkumulyatornye-dreli-shurupoverty'
-  // );
-  // const allSlugs = foundObject ? getAllChildSlugs(foundObject) : [];
-  
   return (
     <main className="">
       <Layout headerFooter={headerFooter || {}} menu={menu}>
@@ -53,6 +47,6 @@ export const getStaticProps: GetStaticProps = async () => {
       headerFooter: headerFooterData?.data ?? {},
       menu: menuObject,
     },
-    revalidate: 1,
+    revalidate: 1000,
   };
 };

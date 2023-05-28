@@ -1,19 +1,10 @@
 import { Disclosure } from '@headlessui/react';
 import { ChevronUpIcon } from '@heroicons/react/24/outline';
-import React from 'react';
-import Container from '@/src/components/container';
-import Layout from '@/src/components/layouts';
-import MyAccountNavMenu from '@/src/components/myAccount/myAccountNavMenu';
-import { CartContext } from '@/src/contex/CartContex';
-import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
+import React, { useState } from 'react';
 import { IOrders } from '@/src/interfaces/apollo/historyPage.interface';
 import { IRefreshJwtAuthToken } from '@/src/interfaces/apollo/login.interface';
-import { IData } from '@/src/interfaces/footerHeaderRestAPIDataResponse';
 import { REFRESH_JWT_AUTH_TOKEN } from '@/src/utils/apollo/mutationsConst';
-import { getAllCategories } from '@/src/utils/apollo/queries';
 import { GET_ORDERS } from '@/src/utils/apollo/queriesConst';
-import buildMenu from '@/src/utils/buildMenu';
-import { HEADER_FOOTER_ENDPOINT } from '@/src/utils/constants/endpoints';
 import {
   IAuthorizationHeader,
   getAuthorizationHeaderWithAuthToken,
@@ -21,12 +12,6 @@ import {
   setTokensInLocalStorage,
 } from '@/src/utils/helpers/localStorageHelpers';
 import { useMutation, useQuery } from '@apollo/client';
-import axios from 'axios';
-import { GetStaticProps } from 'next';
-
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useContext, useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { formattedDate } from '@/src/utils/helpers/dataHelpers';
 import { formatBelarusianCurrency, getStatusLabel } from '@/src/utils/helpers';
@@ -117,6 +102,7 @@ function OrderHistory() {
   return (
     <div className="w-full px-4 ">
       <div className="mx-auto w-full  rounded-2xl bg-white p-2">
+        {getOrdersLoading && <span>Синхронизация истории...</span>}
         {getOrdersData &&
           getOrdersData?.orders?.edges?.map((order, index) => (
             <Disclosure key={index} as="div" className="mt-2">
@@ -169,24 +155,6 @@ function OrderHistory() {
               )}
             </Disclosure>
           ))}
-        {/* 
-        <Disclosure as="div" className="mt-2">
-          {({ open }) => (
-            <>
-              <Disclosure.Button className="flex w-full justify-between rounded-md bg-indigo-100 px-4 py-2 text-left text-sm font-medium text-indigo-900 hover:bg-indigo-200 focus:outline-none focus-visible:ring focus-visible:ring-indigo-500 focus-visible:ring-opacity-75">
-                <span>Заказ №11009 от 24.04.2022</span>
-                <ChevronUpIcon
-                  className={`${
-                    open ? 'rotate-180 transform' : ''
-                  } h-5 w-5 text-indigo-500`}
-                />
-              </Disclosure.Button>
-              <Disclosure.Panel className="px-4 pb-2 pt-4 text-sm text-gray-500">
-                No.
-              </Disclosure.Panel>
-            </>
-          )}
-        </Disclosure> */}
       </div>
     </div>
   );
