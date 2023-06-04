@@ -18,6 +18,7 @@ import { CartAddButton } from '@/src/components/products/cartAddButton';
 import { sanitize } from '@/src/utils/miscellaneous';
 import { SliderProductPage } from '@/src/components/sliderProductPage';
 import { useRouter } from 'next/router';
+import Breadcrumbs from '@/src/components/breadcrumbs';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -38,11 +39,16 @@ export default function ProductPage({
 
   const { product } = productData;
   console.log(productData);
+  const breadcrumbs =
+    product?.productCategories?.edges[0]?.node?.seo?.breadcrumbs;
   return (
     <main className="">
       <Layout headerFooter={headerFooter || {}} menu={menu}>
         <Container>
-          <div className="grid grid-cols-5 ">
+          {breadcrumbs ? (
+            <Breadcrumbs breadcrumbs={breadcrumbs} clickable />
+          ) : null}
+          <div className="grid grid-cols-5 mt-4 ">
             <div className="col-span-3 my-4 border-r border-gray-200 pr-8">
               <SliderProductPage
                 images={product?.galleryImages?.edges}

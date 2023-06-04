@@ -553,6 +553,18 @@ query MyQuery2($id: ID = "karman-v-bagazhnik-na-lipuchke-universalnyj-40h30-sm-r
           }
         }
       }
+      productCategories {
+        edges {
+          node {
+            seo {
+              breadcrumbs {
+                text
+                url
+              }
+            }
+          }
+        }
+      }
       stockStatus
     }
   }

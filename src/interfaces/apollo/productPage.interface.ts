@@ -1,5 +1,7 @@
 // похожий интерфейс IGetProductsSimple
 
+import { IBreadcrumbs } from "../seo.interfaces";
+
 export interface IProductPage {
   product: Product;
 }
@@ -11,6 +13,7 @@ export interface Product {
   name: string;
   image: ImageProduct;
   galleryImages: GalleryImages;
+  productCategories: ProductCategories;
   description: null | string;
   shortDescription: null | string;
   price: string;
@@ -29,14 +32,31 @@ export interface GalleryImages {
   __typename: string;
   edges: GalleryImage[];
 }
+export interface ProductCategories {
+  __typename: string;
+  edges: ProductCategory[];
+}
 
 export interface GalleryImage {
   __typename: string;
   node: ImageProduct;
 }
 
+export interface ProductCategory {
+  __typename: string;
+  node: ProductCategoryNode;
+}
+
 export interface ImageProduct {
   __typename: string;
   altText: string;
   sourceUrl: string;
+}
+export interface ProductCategoryNode {
+  __typename: string;
+  seo: SEO;
+}
+
+export interface SEO {
+  breadcrumbs: IBreadcrumbs[];
 }

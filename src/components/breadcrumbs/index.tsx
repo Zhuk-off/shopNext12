@@ -6,12 +6,17 @@ import { FC } from 'react';
 
 type BreadcrumbsProps = {
   breadcrumbs: IBreadcrumbs[];
+  clickable?: boolean;
 };
 
-const Breadcrumbs: FC<BreadcrumbsProps> = ({ breadcrumbs }) => {
+const Breadcrumbs: FC<BreadcrumbsProps> = ({
+  breadcrumbs,
+  clickable = false,
+}) => {
   const homePageSlug = process.env.NEXT_PUBLIC_SITE_URL
     ? getSlugFromUrl(process.env.NEXT_PUBLIC_SITE_URL)
     : '/';
+  console.log(breadcrumbs);
   return (
     <nav className="text-xs font-medium">
       <ol className="inline-flex list-none flex-wrap p-0">
@@ -23,13 +28,13 @@ const Breadcrumbs: FC<BreadcrumbsProps> = ({ breadcrumbs }) => {
               {index !== 0 && (
                 <ChevronDoubleRightIcon width={10} className="mx-1" />
               )}
-              {index === breadcrumbs?.length - 1 ? (
+              {index === breadcrumbs?.length - 1 && !clickable ? (
                 breadcrumb.text
               ) : (
                 <Link
                   href={slug !== homePageSlug ? slug : '/'}
                   className={`${
-                    index === breadcrumbs?.length - 1
+                    index === breadcrumbs?.length - 1 && !clickable
                       ? 'text-gray-700 underline'
                       : 'text-gray-500 underline hover:text-gray-700'
                   }`}
