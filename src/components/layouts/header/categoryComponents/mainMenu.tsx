@@ -22,7 +22,6 @@ const MainMenu = ({
   toggleDropdown: any;
 }) => {
   const { setSubMenuItems } = useContext(DataContext);
-
   const handleMouseEnter = (data: MenuItem[]) => {
     setSubMenuItems(data);
   };

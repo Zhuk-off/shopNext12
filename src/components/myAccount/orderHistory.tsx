@@ -100,7 +100,7 @@ function OrderHistory() {
   }
 
   return (
-    <div className="w-full px-4 ">
+    <div className="w-full sm:px-4">
       <div className="mx-auto w-full  rounded-2xl bg-white p-2">
         {getOrdersLoading && <span>Синхронизация истории...</span>}
         {getOrdersData &&
@@ -108,21 +108,25 @@ function OrderHistory() {
             <Disclosure key={index} as="div" className="mt-2">
               {({ open }) => (
                 <>
-                  <Disclosure.Button className="grid w-full grid-cols-3 rounded-md bg-indigo-100 px-4 py-2 text-left text-sm font-medium text-indigo-900 hover:bg-indigo-200 focus:outline-none focus-visible:ring focus-visible:ring-indigo-500 focus-visible:ring-opacity-75">
+                  <Disclosure.Button className="grid w-full grid-cols-2 rounded-md bg-indigo-100 px-4 py-2 text-left text-sm font-medium text-indigo-900 hover:bg-indigo-200 focus:outline-none focus-visible:ring focus-visible:ring-indigo-500 focus-visible:ring-opacity-75 lg:grid-cols-3">
                     <div>
                       Заказ №{order.node.orderNumber} от{' '}
                       {formattedDate(order.node.date)}
                     </div>
-                    <div></div>
-                    <div className="grid grid-cols-3 justify-items-end">
-                      <div className="justify-self-center">
-                        <StatusLabel status={order.node.status} />
+                    <div className="hidden lg:block"></div>
+                    <div className="grid grid-cols-5 justify-items-end">
+                      <div className="col-span-4 flex flex-col items-end justify-items-end gap-x-2 md:flex-row">
+                        <div className="justify-self-center">
+                          <StatusLabel status={order.node.status} />
+                        </div>
+                        <div>
+                          {formatBelarusianCurrency(order.node.total)}р.
+                        </div>
                       </div>
-                      <div>{formatBelarusianCurrency(order.node.total)}р.</div>
                       <ChevronUpIcon
                         className={`${
                           open ? 'rotate-180 transform' : ''
-                        } h-5 w-5 text-indigo-500`}
+                        } col-span-1 h-5 w-5 text-indigo-500`}
                       />
                     </div>
                   </Disclosure.Button>
@@ -140,7 +144,7 @@ function OrderHistory() {
                         ></Image>
                         <p>{product?.node?.product?.node?.name}</p>
                       </div>
-                      <div className="flex items-center space-x-3">
+                      <div className="flex flex-col items-center space-x-3 sm:flex-row">
                         <p>{product?.node?.quantity}шт.</p>
                         <p>
                           {formatBelarusianCurrency(

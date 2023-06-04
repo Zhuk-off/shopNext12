@@ -53,10 +53,12 @@ const Header = ({
     <header className="relative bg-gray-100 shadow">
       <div className="mx-auto max-w-7xl bg-gray-100 px-2 sm:px-6 lg:px-8">
         <LocationContacts />
-        <NavMenu setIsMenuOpen={setIsMenuOpen} isMenuOpen={isMenuOpen} />
-
+        <NavMenu
+          setIsMenuOpen={setIsMenuOpen}
+          menu={menu}
+          isMenuOpen={isMenuOpen}
+        />
         <Promotions />
-
         {isMenuOpen && (
           <div className=" " ref={headerRef}>
             <DataContext.Provider value={{ subMenuItems, setSubMenuItems }}>

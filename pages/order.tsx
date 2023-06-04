@@ -181,7 +181,7 @@ export default function Order({
             </span>
           </div>
           {!loading ? (
-            <div className="mt-8 flex flex-grow">
+            <div className="mt-8 flex flex-grow flex-col gap-y-4 md:flex-row md:gap-y-0">
               <ul className="w-full flex-grow">
                 {productsByIds && databaseIds && databaseIds?.length !== 0 ? (
                   <CartOrderItems productsDataOrder={productsDataOrder} />
@@ -191,7 +191,7 @@ export default function Order({
                   </div>
                 )}
               </ul>
-              <div className="ml-12 rounded-lg shadow-lg">
+              <div className=" rounded-lg shadow-lg md:ml-12">
                 <TotalCard
                   sum={sum}
                   totalCount={totalCount}

@@ -16,7 +16,7 @@ export const CartOrderItem = ({
   // console.log('product.uri order',product.uri);
 
   return (
-    <div className="flex w-full mt-4 text-gray-900 transition-all ">
+    <div className="mt-4 flex w-full text-gray-900 transition-all ">
       <div className="mr-3 w-24 flex-shrink-0">
         <Link
           href={product.uri !== undefined ? product.uri : '#'}
@@ -35,7 +35,7 @@ export const CartOrderItem = ({
         </Link>
       </div>
       <div className="flex flex-grow flex-col border-b">
-        <div className="flex gap-3 md:gap-5 lg:gap-10">
+        <div className="flex flex-col gap-3 md:flex-row md:gap-5 lg:gap-10">
           <div className="flex-grow ">
             <Link
               href={product.uri !== undefined ? product.uri : '#'}
@@ -61,7 +61,7 @@ export const CartOrderItem = ({
               Нет в наличии
             </span>
           ) : product.price ? (
-            <div className="whitespace-nowrap">
+            <div className="whitespace-nowrap text-xl font-semibold md:text-base md:font-normal">
               {product.price.replace('Br', '')} р.
             </div>
           ) : null}

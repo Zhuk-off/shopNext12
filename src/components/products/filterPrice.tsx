@@ -50,10 +50,10 @@ export const FilterPrice = () => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-2 flex flex-col items-center justify-items-center gap-2 md:flex-row"
+      className="mx-2 flex flex-col items-center justify-items-center gap-2 lg:flex-row"
     >
       <span className="block">Цена</span>
-      <label className="text-base" htmlFor="minPrice">
+      <label className="flex items-center text-base" htmlFor="minPrice">
         <span className="pr-2">от</span>
         <input
           type="text"
@@ -62,7 +62,7 @@ export const FilterPrice = () => {
           className="w-32 rounded-md border border-gray-400 px-2 py-1 focus:outline-none focus:ring-gray-400"
         />
       </label>
-      <label className="mx-2 text-base " htmlFor="maxPrice">
+      <label className="mx-2 flex items-center text-base" htmlFor="maxPrice">
         <span className="pr-2">до</span>
         <input
           value={maxPrice ? maxPrice : ''}

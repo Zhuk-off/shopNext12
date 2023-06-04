@@ -28,11 +28,13 @@ function ListItem({
   }
   return (
     <li className="flex items-center justify-between gap-x-6 border-t border-gray-100 py-5">
-      <div className="flex gap-x-4">
+      <div className="flex gap-x-4 overflow-hidden text-ellipsis">
         {image}
-        <div className="min-w-0 flex-auto">
+        <div className="flex min-w-0 flex-col">
           <p className="text-sm  leading-6 text-gray-400">{label}</p>
-          <p className="text mt-1 truncate leading-5 text-gray-900">{data}</p>
+          <p className="mt-1 overflow-hidden text-ellipsis leading-5 text-gray-900">
+            {data}
+          </p>
         </div>
       </div>
       <div className="flex items-end ">

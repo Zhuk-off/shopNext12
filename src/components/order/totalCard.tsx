@@ -23,7 +23,7 @@ export const TotalCard = ({
   const sumWithComa = sumToStringWithComa(sum);
 
   return (
-    <div className="w-72 p-8">
+    <div className="w-full p-8 md:w-72">
       <div className="mb-4 flex justify-between border-b pb-2 text-lg font-bold">
         <span>Итого</span>
         <div className="">

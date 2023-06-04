@@ -7,9 +7,7 @@ import axios from 'axios';
 import { Inter } from 'next/font/google';
 import { GetStaticProps } from 'next';
 import { getAllCategories } from '@/src/utils/apollo/queries';
-import { CounterOrderPage } from '@/src/components/order/counterOrderPage';
 import Container from '@/src/components/container';
-import { TotalCard } from '@/src/components/order/totalCard';
 import { useContext, useEffect, useState } from 'react';
 import { CartContext } from '@/src/contex/CartContex';
 import { useQuery, useReactiveVar } from '@apollo/client';
@@ -19,7 +17,6 @@ import {
 } from '@/src/interfaces/apollo/getOrderData.interfase';
 import { GET_PRODUCTS_BY_IDS_ORDER_CARD } from '@/src/utils/apollo/queriesConst';
 import { IPproductsDataOrder } from '@/src/interfaces/cart.interface';
-import { CartOrderItems } from '@/src/components/order/cartOrderItems';
 import { useRouter } from 'next/router';
 import {
   getDatabaseIds,
@@ -199,8 +196,8 @@ export default function Order({
           </div>
           {!loading ? (
             personalData.orderStatus !== 'success' ? (
-              <div className="mt-8 flex flex-grow">
-                <ul className="w-full flex-grow">
+              <div className="mt-8 flex flex-grow flex-col-reverse lg:flex-row">
+                <ul className="hidden w-full flex-grow sm:block">
                   {productsByIds && databaseIds && databaseIds?.length !== 0 ? (
                     <CartCheckoutItems
                       productsDataOrder={productsDataOrder}
@@ -214,7 +211,7 @@ export default function Order({
                     </div>
                   )}
                 </ul>
-                <div className="ml-12 rounded-lg shadow-lg">
+                <div className=" rounded-lg shadow-lg lg:ml-12">
                   <ChekcoutInfo
                     sum={sum}
                     totalCount={totalCount}
@@ -236,16 +233,16 @@ export default function Order({
                     В ближайшее время мы начнем его комплектовать.
                   </div>
                 </div>
-                <div className="mx-auto mt-4 flex max-w-lg space-x-5">
+                <div className="mx-auto mt-4 flex max-w-lg flex-wrap gap-4 sm:flex-nowrap">
                   <Link
                     href={'/'}
-                    className="mt-8 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    className="flex w-full justify-center whitespace-nowrap rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
                     На Главную
                   </Link>
                   <Link
                     href={'/my-account/history'}
-                    className="mt-8 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    className="flex w-full justify-center whitespace-nowrap rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
                     В Кабинет
                   </Link>

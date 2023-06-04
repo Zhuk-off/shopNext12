@@ -205,7 +205,7 @@ export default function Login() {
           >
             <ArrowLeftIcon width={15} height={15} /> На главную
           </Link>
-          <CartButtons />
+          {/* <CartButtons /> */}
           {session === null ? (
             <div className="flex min-h-full items-center justify-center p-4 text-center">
               <div className="justify-cent7er flex min-h-full flex-1 flex-col px-6 py-12 lg:px-8">
@@ -246,7 +246,7 @@ export default function Login() {
                           })}
                           id="username"
                           name="username"
-                          type='email'
+                          type="email"
                           required
                           className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                           onChange={(e) => handleFieldChange(e)}

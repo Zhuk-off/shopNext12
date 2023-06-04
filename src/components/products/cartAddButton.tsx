@@ -34,7 +34,7 @@ export const CartAddButton = ({
       {buttonStatus === 'enable' ? (
         <button
           className={classNames(
-            'flex-shrink-0 rounded border-2 border-pink-800 px-4 py-2 transition',
+            'flex-shrink-0 whitespace-nowrap rounded border-2 border-pink-800 px-4 py-2 transition',
             {
               'font-medium text-pink-700 hover:border-pink-800 hover:text-pink-800':
                 isAddedToCart,
@@ -61,7 +61,7 @@ export const CartAddButton = ({
       ) : (
         <button
           disabled
-          className="flex-shrink-0 rounded bg-gray-300 px-4 py-2 text-white transition"
+          className="flex-shrink-0 whitespace-nowrap rounded bg-gray-300 px-4 py-2 text-white transition"
         >
           В корзину
         </button>

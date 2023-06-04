@@ -42,24 +42,24 @@ export default function ProductPage({
   const breadcrumbs =
     product?.productCategories?.edges[0]?.node?.seo?.breadcrumbs;
   return (
-    <main className="">
+    <main>
       <Layout headerFooter={headerFooter || {}} menu={menu}>
         <Container>
           {breadcrumbs ? (
             <Breadcrumbs breadcrumbs={breadcrumbs} clickable />
           ) : null}
-          <div className="grid grid-cols-5 mt-4 ">
-            <div className="col-span-3 my-4 border-r border-gray-200 pr-8">
+          <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
+            <div className="border border-gray-200 pr-8 md:col-span-3 lg:col-span-2">
               <SliderProductPage
                 images={product?.galleryImages?.edges}
                 coverImage={product?.image}
               />
             </div>
-            <div className="col-span-2 px-5 py-4">
-              <h1 className=" text-2xl font-bold text-gray-700">
+            <div className="px-5 py-4 md:col-span-2 lg:col-span-3">
+              <h1 className="text-2xl font-bold text-gray-700">
                 {product?.name}
               </h1>
-              <div className="mt-8 flex items-center space-x-8">
+              <div className="mt-8 flex flex-row flex-wrap items-start gap-x-8 gap-y-4">
                 <div className="">
                   {product?.price ? (
                     <div className="text-3xl font-bold text-pink-700">
@@ -85,7 +85,6 @@ export default function ProductPage({
                   </span>
                 ) : (
                   <span className="font-semibold text-pink-600">
-                    {' '}
                     Нет на складе
                   </span>
                 )}

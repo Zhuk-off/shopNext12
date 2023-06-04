@@ -28,7 +28,7 @@ export default function Home({
         <Container>
           <Search />
         </Container>
-        <div className="mb-20 mt-12 rounded-xl px-20 ">
+        <div className="mb-20 mt-12 rounded-xl ">
           <Slider />
         </div>
         <Banners />

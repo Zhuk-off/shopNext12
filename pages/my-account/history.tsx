@@ -23,11 +23,11 @@ export default function MyAccount({
   return (
     <Layout headerFooter={headerFooter || {}} menu={menu}>
       <Container>
-        <div className="grid grid-cols-4">
-          <div className="h-min-1/2 col-span-1">
+        <div className="flex flex-col sm:grid sm:grid-cols-4">
+          <div className=" sm:h-min-1/2  sm:col-span-1">
             <MyAccountNavMenu />
           </div>
-          <div className="col-span-3">
+          <div className=" sm:col-span-3">
             <OrderHistory />{' '}
           </div>
         </div>

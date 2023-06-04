@@ -156,6 +156,7 @@ export const ChekcoutInfo = ({
         change: false,
       }));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [personalData.change, userDataData]);
 
   const handleFieldChange = (e: { target: { id: string; value: string } }) => {
@@ -255,7 +256,7 @@ export const ChekcoutInfo = ({
   console.log('totalCount', totalCount);
 
   return (
-    <div className="flex w-96 flex-col space-y-3 p-8">
+    <div className="flex flex-col space-y-3 p-8 lg:w-96">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label
