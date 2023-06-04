@@ -16,13 +16,11 @@ const Breadcrumbs: FC<BreadcrumbsProps> = ({
   const homePageSlug = process.env.NEXT_PUBLIC_SITE_URL
     ? getSlugFromUrl(process.env.NEXT_PUBLIC_SITE_URL)
     : '/';
-  console.log(breadcrumbs);
   return (
     <nav className="text-xs font-medium">
       <ol className="inline-flex list-none flex-wrap p-0">
         {breadcrumbs.map((breadcrumb, index) => {
           const slug = getSlugFromUrl(breadcrumb.url);
-
           return (
             <li className="flex items-center" key={index}>
               {index !== 0 && (
@@ -32,7 +30,7 @@ const Breadcrumbs: FC<BreadcrumbsProps> = ({
                 breadcrumb.text
               ) : (
                 <Link
-                  href={slug !== homePageSlug ? slug : '/'}
+                href={slug !== homePageSlug ? `/${slug}` : '/'}
                   className={`${
                     index === breadcrumbs?.length - 1 && !clickable
                       ? 'text-gray-700 underline'
