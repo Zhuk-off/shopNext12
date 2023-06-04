@@ -17,19 +17,25 @@ import { formatBelarusianCurrency } from '@/src/utils/helpers';
 import { CartAddButton } from '@/src/components/products/cartAddButton';
 import { sanitize } from '@/src/utils/miscellaneous';
 import { SliderProductPage } from '@/src/components/sliderProductPage';
+import { useRouter } from 'next/router';
 
 const inter = Inter({ subsets: ['latin'] });
 
-export default function Category({
+export default function ProductPage({
   headerFooter,
   menu,
-
   productData,
 }: {
   headerFooter: IData | undefined;
   menu: MenuItem[];
   productData: IProductPage;
 }) {
+  const router = useRouter();
+  // надо для сборки build, чтобы на возникало ошибки
+  if (router.isFallback) {
+    return <h1>Загрузка...</h1>;
+  }
+
   const { product } = productData;
   console.log(productData);
   return (
@@ -99,7 +105,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const paths: string[] = await getAllProductsURI();
   return {
     paths,
-    fallback: false,
+    fallback: true,
   };
 };
 
@@ -108,8 +114,10 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const categories = await getAllCategories();
   const menuObjectArr = buildMenu(categories);
   const slug = params?.product;
-  const productData = slug ? await getProductDataByURI(slug) : {};
-
+  const productData = slug ? await getProductDataByURI(slug) : null;
+  if (!productData) {
+    return { notFound: true };
+  }
   return {
     props: {
       headerFooter: headerFooterData?.data ?? {},

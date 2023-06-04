@@ -38,7 +38,7 @@ const MainMenu = ({
             >
               <Link
                 href={menuItem.slug}
-                className="block"
+                className="block py-1"
                 onMouseEnter={() =>
                   handleMouseEnter(menuItem?.children ? menuItem?.children : [])
                 }

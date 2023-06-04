@@ -19,7 +19,7 @@ export const CartRemoveButton = ({
   return (
     <>
       <button
-        className="border"
+        className="border px-3 rounded hover:bg-gray-50 text-gray-800"
         onClick={() =>
           addToCart(
             idProduct,

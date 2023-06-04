@@ -143,6 +143,9 @@ function ProductsList({
   // получение данных о товарах
   const { loading, error, data } = useQuery(queryFunc(), {
     variables: variablesFunc(),
+    // fetchPolicy: 'cache-and-network',
+    // fetchPolicy: 'cache-first',
+    // nextFetchPolicy: 'cache-first',
     pollInterval: 10000,
   });
 

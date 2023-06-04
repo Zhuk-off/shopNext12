@@ -16,7 +16,7 @@ export const CartOrderItem = ({
   // console.log('product.uri order',product.uri);
 
   return (
-    <div className="flex w-full ">
+    <div className="flex w-full mt-4 text-gray-900 transition-all ">
       <div className="mr-3 w-24 flex-shrink-0">
         <Link
           href={product.uri !== undefined ? product.uri : '#'}
@@ -36,10 +36,10 @@ export const CartOrderItem = ({
       </div>
       <div className="flex flex-grow flex-col border-b">
         <div className="flex gap-3 md:gap-5 lg:gap-10">
-          <div className="flex-grow hover:text-gray-400">
+          <div className="flex-grow ">
             <Link
               href={product.uri !== undefined ? product.uri : '#'}
-              className={classNames('mr-6 font-medium ', {
+              className={classNames('mr-6 font-medium hover:text-gray-400', {
                 'line-clamp-3 cursor-default text-gray-400 line-through':
                   !availability,
               })}
@@ -73,7 +73,7 @@ export const CartOrderItem = ({
               databaseId={product.databaseId}
               productQuantity={product.quantity}
             />
-            <button className="border">В избранное</button>
+            {/* <button className="border">В избранное</button> */}
           </div>
         </div>
       </div>

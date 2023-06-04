@@ -4,6 +4,23 @@ export const client = new ApolloClient({
   uri: 'https://sp.zhu.by/graphql',
   cache: new InMemoryCache({
     typePolicies: {
+      // Query: {
+      //   fields: {
+      //     AllProductsInCategories: {
+      //       keyArgs: false,
+      //       merge(existing = [], incoming, { args }) {
+      //         const merged = existing ? existing.slice(0) : [];
+      //         const offset = args?.offset || 0;
+        
+      //         for (let i = 0; i < incoming.length; ++i) {
+      //           merged[offset + i] = incoming[i];
+      //         }
+        
+      //         return merged;
+      //       },
+      //     },
+      //   },
+      // },
       // Type policy map
       Cart: {
         fields: {
