@@ -36,7 +36,7 @@ function ProductsList({
   // количество товаров на страницу
 
   // текущая страница - входной параметр - по умолчанию ставится 1 при вызовен на уровне выше, записывается в стейт
-  const [currentPage, setCurrentPage] = useState(1);
+
   // общее количество страниц - 1 - минимальное количество
   const [totalPages, setTotalPages] = useState(1);
   // предыдущее количество страниц - нужно, чтобы при переключении страницы пока loading, общее количество страниц не сбрасывалось на ноль
@@ -48,16 +48,29 @@ function ProductsList({
   // сотояние controlBar
   const { controlBar, setControlBars } = useContext(ControlBarContext);
 
+  const [count, setCount] = useState(0);
+
   /* Необходимо, для того, чтобы при переходе на новую страницу стейт не сохранялся старый
   из за этого товар не найден, потому что он учавствует в запросе, а также при изменении вывода
-  количества товаров на страницу*/
+  количества товаров на страницу
+  чтобы не сбрасывалась пагинация при нажатии кнопки назад с карточки товара в каталог реализовано условие controlBar.currentCat !== router.asPath
+  */
   useEffect(() => {
-    setCurrentPage(1);
+    if (controlBar.currentCat !== router.asPath) {
+      setControlBars({
+        ...controlBar,
+        currentPage: 1,
+        currentCat: router.asPath,
+      });
+    } else {
+      setControlBars({ ...controlBar, currentCat: router.asPath });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query.category, controlBar.productsPerPage]);
 
   const variablesFunc = () => {
     let variables: IVariables = {
-      offset: (currentPage - 1) * controlBar.productsPerPage,
+      offset: (controlBar.currentPage - 1) * controlBar.productsPerPage,
       size: controlBar.productsPerPage,
       categorySlugs: mainAndChildrenSlugs,
     };
@@ -189,9 +202,11 @@ function ProductsList({
           controlBarFaster={controlBar}
         />
         <Pagination
-          currentPage={currentPage}
+          currentPage={controlBar.currentPage}
           totalPages={totalPages}
-          onPageChange={(newPage: any) => setCurrentPage(newPage)}
+          onPageChange={(newPage: any) =>
+            setControlBars({ ...controlBar, currentPage: newPage })
+          }
           totalProducts={totalProducts}
         />
       </div>
@@ -214,10 +229,12 @@ function ProductsList({
         controlBarFaster={controlBar}
       />
       <Pagination
-        currentPage={currentPage}
+        currentPage={controlBar.currentPage}
         totalPages={totalPages}
         onPageChange={(newPage: any) => {
-          setCurrentPage(newPage);
+          setControlBars(() => {
+            return { ...controlBar, currentPage: newPage };
+          });
           setTotalPages(totalPages);
           setPrevTotalProducts(totalProducts);
         }}

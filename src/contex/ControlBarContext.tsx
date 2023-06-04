@@ -19,6 +19,8 @@ export interface IControlBar {
   sortName: SortName;
   minPrice?: number | null;
   maxPrice?: number | null;
+  currentPage: number;
+  currentCat: string;
 }
 
 interface IControlBarContex {
@@ -34,11 +36,17 @@ export const ControlBarContext = createContext<IControlBarContex>({
     sortName: '',
     minPrice: null,
     maxPrice: null,
+    currentPage: 1,
+    currentCat: '',
   },
   setControlBars: () => {},
 });
 
-export const ControlBarContextProvider = ({ children }: { children: ReactNode }) => {
+export const ControlBarContextProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
   const [controlBar, setControlBars] = useState<IControlBar>({
     productsPerPage: 12,
     viewProducts: 'card',
@@ -46,6 +54,8 @@ export const ControlBarContextProvider = ({ children }: { children: ReactNode })
     sortName: '',
     minPrice: null,
     maxPrice: null,
+    currentPage: 1,
+    currentCat: '',
   });
 
   return (
