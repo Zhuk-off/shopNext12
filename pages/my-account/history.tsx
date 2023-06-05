@@ -10,6 +10,8 @@ import { HEADER_FOOTER_ENDPOINT } from '@/src/utils/constants/endpoints';
 import axios from 'axios';
 import { GetStaticProps } from 'next';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 export default function MyAccount({
   headerFooter,
@@ -18,19 +20,28 @@ export default function MyAccount({
   headerFooter: IData | undefined;
   menu: MenuItem[];
 }) {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login');
+    }
+  }, [router, status]);
 
   return (
     <Layout headerFooter={headerFooter || {}} menu={menu}>
       <Container>
-        <div className="flex flex-col sm:grid sm:grid-cols-4">
-          <div className=" sm:h-min-1/2  sm:col-span-1">
-            <MyAccountNavMenu />
+        {status !== 'unauthenticated' ? (
+          <div className="flex flex-col sm:grid sm:grid-cols-4">
+            <div className=" sm:h-min-1/2  sm:col-span-1">
+              <MyAccountNavMenu />
+            </div>
+            <div className=" sm:col-span-3">
+              <OrderHistory />{' '}
+            </div>
           </div>
-          <div className=" sm:col-span-3">
-            <OrderHistory />{' '}
-          </div>
-        </div>
+        ) : null}
       </Container>
     </Layout>
   );

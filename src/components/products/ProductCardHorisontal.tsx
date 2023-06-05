@@ -51,8 +51,8 @@ const ProductCardHorisontal = ({
       </Link>
       <div className="col-span-1 flex border-gray-200 px-4 lg:col-span-3">
         <div className="flex-1 overflow-hidden">
-          <Link href={`/product/${uri}`}>
-            <h2 className="line-clamp-3 text-center text-lg font-medium text-blue-500 underline hover:text-red-500 lg:line-clamp-4 lg:text-start">
+          <Link href={`/product/${uri}`} className='visited:text-purple-500  text-blue-500 underline hover:text-red-500'>
+            <h2 className="line-clamp-3 text-center text-lg font-medium lg:line-clamp-4 lg:text-start">
               {title}
             </h2>
           </Link>

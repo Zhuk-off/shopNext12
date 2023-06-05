@@ -39,8 +39,8 @@ const callsToAction = [
 
 const LocationContacts = () => {
   return (
-    <div className="hidden md:flex p-2 whitespace-nowrap items-center">
-      <div className='hover:text-red-500 mr-2'>
+    <div className="hidden items-center whitespace-nowrap p-2 md:flex">
+      <div className="mr-2 hover:text-red-500">
         <button
           type="button"
           className="flex items-center gap-1 focus:outline-none focus:ring"
@@ -51,8 +51,12 @@ const LocationContacts = () => {
         </button>
       </div>
       <div className="flex h-full w-1/2 justify-end gap-3 border-r">
-        <Link href={'#'} className='hidden lg:block hover:text-red-500'>Оплата частями</Link>
-        <Link href={'#'} className='hidden lg:block hover:text-red-500'>Бонусная программа</Link>
+        <Link href={'#'} className="hidden hover:text-red-500 lg:block">
+          Оплата частями
+        </Link>
+        <Link href={'#'} className="hidden hover:text-red-500 lg:block">
+          Бонусная программа
+        </Link>
         <Popover.Group className="flex lg:gap-x-12">
           <Popover className="relative">
             <Popover.Button className="flex items-center gap-x-1 hover:text-red-500 focus:outline-none focus:ring-0">
@@ -75,7 +79,7 @@ const LocationContacts = () => {
               <Popover.Panel className="absolute z-10 max-w-md overflow-hidden rounded-md bg-white shadow-lg ring-1 ring-gray-900/5">
                 <div className="p-3">
                   {products.map((item) => (
-                    <Link key={item.name} href={item.href}>
+                    <Link key={item.name} href={`/${item.href}`}>
                       <div className="group relative flex items-center gap-x-6 rounded-lg p-1 leading-6 hover:bg-red-100 hover:text-red-500">
                         <div>{item.name}</div>
                       </div>
@@ -89,8 +93,12 @@ const LocationContacts = () => {
       </div>
 
       <div className="flex h-full w-1/2 justify-end gap-3 border-r">
-        <Link href={'#'} className='hover:text-red-500'>Viber</Link>
-        <Link href={'#'} className='hover:text-red-500'>+375 29 344 55 66</Link>
+        <Link href={'#'} className="hover:text-red-500">
+          Viber
+        </Link>
+        <Link href={'#'} className="hover:text-red-500">
+          +375 29 344 55 66
+        </Link>
 
         <Popover.Group className="flex lg:gap-x-12">
           <Popover className="relative">
@@ -137,16 +145,14 @@ const LocationContacts = () => {
         </Popover.Group>
       </div>
 
-      <div className="flex justify-center items-center gap-3 px-2">
+      <div className="flex items-center justify-center gap-3 px-2">
         <div className="w-4">
-          <Clock className='text-slate-500' />
+          <Clock className="text-slate-500" />
         </div>
         <div>
           <div className="text-xs text-slate-500">Контакт-центр</div>
           <div className="text-xs text-slate-500">с 8:00 до 22:00</div>
         </div>
-
-
       </div>
     </div>
   );

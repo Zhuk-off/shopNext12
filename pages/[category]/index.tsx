@@ -12,9 +12,6 @@ import buildMenu from '@/src/utils/buildMenu';
 import { HEADER_FOOTER_ENDPOINT } from '@/src/utils/constants/endpoints';
 import {
   ApolloQueryResult,
-  gql,
-  useQuery,
-  useReactiveVar,
 } from '@apollo/client';
 import axios from 'axios';
 import { Inter } from 'next/font/google';
@@ -31,8 +28,6 @@ import Container from '@/src/components/container';
 import ProductsList from '@/src/components/pagiation/productsList';
 import Search from '@/src/components/search';
 import { getAllCategories } from '@/src/utils/apollo/queries';
-import { cartVar } from '@/src/utils/apollo/reactiveVar';
-import { ICartLocalStorage } from '@/src/interfaces/cart.interface';
 
 const inter = Inter({ subsets: ['latin'] });
 

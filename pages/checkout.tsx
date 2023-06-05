@@ -50,11 +50,17 @@ export default function Order({
     orderNumber: '640012',
     orderStatus: '',
   });
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/login');
+    }
+  }, [router, status]);
 
   // const cartA = useReactiveVar(cartVar);
   const [cart, setCart] = useContext(CartContext);
-  const router = useRouter();
   const databaseIds = getDatabaseIds(cart);
 
   let hasNextPage = false;
@@ -185,76 +191,80 @@ export default function Order({
   return (
     <main>
       <Layout headerFooter={headerFooter || {}} menu={menu}>
-        <Container>
-          <div className="relative border-b font-semibold">
-            <span className="inline-block border-b-2 border-black pb-5">
-              Оформить
-            </span>
-            <span className="absolute left-16 top-0 inline-block text-xs font-bold">
-              {/* <CounterOrderPage /> */}
-            </span>
-          </div>
-          {!loading ? (
-            personalData.orderStatus !== 'success' ? (
-              <div className="mt-8 flex flex-grow flex-col-reverse lg:flex-row">
-                <ul className="hidden w-full flex-grow sm:block">
-                  {productsByIds && databaseIds && databaseIds?.length !== 0 ? (
-                    <CartCheckoutItems
-                      productsDataOrder={productsDataOrder}
+        {status !== 'unauthenticated' ? (
+          <Container>
+            <div className="relative border-b font-semibold">
+              <span className="inline-block border-b-2 border-black pb-5">
+                Оформить
+              </span>
+              <span className="absolute left-16 top-0 inline-block text-xs font-bold">
+                {/* <CounterOrderPage /> */}
+              </span>
+            </div>
+            {!loading ? (
+              personalData.orderStatus !== 'success' ? (
+                <div className="mt-8 flex flex-grow flex-col-reverse lg:flex-row">
+                  <ul className="hidden w-full flex-grow sm:block">
+                    {productsByIds &&
+                    databaseIds &&
+                    databaseIds?.length !== 0 ? (
+                      <CartCheckoutItems
+                        productsDataOrder={productsDataOrder}
+                        sum={sum}
+                        totalCount={totalCount}
+                        loading={loading}
+                      />
+                    ) : (
+                      <div className="border-b-2 border-b-pink-700 text-center text-lg font-semibold text-pink-700">
+                        Нет товаров в корзине
+                      </div>
+                    )}
+                  </ul>
+                  <div className=" rounded-lg shadow-lg lg:ml-12">
+                    <ChekcoutInfo
                       sum={sum}
                       totalCount={totalCount}
                       loading={loading}
+                      personalData={personalData}
+                      setPersonalData={setPersonalData}
                     />
-                  ) : (
-                    <div className="border-b-2 border-b-pink-700 text-center text-lg font-semibold text-pink-700">
-                      Нет товаров в корзине
-                    </div>
-                  )}
-                </ul>
-                <div className=" rounded-lg shadow-lg lg:ml-12">
-                  <ChekcoutInfo
-                    sum={sum}
-                    totalCount={totalCount}
-                    loading={loading}
-                    personalData={personalData}
-                    setPersonalData={setPersonalData}
-                  />
-                </div>
-              </div>
-            ) : (
-              <div className="h-screen">
-                <div className="mx-auto mt-8 max-w-4xl text-center text-2xl font-medium   text-green-600">
-                  Спасибо за заказ! Ваш заказ{' '}
-                  <span className="font-bold text-green-700">
-                    №{personalData.orderNumber}
-                  </span>{' '}
-                  отправлен.{' '}
-                  <div className="mt-1 text-xl">
-                    В ближайшее время мы начнем его комплектовать.
                   </div>
                 </div>
-                <div className="mx-auto mt-4 flex max-w-lg flex-wrap gap-4 sm:flex-nowrap">
-                  <Link
-                    href={'/'}
-                    className="flex w-full justify-center whitespace-nowrap rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                  >
-                    На Главную
-                  </Link>
-                  <Link
-                    href={'/my-account/history'}
-                    className="flex w-full justify-center whitespace-nowrap rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                  >
-                    В Кабинет
-                  </Link>
+              ) : (
+                <div className="h-screen">
+                  <div className="mx-auto mt-8 max-w-4xl text-center text-2xl font-medium   text-green-600">
+                    Спасибо за заказ! Ваш заказ{' '}
+                    <span className="font-bold text-green-700">
+                      №{personalData.orderNumber}
+                    </span>{' '}
+                    отправлен.{' '}
+                    <div className="mt-1 text-xl">
+                      В ближайшее время мы начнем его комплектовать.
+                    </div>
+                  </div>
+                  <div className="mx-auto mt-4 flex max-w-lg flex-wrap gap-4 sm:flex-nowrap">
+                    <Link
+                      href={'/'}
+                      className="flex w-full justify-center whitespace-nowrap rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    >
+                      На Главную
+                    </Link>
+                    <Link
+                      href={'/my-account/history'}
+                      className="flex w-full justify-center whitespace-nowrap rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    >
+                      В Кабинет
+                    </Link>
+                  </div>
                 </div>
+              )
+            ) : (
+              <div className="mt-8 h-[520px] font-medium text-gray-600">
+                Обновление корзины...
               </div>
-            )
-          ) : (
-            <div className="mt-8 h-[520px] font-medium text-gray-600">
-              Обновление корзины...
-            </div>
-          )}
-        </Container>
+            )}
+          </Container>
+        ) : null}
       </Layout>
     </main>
   );

@@ -12,7 +12,7 @@ const SubMenu = ({ toggleDropdown }: { toggleDropdown: any }) => {
       {subMenuItems.map((menuItem, index) => (
         <li key={index} className="pb-2 leading-tight">
           <Link
-            href={menuItem.slug}
+            href={`/${menuItem.slug}`}
             className=" font-semibold hover:bg-red-50 hover:text-red-600 "
             onClick={toggleDropdown}
           >

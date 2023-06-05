@@ -18,7 +18,7 @@ export const CartCheckoutItem = ({
     <div className="flex w-full ">
       <div className="mr-3 w-24 flex-shrink-0">
         <Link
-          href={product.uri !== undefined ? product.uri : '#'}
+          href={product.uri !== undefined ? `${product.uri}` : '#'}
           className={classNames('hover:opacity-70', {
             bar: availability,
             'cursor-default opacity-70': !availability,
@@ -37,7 +37,7 @@ export const CartCheckoutItem = ({
         <div className="flex gap-3 md:gap-5 lg:gap-10">
           <div className="flex-grow text-gray-500">
             <Link
-              href={product.uri !== undefined ? product.uri : '#'}
+              href={product.uri !== undefined ? `${product.uri}` : '#'}
               className={classNames('mr-6 font-medium ', {
                 'line-clamp-3 cursor-default text-gray-400 line-through':
                   !availability,

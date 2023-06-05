@@ -24,7 +24,7 @@ const SubMenuRecursive = ({
         items.slice(0, MAX_SUBCATEGORY_OPEN).map((item) => (
           <li key={item.name} className="mt-2">
             <Link
-              href={item.slug}
+              href={`/${item.slug}`}
               className="font-normal text-gray-800 hover:text-red-600"
               onClick={toggleDropdown}
             >
@@ -39,7 +39,7 @@ const SubMenuRecursive = ({
               {dropdownItems.map((item) => (
                 <li key={item.id} className="mt-2">
                   <Link
-                    href={item.slug}
+                    href={`/${item.slug}`}
                     className="font-normal hover:text-red-600"
                     onClick={toggleDropdown}
                   >
@@ -67,7 +67,7 @@ const SubMenuRecursive = ({
 
       {/* {items.map((item) => (
         <li key={item.catName + item.link}>
-          <Link href={item.link} className="font-normal hover:text-red-600">
+          <Link href={`/${item.link}`} className="font-normal hover:text-red-600">
             {item.catName}
           </Link>
           {item?.submenu && <SubMenuRecursive items={item?.submenu} />}

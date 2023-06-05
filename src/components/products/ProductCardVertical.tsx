@@ -39,8 +39,8 @@ const ProductCardVertical = ({
 
       <div className="mt-2 flex px-4">
         <div className="flex-1 overflow-hidden">
-          <Link href={`/product/${uri}`}>
-            <h2 className="line-clamp-3 min-h-[72px] text-center text-base font-medium text-blue-500 underline hover:text-red-500">
+          <Link href={`/product/${uri}`} className='visited:text-purple-500  text-blue-500 underline hover:text-red-500'>
+            <h2 className="line-clamp-3 min-h-[72px] text-center text-base font-medium">
               {title}
             </h2>
           </Link>

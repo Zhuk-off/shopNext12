@@ -52,7 +52,7 @@ const Offers = () => {
               key={offer.id}
               className="overflow-hidden rounded-lg bg-white shadow-md"
             >
-              <Link href={offer.link}>
+              <Link href={`/${offer.link}`}>
                 <Image
                   src={offer.image}
                   alt={offer.title}
@@ -64,7 +64,7 @@ const Offers = () => {
               <div className="p-4">
                 <h3 className="mb-2 text-xl font-semibold">{offer.title}</h3>
                 <Link
-                  href={offer.link}
+                  href={`/${offer.link}`}
                   className="text-blue-500 hover:text-blue-600"
                 >
                   Подробнее

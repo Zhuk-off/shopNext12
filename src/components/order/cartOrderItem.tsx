@@ -19,7 +19,7 @@ export const CartOrderItem = ({
     <div className="mt-4 flex w-full text-gray-900 transition-all ">
       <div className="mr-3 w-24 flex-shrink-0">
         <Link
-          href={product.uri !== undefined ? product.uri : '#'}
+          href={product.uri !== undefined ? `${product.uri}` : '#'}
           className={classNames('hover:opacity-70', {
             bar: availability,
             'cursor-default opacity-70': !availability,
@@ -38,7 +38,7 @@ export const CartOrderItem = ({
         <div className="flex flex-col gap-3 md:flex-row md:gap-5 lg:gap-10">
           <div className="flex-grow ">
             <Link
-              href={product.uri !== undefined ? product.uri : '#'}
+              href={product.uri !== undefined ? `${product.uri}` : '#'}
               className={classNames('mr-6 font-medium hover:text-gray-400', {
                 'line-clamp-3 cursor-default text-gray-400 line-through':
                   !availability,

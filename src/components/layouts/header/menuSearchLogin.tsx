@@ -147,7 +147,7 @@ const NavMenu = ({
                             className="mt-2 text-gray-600 hover:bg-red-50 hover:text-red-600"
                           >
                             <Link
-                              href={menuItem.slug}
+                              href={`/${menuItem.slug}`}
                               className="block py-1"
                               onMouseEnter={() =>
                                 handleMouseEnter(

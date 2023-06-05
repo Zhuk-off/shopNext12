@@ -37,7 +37,7 @@ const SubCategories = ({
             childrenSlugName.slice(0, MAX_SUBCATEGORY_OPEN).map((item) => (
               <li key={item.name}>
                 <Link
-                  href={item.slug}
+                  href={`/${item.slug}`}
                   className="text-blue-500 underline hover:text-red-500"
                 >
                   {item.name}
@@ -49,7 +49,7 @@ const SubCategories = ({
             childrenSlugName.map((item, index) => (
               <li key={item.slug + index.toString()}>
                 <Link
-                  href={item.slug}
+                  href={`/${item.slug}`}
                   className="text-blue-500 underline hover:text-red-500"
                 >
                   {item.name}

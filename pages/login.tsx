@@ -177,7 +177,7 @@ export default function Login() {
       // apolloClient // обновление Apollo кеша вызывает ошибку TypeError: Cannot read properties of undefined (reading 'data')
     );
     // console.log('router back done');
-    // router.back();
+    router.back();
   }
 
   if (
@@ -188,7 +188,7 @@ export default function Login() {
   ) {
     console.log('router back  session && refreshToken !== null');
     try {
-      // router.back();
+      router.back();
       // console.log('router back');
     } catch (error) {
       console.log(error);

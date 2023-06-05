@@ -22,7 +22,7 @@ export const Banners = () => {
       <Container>
         <div className="grid grid-cols-6 justify-center gap-3">
           {banners.map((item, index) => (
-            <Link key={index} href={item.uri}>
+            <Link key={index} href={`/${item.uri}`}>
               <div className="h-[200px]  overflow-hidden whitespace-nowrap rounded-xl bg-gray-100 px-3 py-5 text-center transition-all hover:bg-red-50 hover:text-red-600">
                 <div className="">
                   <Image
