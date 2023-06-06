@@ -6,6 +6,7 @@ import { IHeader } from '@/src/interfaces/footerHeaderRestAPIDataResponse';
 import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
 import MainMenu from './categoryComponents/mainMenu';
 import SubMenu from './categoryComponents/subMenu';
+import TestHeaderExample from './TestHeaderExample';
 
 interface Data {
   subMenuItems: MenuItem[];
@@ -51,6 +52,7 @@ const Header = ({
 
   return (
     <header className="relative bg-gray-100 shadow">
+        <TestHeaderExample/>
       <div className="mx-auto max-w-7xl bg-gray-100 px-2 sm:px-6 lg:px-8">
         <LocationContacts />
         <NavMenu

@@ -21,7 +21,8 @@ export async function getAllCategories() {
   let hasNextPage: boolean = true;
   let endCursor: string = '';
 
-  while (hasNextPage) {
+  // чтобы уменьшить количество страниц поставил !hasNextPage
+  while (!hasNextPage) {
     const data: ApolloQueryResult<IGetCategories> = await client.query({
       query: gql`
         query Category($endCursor: String) {
@@ -65,7 +66,9 @@ export async function getAllCategories() {
   return categories;
 }
 
-export async function getAllOrderProducts(query: DocumentNode=GET_PRODUCTS_BY_IDS_TOTAL_COST) {
+export async function getAllOrderProducts(
+  query: DocumentNode = GET_PRODUCTS_BY_IDS_TOTAL_COST
+) {
   let productsOrder: ICategory[] = [];
   let hasNextPage: boolean = true;
   let endCursor: string = '';

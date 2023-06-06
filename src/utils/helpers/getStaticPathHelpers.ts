@@ -1,7 +1,5 @@
-import React from 'react';
 import { client } from '../apollo/apolloClient';
 import { GET_PRODUCTS_URI, GET_PRODUCT_DATA } from '../apollo/queriesConst';
-import { ParsedUrlQuery } from 'querystring';
 
 export async function getAllProductsURI() {
   const paths: string[] = [];
@@ -19,10 +17,12 @@ export async function getAllProductsURI() {
       .then(({ data }) => {
         products = data?.products;
         // console.log('getProductsURI', data);
-      });
+      }).catch((e)=>console.log('error getStaticPath query',e));
     // console.log(products);
     allProducts = allProducts?.concat(products?.edges);
-    if (!products?.pageInfo?.hasNextPage || paths.length >= 100) {
+    // меняем (!products?.pageInfo?.hasNextPage || paths.length >= 100) если надо рендерить не все я только 100 товаров, например
+    // if (!products?.pageInfo?.hasNextPage) {
+    if (products?.pageInfo?.hasNextPage || paths.length >= 100) {
       break;
     }
     const pagePaths = products?.edges?.map(

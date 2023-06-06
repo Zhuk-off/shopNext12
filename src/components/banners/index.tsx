@@ -3,17 +3,42 @@ import Link from 'next/link';
 import Container from '../container';
 
 const banners = [
-  { icon: '/logo.png', uri: '#', title: 'Wortex', description: 'description' },
-  { icon: '/logo.png', uri: '#', title: 'Bosch', description: 'description' },
-  { icon: '/logo.png', uri: '#', title: 'Bull', description: 'description' },
   {
-    icon: '/logo.png',
-    uri: '#',
-    title: 'Makita',
-    description: 'description',
+    icon: '/logo.svg',
+    uri: '/search/?q=Wortex',
+    title: 'Wortex',
+    description: 'Найди свой инструмент!',
   },
-  { icon: '/logo.png', uri: '#', title: 'Matrix', description: 'description' },
-  { icon: '/logo.png', uri: '#', title: 'Fermer', description: 'description' },
+  {
+    icon: '/logo.svg',
+    uri: '/search/?q=Bosch',
+    title: 'Bosch',
+    description: 'Найди свой инструмент!',
+  },
+  {
+    icon: '/logo.svg',
+    uri: '/search/?q=Bull',
+    title: 'Bull',
+    description: 'Найди свой инструмент!',
+  },
+  {
+    icon: '/logo.svg',
+    uri: '/search/?q=Makita',
+    title: 'Makita',
+    description: 'Найди свой инструмент!',
+  },
+  {
+    icon: '/logo.svg',
+    uri: '/search/?q=Волат',
+    title: 'Волат',
+    description: 'Найди свой инструмент!',
+  },
+  {
+    icon: '/logo.svg',
+    uri: '/search/?q=Fermer',
+    title: 'Fermer',
+    description: 'Найди свой инструмент!',
+  },
 ];
 
 export const Banners = () => {
@@ -36,7 +61,7 @@ export const Banners = () => {
                 <div className="overflow-hidden text-clip text-center font-semibold">
                   {item.title}
                 </div>
-                <div className="overflow-hidden text-clip text-center">
+                <div className="hidden whitespace-normal text-center text-sm md:block">
                   {item.description}
                 </div>
               </div>

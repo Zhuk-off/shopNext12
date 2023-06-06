@@ -72,3 +72,16 @@ body {
     opacity: 1;
   }
 }
+
+.gradient-text {
+  background: linear-gradient(
+      212.74deg,
+      rgba(0, 0, 0, 0.1) 32.61%,
+      rgba(0, 0, 0, 0) 80.43%
+    ),
+    linear-gradient(98.79deg, #b721ff 15.5%, rgba(33, 212, 253, 0) 72.71%),
+    #21d4fd;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

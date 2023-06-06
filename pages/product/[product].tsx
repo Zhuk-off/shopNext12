@@ -19,6 +19,7 @@ import { sanitize } from '@/src/utils/miscellaneous';
 import { SliderProductPage } from '@/src/components/sliderProductPage';
 import { useRouter } from 'next/router';
 import Breadcrumbs from '@/src/components/breadcrumbs';
+import { NextSeo } from 'next-seo';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -43,6 +44,12 @@ export default function ProductPage({
     product?.productCategories?.edges[0]?.node?.seo?.breadcrumbs;
   return (
     <main>
+      <NextSeo
+        title={product?.name}
+        description={product?.name}
+        nofollow
+        noindex
+      />
       <Layout headerFooter={headerFooter || {}} menu={menu}>
         <Container>
           {breadcrumbs ? (
@@ -110,7 +117,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const paths: string[] = await getAllProductsURI();
   return {
     paths,
-    fallback: true,
+    fallback: false,
   };
 };
 

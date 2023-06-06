@@ -10,9 +10,7 @@ import { client } from '@/src/utils/apollo/apolloClient';
 import { GET_CATEGORY_DATA } from '@/src/utils/apollo/queriesConst';
 import buildMenu from '@/src/utils/buildMenu';
 import { HEADER_FOOTER_ENDPOINT } from '@/src/utils/constants/endpoints';
-import {
-  ApolloQueryResult,
-} from '@apollo/client';
+import { ApolloQueryResult } from '@apollo/client';
 import axios from 'axios';
 import { Inter } from 'next/font/google';
 import { GetStaticPaths, GetStaticProps, GetStaticPropsContext } from 'next';
@@ -28,9 +26,10 @@ import Container from '@/src/components/container';
 import ProductsList from '@/src/components/pagiation/productsList';
 import Search from '@/src/components/search';
 import { getAllCategories } from '@/src/utils/apollo/queries';
+import { NextSeo } from 'next-seo';
+import { useRouter } from 'next/router';
 
 const inter = Inter({ subsets: ['latin'] });
-
 
 export default function Category({
   headerFooter,
@@ -45,9 +44,19 @@ export default function Category({
   childrenSlugName: ChildSlugNameByCategory[];
   allSlugs: string[];
 }) {
-
+  const router = useRouter();
+  // надо для сборки build, чтобы на возникало ошибки
+  if (router.isFallback) {
+    return <h1>Загрузка...</h1>;
+  }
   return (
     <main className="">
+      <NextSeo
+        title={category?.productCategory?.name}
+        description={category?.productCategory?.name}
+        nofollow
+        noindex
+      />
       <Layout headerFooter={headerFooter || {}} menu={menu}>
         <Container>
           {category?.productCategory?.seo?.breadcrumbs ? (
@@ -77,7 +86,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const menu: ICategory[] = await getAllCategories();
   return {
     paths: menu.map((item) => `/${item.node.slug}`),
-    fallback: true,
+    fallback: false,
   };
 };
 

@@ -105,6 +105,6 @@ export const getStaticProps: GetStaticProps = async () => {
       // category,
       // childrenSlugName,
     },
-    revalidate: 1,
+    revalidate: 1000,
   };
 };

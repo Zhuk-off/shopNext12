@@ -12,6 +12,7 @@ import { GetStaticProps } from 'next';
 import { getAllCategories } from '@/src/utils/apollo/queries';
 import Search from '@/src/components/search';
 import Container from '@/src/components/container';
+import { NextSeo } from 'next-seo';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -24,6 +25,13 @@ export default function Home({
 }) {
   return (
     <main className="">
+      <NextSeo
+        title="Электроинструмент, официальный импортер Bosch, Master, Telwin, Endress, Sola, Startul, Toptul, Solaris, Fermer, ECO"
+        description="Электроинструмент, официальный импортер Bosch, Master, Telwin, Endress, Sola, Startul, Toptul, Solaris, Fermer, ECO"
+        nofollow
+        noindex
+      />
+
       <Layout headerFooter={headerFooter || {}} menu={menu}>
         <Container>
           <Search />
@@ -47,6 +55,6 @@ export const getStaticProps: GetStaticProps = async () => {
       headerFooter: headerFooterData?.data ?? {},
       menu: menuObject,
     },
-    revalidate: 1000,
+    revalidate: 60000,
   };
 };
