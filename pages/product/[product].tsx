@@ -39,9 +39,9 @@ export default function ProductPage({
   }
 
   const { product } = productData;
-  console.log(productData);
+  // console.log(productData);
   const breadcrumbs =
-    product?.productCategories?.edges[0]?.node?.seo?.breadcrumbs;
+    product?.productCategories?.edges[0]?.node?.seo?.breadcrumbs || null;
   return (
     <main>
       <NextSeo
@@ -56,7 +56,7 @@ export default function ProductPage({
             <Breadcrumbs breadcrumbs={breadcrumbs} clickable />
           ) : null}
           <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
-            <div className="border border-gray-200 pr-8 md:col-span-3 lg:col-span-2">
+            <div className="pr-8 md:col-span-3 lg:col-span-2">
               <SliderProductPage
                 images={product?.galleryImages?.edges}
                 coverImage={product?.image}
@@ -117,27 +117,36 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const paths: string[] = await getAllProductsURI();
   return {
     paths,
-    fallback: false,
+    fallback: true,
   };
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { data: headerFooterData } = await axios.get(HEADER_FOOTER_ENDPOINT);
-  const categories = await getAllCategories();
-  const menuObjectArr = buildMenu(categories);
-  const slug = params?.product;
-  const productData = slug ? await getProductDataByURI(slug) : null;
-  if (!productData) {
+  let headerFooter = null;
+  let menuObjectArr = null;
+  let productData = null;
+  try {
+    const { data: headerFooterData } = await axios.get(HEADER_FOOTER_ENDPOINT);
+    headerFooter = headerFooterData?.data ?? {};
+    const categories = await getAllCategories();
+    menuObjectArr = buildMenu(categories);
+    const slug = params?.product;
+    productData = slug ? await getProductDataByURI(slug) : null;
+  } catch (error) {
+    console.log('error GetStaticProps Product', error);
     return { notFound: true };
   }
+
+  if (!productData || !headerFooter || !menuObjectArr) {
+    return { notFound: true };
+  }
+
   return {
     props: {
-      headerFooter: headerFooterData?.data ?? {},
+      headerFooter,
       menu: menuObjectArr,
-      params,
-      slug,
       productData,
     },
-    revalidate: 1000,
+    revalidate: 60000,
   };
 };

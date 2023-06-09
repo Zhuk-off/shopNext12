@@ -138,7 +138,7 @@ export default function Order({
     loadMore();
   }
 
-  console.log(cart);
+  // console.log(cart);
 
   // При переходе на другую страницу надо очистить скрытые элементы, которые удалили
   // useEffect(() => {

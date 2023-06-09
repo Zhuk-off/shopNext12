@@ -3,7 +3,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { DEFAULT_IMG_URL_96x96 } from '@/src/utils/constants/images';
 import { IPproductsDataOrder } from '@/src/interfaces/cart.interface';
-import { CartRemoveButton } from '../products/cartRemoveButton';
 
 export const CartCheckoutItem = ({
   availability,
@@ -12,7 +11,6 @@ export const CartCheckoutItem = ({
   availability: boolean;
   product: IPproductsDataOrder;
 }) => {
-  // console.log('product.uri order',product.uri);
 
   return (
     <div className="flex w-full ">

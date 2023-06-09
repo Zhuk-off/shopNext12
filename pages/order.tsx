@@ -118,7 +118,7 @@ export default function Order({
     loadMore();
   }
 
-  console.log(cart);
+  // console.log(cart);
 
   // При переходе на другую страницу надо очистить скрытые элементы, которые удалили
   // useEffect(() => {
@@ -209,14 +209,6 @@ export default function Order({
     </main>
   );
 }
-
-// export const getStaticPaths: GetStaticPaths = async () => {
-//   const menu: ICategory[] = await getAllCategories();
-//   return {
-//     paths: menu.map((item) => `/${item.node.slug}`),
-//     fallback: true,
-//   };
-// };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { data: headerFooterData } = await axios.get(HEADER_FOOTER_ENDPOINT);

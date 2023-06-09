@@ -97,23 +97,23 @@ export default function Login() {
     if (!fillCartLoading || fillCartData !== undefined || !fillCartError) {
       const header = getAuthorizationHeader(authToken);
       const cartData = getLocalStorageCartItems();
-      console.log('syncCart', header, cartData);
+      // console.log('syncCart', header, cartData);
       if (cartData && cartData?.totalQty > 0) {
         const fillCartMutationData: FillCartMutationData[] =
           convertedCartToFillMutation(cartData);
-        console.log('передаем в fillCart', fillCartMutationData);
+        // console.log('передаем в fillCart', fillCartMutationData);
         fillCart({
           variables: { items: fillCartMutationData },
           context: {
             headers: header,
           },
         }).then(({ data }) => {
-          console.log('fillCart, header', data?.fillCart?.added);
+          // console.log('fillCart, header', data?.fillCart?.added);
 
           getCartServerHandle(header);
         });
       } else {
-        console.log('else');
+        // console.log('else');
         getCartServerHandle(header);
       }
       // setPageState((old) => ({ ...old, processing: false, status: '' }))
@@ -122,13 +122,13 @@ export default function Login() {
   /*  хз, для дублируется в запросе на авторизацию, но почему-то тут в этом исполнении лучше работает */
   // console.log('refreshToken', refreshToken);
   if (session && refreshToken === null && !sync) {
-    console.log(
-      'session && refreshToken=null',
-      getCartServerLoading,
-      fillCartLoading,
-      getCartServerData,
-      fillCartError
-    );
+    // console.log(
+    //   'session && refreshToken=null',
+    //   getCartServerLoading,
+    //   fillCartLoading,
+    //   getCartServerData,
+    //   fillCartError
+    // );
     const { authToken } = session.user.tokens;
     setSync(true);
     syncCart(authToken);
@@ -136,19 +136,19 @@ export default function Login() {
 
   function getCartServerHandle(header: IAuthorizationHeader) {
     if (header) {
-      console.log('getCartServerHandle');
+      // console.log('getCartServerHandle');
       getCartServer({
         context: {
           headers: header,
         },
       }).then(({ data }) => {
         if (data) {
-          console.log('getCartServer data', data.cart.contents.edges);
+          // console.log('getCartServer data', data.cart.contents.edges);
           if (data) {
             const localStorageCart = transformedCartForLocalStorage(data, true);
             setCart(localStorageCart);
             cartVar(localStorageCart);
-            console.log('новые LocalStorage', localStorageCart);
+            // console.log('новые LocalStorage', localStorageCart);
             // console.log('local cart', localStorageCart);
           }
         }
@@ -186,7 +186,7 @@ export default function Login() {
     !fillCartLoading &&
     !getCartServerLoading
   ) {
-    console.log('router back  session && refreshToken !== null');
+    // console.log('router back  session && refreshToken !== null');
     try {
       router.back();
       // console.log('router back');

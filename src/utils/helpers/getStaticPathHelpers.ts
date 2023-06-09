@@ -17,12 +17,13 @@ export async function getAllProductsURI() {
       .then(({ data }) => {
         products = data?.products;
         // console.log('getProductsURI', data);
-      }).catch((e)=>console.log('error getStaticPath query',e));
+      })
+      .catch((e) => console.log('error getStaticPath query', e));
     // console.log(products);
     allProducts = allProducts?.concat(products?.edges);
     // меняем (!products?.pageInfo?.hasNextPage || paths.length >= 100) если надо рендерить не все я только 100 товаров, например
     // if (!products?.pageInfo?.hasNextPage) {
-    if (products?.pageInfo?.hasNextPage || paths.length >= 100) {
+    if (!products?.pageInfo?.hasNextPage || paths.length >= 100) {
       break;
     }
     const pagePaths = products?.edges?.map(

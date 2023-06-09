@@ -86,50 +86,71 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const menu: ICategory[] = await getAllCategories();
   return {
     paths: menu.map((item) => `/${item.node.slug}`),
-    fallback: false,
+    fallback: true,
   };
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { data: headerFooterData } = await axios.get(HEADER_FOOTER_ENDPOINT);
-  const categories = await getAllCategories();
-  const menuObjectArr = buildMenu(categories);
-  // Проверка не является ли params - undefined, null, array
-  let slug = params ? params.category : '';
-  if (!slug) {
-    slug = '';
-  }
-  if (Array.isArray(slug)) {
-    slug = slug[0];
-  }
-  // Получаем объект категории текущей
-  const foundObject = menuObjectArr
-    .map((cat) => findObjectById(cat, slug))
-    .find((cat) => cat !== null);
-  // Получаем все slug дочерних элементов
-  let allSlugs = foundObject ? getAllChildSlugs(foundObject) : [];
-  // Еще кладем туда текущую категорию
-  allSlugs.push(slug);
+  let headerFooter = null;
+  let menuObjectArr = null;
+  let category = null;
+  let childrenSlugName = null;
+  let allSlugs = null;
+  try {
+    const { data: headerFooterData } = await axios.get(HEADER_FOOTER_ENDPOINT);
+    headerFooter = headerFooterData?.data ?? {};
 
-  const { data: category }: ApolloQueryResult<IProductCategoryData> =
-    await client.query({
-      query: GET_CATEGORY_DATA,
-      variables: { id: slug },
-    });
+    const categories = await getAllCategories();
+    menuObjectArr = buildMenu(categories);
+    // Проверка не является ли params - undefined, null, array
+    let slug = params ? params.category : '';
+    if (!slug) {
+      slug = '';
+    }
+    if (Array.isArray(slug)) {
+      slug = slug[0];
+    }
+    // Получаем объект категории текущей
+    const foundObject = menuObjectArr
+      .map((cat) => findObjectById(cat, slug))
+      .find((cat) => cat !== null);
+    // Получаем все slug дочерних элементов
+    allSlugs = foundObject ? getAllChildSlugs(foundObject) : [];
+    // Еще кладем туда текущую категорию
+    allSlugs.push(slug);
 
-  const childrenSlugName = foundObject
-    ? getAllChildSlugsAndName(foundObject)
-    : [];
+    const { data: categoryQuery }: ApolloQueryResult<IProductCategoryData> =
+      await client.query({
+        query: GET_CATEGORY_DATA,
+        variables: { id: slug },
+      });
+      category = categoryQuery
+    childrenSlugName = foundObject
+      ? getAllChildSlugsAndName(foundObject)
+      : [];
+  } catch (error) {
+    console.log('error GetStaticProps Product', error);
+    return { notFound: true };
+  }
+
+  if (
+    !headerFooter ||
+    !menuObjectArr ||
+    !category ||
+    !allSlugs ||
+    !childrenSlugName
+  ) {
+    return { notFound: true };
+  }
 
   return {
     props: {
-      headerFooter: headerFooterData?.data ?? {},
+      headerFooter,
       menu: menuObjectArr,
-      params,
       category,
       childrenSlugName,
       allSlugs,
     },
-    revalidate: 1,
+    revalidate: 60000,
   };
 };

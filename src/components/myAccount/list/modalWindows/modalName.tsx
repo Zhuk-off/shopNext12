@@ -52,7 +52,7 @@ function ModalName(
   };
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
+    // console.log(data);
     changeName({
       variables: {
         id: session?.user.info.id,
@@ -68,9 +68,9 @@ function ModalName(
     closeModal();
   }
 
-  console.log('authorizationHeader', authorizationHeader);
-  console.log('changeNameData', changeNameData);
-  console.log('error', error);
+  // console.log('authorizationHeader', authorizationHeader);
+  // console.log('changeNameData', changeNameData);
+  // console.log('error', error);
 
   return (
     <Dialog.Panel

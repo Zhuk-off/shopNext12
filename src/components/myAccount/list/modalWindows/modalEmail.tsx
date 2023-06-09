@@ -64,7 +64,7 @@ function ModalEmail(
   }
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
+    // console.log(data);
     changeEmail({
       variables: {
         id: session?.user.info.id,

@@ -21,7 +21,6 @@ function ListItem({
   function closeModal() {
     setIsOpen(false);
   }
-  console.log();
 
   function openModal() {
     setIsOpen(true);

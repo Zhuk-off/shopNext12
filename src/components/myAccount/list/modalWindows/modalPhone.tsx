@@ -52,7 +52,7 @@ function ModalPhone(
   };
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
+    // console.log(data);
     changePhone({
       variables: {
         id: session?.user.info.id,

@@ -15,7 +15,7 @@ export const CartCheckoutItems = ({
   loading: boolean;
 }) => {
   const sumFixed=sum.toFixed(2)
-  console.log(sumFixed)
+  // console.log(sumFixed)
   const sumWithComa = sumToStringWithComa(sumFixed);
 
   return (

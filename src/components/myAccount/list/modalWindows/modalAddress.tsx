@@ -52,7 +52,7 @@ function ModalAddress(
   };
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
+    // console.log(data);
     changeAddress({
       variables: {
         id: session?.user.info.id,

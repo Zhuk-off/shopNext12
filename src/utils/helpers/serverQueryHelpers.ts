@@ -48,10 +48,10 @@ export const syncCartWithServer = async (
   });
 
   if (cartData) {
-    console.log('cartData for fill', cartData);
+    // console.log('cartData for fill', cartData);
     const fillCartMutationData: FillCartMutationData[] =
       convertedCartToFillMutation(cartData);
-    console.log('cartData for fill fillCartMutationData', fillCartMutationData);
+    // console.log('cartData for fill fillCartMutationData', fillCartMutationData);
     await fillCart({
       variables: { items: fillCartMutationData },
       context: {

@@ -55,7 +55,7 @@ export const addToCart = async (
     const cartLocalStorage: ICartLocalStorage = {
       ...parsedLocalStorageData,
     };
-    console.log('cartLocalStorage', cartLocalStorage);
+    // console.log('cartLocalStorage', cartLocalStorage);
 
     const cartItemsUpdated = addItem(cartLocalStorage.cartItems, productForAdd);
     const totalQuantity = cartItemsUpdated.reduce(
@@ -69,7 +69,7 @@ export const addToCart = async (
       sync:false,
       totalQty: totalQuantity,
     };
-    console.log('cartLocalStorageUpdate', cartLocalStorageUpdate);
+    // console.log('cartLocalStorageUpdate', cartLocalStorageUpdate);
 
     cartVar(cartLocalStorageUpdate); //запись в переменную аполло
     setCart(cartLocalStorageUpdate);

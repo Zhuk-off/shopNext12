@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_OPTIONS='--inspect' next dev",
+    "dev": "node server.js",
     "build": "next build",
+    "start": "NODE_ENV=production node server.js",
+
+
     "postbuild": "next-sitemap",
-    "start": "next start",
+
     "lint": "next lint",
     "svg": "svgr -d src/components/icons src/components/icons/svgs"
   },

@@ -177,7 +177,7 @@ export const ChekcoutInfo = ({
       },
     }).then(({ data }) => {
       const authToken = data?.refreshJwtAuthToken.authToken;
-      console.log(authToken);
+      // console.log(authToken);
       setTokensInLocalStorage(authToken);
     });
   };
@@ -187,9 +187,9 @@ export const ChekcoutInfo = ({
         headers: getAuthorizationHeaderWithAuthToken(),
       },
     }).then(({ data }) => {
-      console.log('clearCart', data);
+      // console.log('clearCart', data);
     });
-    console.log('delCartServerHandle');
+    // console.log('delCartServerHandle');
   };
   const fillCartHandle = async () => {
     const cartData = getLocalStorageCartItems();
@@ -202,7 +202,7 @@ export const ChekcoutInfo = ({
           headers: getAuthorizationHeaderWithAuthToken(),
         },
       }).then(({ data }) => {
-        console.log('fillCart', data?.fillCart?.cart);
+        // console.log('fillCart', data?.fillCart?.cart);
       });
     }
   };
@@ -220,7 +220,7 @@ export const ChekcoutInfo = ({
         headers: getAuthorizationHeaderWithRefreshToken(),
       },
     }).then(({ data }) => {
-      console.log('createOrder', data);
+      // console.log('createOrder', data);
       clearCartLocal(setCart, cartVar);
       if (data)
         setPersonalData((old) => ({
@@ -241,7 +241,7 @@ export const ChekcoutInfo = ({
   // TODO Устнарить БАГ - при отправки формы, если данные не введены вручную, а получены из запроса то поля - undefined
   const onSubmit: SubmitHandler<Inputs> = async () => {
     setLoadingCheckout(true);
-    console.log('object');
+    // console.log('object');
 
     await refreshAuth();
     await clearCart();
@@ -252,8 +252,8 @@ export const ChekcoutInfo = ({
   };
 
   // console.log(userDataData);
-  console.log(personalData);
-  console.log('totalCount', totalCount);
+  // console.log(personalData);
+  // console.log('totalCount', totalCount);
 
   return (
     <div className="flex flex-col space-y-3 p-8 lg:w-96">

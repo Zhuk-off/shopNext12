@@ -5,37 +5,37 @@ import Container from '../container';
 const banners = [
   {
     icon: '/logo.svg',
-    uri: '/search/?q=Wortex',
+    uri: 'search/?q=Wortex',
     title: 'Wortex',
     description: 'Найди свой инструмент!',
   },
   {
     icon: '/logo.svg',
-    uri: '/search/?q=Bosch',
+    uri: 'search/?q=Bosch',
     title: 'Bosch',
     description: 'Найди свой инструмент!',
   },
   {
     icon: '/logo.svg',
-    uri: '/search/?q=Bull',
+    uri: 'search/?q=Bull',
     title: 'Bull',
     description: 'Найди свой инструмент!',
   },
   {
     icon: '/logo.svg',
-    uri: '/search/?q=Makita',
+    uri: 'search/?q=Makita',
     title: 'Makita',
     description: 'Найди свой инструмент!',
   },
   {
     icon: '/logo.svg',
-    uri: '/search/?q=Волат',
+    uri: 'search/?q=Волат',
     title: 'Волат',
     description: 'Найди свой инструмент!',
   },
   {
     icon: '/logo.svg',
-    uri: '/search/?q=Fermer',
+    uri: 'search/?q=Fermer',
     title: 'Fermer',
     description: 'Найди свой инструмент!',
   },
@@ -46,10 +46,10 @@ export const Banners = () => {
     <section className="hidden pb-20 pt-5 sm:block">
       <Container>
         <div className="grid grid-cols-6 justify-center gap-3">
-          {banners.map((item, index) => (
+          {banners?.map((item, index) => (
             <Link key={index} href={`/${item.uri}`}>
               <div className="h-[200px]  overflow-hidden whitespace-nowrap rounded-xl bg-gray-100 px-3 py-5 text-center transition-all hover:bg-red-50 hover:text-red-600">
-                <div className="">
+                <div>
                   <Image
                     src={item.icon}
                     alt={item.title}

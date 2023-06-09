@@ -47,7 +47,7 @@ function OrderHistory() {
   });
 
   const refreshAuth = async () => {
-    console.log('refreshAuth start');
+    // console.log('refreshAuth start');
     const refreshToken = getToken('refreshToken');
     await refreshJwtAuthToken({
       variables: {
@@ -57,10 +57,10 @@ function OrderHistory() {
       },
     }).then(({ data }) => {
       const authToken = data?.refreshJwtAuthToken.authToken;
-      console.log(authToken);
+      // console.log(authToken);
       setTokensInLocalStorage(authToken);
     });
-    console.log('refreshAuth end');
+    // console.log('refreshAuth end');
   };
 
   const refetchQueryTest = async (headers: IAuthorizationHeader) => {
@@ -69,33 +69,33 @@ function OrderHistory() {
         headers,
       },
     }).then((data) => {
-      console.log('data refetch', data);
+      // console.log('data refetch', data);
     });
   };
 
   const refetchQuery = async () => {
     await refreshAuth();
     const headers = getAuthorizationHeaderWithAuthToken();
-    console.log(headers);
+    // console.log(headers);
     await refetchQueryTest(headers);
     setStop(false);
   };
 
   if (getOrdersLoading) {
-    console.log('Loading');
+    // console.log('Loading');
   }
 
   if (getOrdersData) {
-    console.log(
-      'getOrdersData',
-      getOrdersData,
-      getOrdersData.orders?.edges[0]?.node.status
-    );
+    // console.log(
+    //   'getOrdersData',
+    //   getOrdersData,
+    //   getOrdersData.orders?.edges[0]?.node.status
+    // );
   }
 
   if (getOrdersError && !stop) {
     setStop(true);
-    console.log('getOrdersError', getOrdersError, stop);
+    // console.log('getOrdersError', getOrdersError, stop);
     refetchQuery();
   }
 

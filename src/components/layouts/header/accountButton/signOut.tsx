@@ -53,7 +53,7 @@ const SignOut = forwardRef(function SignOutComponent(
     const authToken = getToken('authToken');
     const header = getAuthorizationHeader(authToken);
     const cartData = getLocalStorageCartItems();
-    console.log('handleSignOut', authToken, header, cartData,session);
+    // console.log('handleSignOut', authToken, header, cartData,session);
 
     if (cartData && cartData?.totalQty > 0) {
       await delCartServerHandle(header);
@@ -71,7 +71,7 @@ const SignOut = forwardRef(function SignOutComponent(
         headers: header,
       },
     });
-    console.log('delCartServerHandle');
+    // console.log('delCartServerHandle');
   }
 
   // добавить local на сервер
@@ -87,7 +87,7 @@ const SignOut = forwardRef(function SignOutComponent(
         headers: header,
       },
     });
-    console.log('addLocalCartToServer');
+    // console.log('addLocalCartToServer');
   }
 
   // удалить корзину с local
@@ -100,7 +100,7 @@ const SignOut = forwardRef(function SignOutComponent(
     };
     setCart(cartEmpty);
     cartVar(cartEmpty);
-    console.log('delLocalCart');
+    // console.log('delLocalCart');
   }
 
   return (

@@ -169,7 +169,7 @@ function CartButtons() {
           console.log('getProductsURI', data);
         }
       );
-      console.log(products);
+      // console.log(products);
 
       allProducts = allProducts?.concat(products?.edges);
 
@@ -181,7 +181,7 @@ function CartButtons() {
       paths.push(...pagePaths);
 
       cursor = products?.pageInfo?.endCursor;
-      console.log('paths', paths);
+      // console.log('paths', paths);
     }
 
     return allProducts;
