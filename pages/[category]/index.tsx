@@ -47,6 +47,8 @@ export default function Category({
   const router = useRouter();
   // надо для сборки build, чтобы на возникало ошибки
   if (router.isFallback) {
+
+    
     return <h1>Загрузка...</h1>;
   }
   return (

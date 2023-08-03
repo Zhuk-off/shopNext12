@@ -1,8 +1,8 @@
-import { IBreadcrumbs } from '@/src/interfaces/seo.interfaces';
-import { getSlugFromUrl } from '@/src/utils/helpers';
-import { ChevronDoubleRightIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
-import { FC } from 'react';
+import { IBreadcrumbs } from "@/src/interfaces/seo.interfaces";
+import { getSlugFromUrl } from "@/src/utils/helpers";
+import { ChevronDoubleRightIcon } from "@heroicons/react/24/outline";
+import Link from "next/link";
+import { FC } from "react";
 
 type BreadcrumbsProps = {
   breadcrumbs: IBreadcrumbs[];
@@ -15,7 +15,8 @@ const Breadcrumbs: FC<BreadcrumbsProps> = ({
 }) => {
   const homePageSlug = process.env.NEXT_PUBLIC_SITE_URL
     ? getSlugFromUrl(process.env.NEXT_PUBLIC_SITE_URL)
-    : '/';
+    : "/";
+
   return (
     <nav className="text-xs font-medium">
       <ol className="inline-flex list-none flex-wrap p-0">
@@ -30,11 +31,11 @@ const Breadcrumbs: FC<BreadcrumbsProps> = ({
                 breadcrumb.text
               ) : (
                 <Link
-                href={slug !== homePageSlug ? `/${slug}` : '/'}
+                  href={slug !== homePageSlug ? `/${slug}` : "/"}
                   className={`${
                     index === breadcrumbs?.length - 1 && !clickable
-                      ? 'text-gray-700 underline'
-                      : 'text-gray-500 underline hover:text-gray-700'
+                      ? "text-gray-700 underline"
+                      : "text-gray-500 underline hover:text-gray-700"
                   }`}
                 >
                   {breadcrumb.text}
