@@ -1,20 +1,20 @@
-import { Inter } from 'next/font/google';
-import { Slider } from '@/src/components/slider';
-import { Banners } from '@/src/components/banners';
-import Offers from '@/src/components/offers';
-import { HEADER_FOOTER_ENDPOINT } from '@/src/utils/constants/endpoints';
-import axios from 'axios';
-import Layout from '@/src/components/layouts';
-import { IData } from '@/src/interfaces/footerHeaderRestAPIDataResponse';
-import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
-import buildMenu from '@/src/utils/buildMenu';
-import { GetStaticProps } from 'next';
-import { getAllCategories } from '@/src/utils/apollo/queries';
-import Search from '@/src/components/search';
-import Container from '@/src/components/container';
-import { NextSeo } from 'next-seo';
+import { Inter } from "next/font/google";
+import { Slider } from "@/src/components/slider";
+import { Banners } from "@/src/components/banners";
+import Offers from "@/src/components/offers";
+import { HEADER_FOOTER_ENDPOINT } from "@/src/utils/constants/endpoints";
+import axios from "axios";
+import Layout from "@/src/components/layouts";
+import { IData } from "@/src/interfaces/footerHeaderRestAPIDataResponse";
+import { MenuItem } from "@/src/interfaces/apollo/buildMenu.interface";
+import buildMenu from "@/src/utils/buildMenu";
+import { GetStaticProps } from "next";
+import { getAllCategories } from "@/src/utils/apollo/queries";
+import Search from "@/src/components/search";
+import Container from "@/src/components/container";
+import { NextSeo } from "next-seo";
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ subsets: ["latin"] });
 
 export default function Home({
   headerFooter,
@@ -36,6 +36,7 @@ export default function Home({
         <Container>
           <Search />
         </Container>
+        <p>test</p>
         <div className="mb-20 mt-12 rounded-xl ">
           <Slider />
         </div>
