@@ -1,33 +1,32 @@
-import Layout from '@/src/components/layouts';
-import { MenuItem } from '@/src/interfaces/apollo/buildMenu.interface';
-import { IData } from '@/src/interfaces/footerHeaderRestAPIDataResponse';
-import buildMenu from '@/src/utils/buildMenu';
-import { HEADER_FOOTER_ENDPOINT } from '@/src/utils/constants/endpoints';
-import axios from 'axios';
-import { Inter } from 'next/font/google';
-import { GetStaticProps } from 'next';
-import { getAllCategories } from '@/src/utils/apollo/queries';
-import { CounterOrderPage } from '@/src/components/order/counterOrderPage';
-import Container from '@/src/components/container';
-import { TotalCard } from '@/src/components/order/totalCard';
-import { useContext, useEffect, useState } from 'react';
-import { CartContext } from '@/src/contex/CartContex';
-import { useQuery, useReactiveVar } from '@apollo/client';
+import Layout from "@/src/components/layouts";
+import { MenuItem } from "@/src/interfaces/apollo/buildMenu.interface";
+import { IData } from "@/src/interfaces/footerHeaderRestAPIDataResponse";
+import buildMenu from "@/src/utils/buildMenu";
+import { HEADER_FOOTER_ENDPOINT } from "@/src/utils/constants/endpoints";
+import axios from "axios";
+import { GetStaticProps } from "next";
+import { getAllCategories } from "@/src/utils/apollo/queries";
+import { CounterOrderPage } from "@/src/components/order/counterOrderPage";
+import Container from "@/src/components/container";
+import { TotalCard } from "@/src/components/order/totalCard";
+import { useContext, useEffect } from "react";
+import { CartContext } from "@/src/contex/CartContex";
+import { useQuery } from "@apollo/client";
 import {
   IOrderDataProductCard,
   IOrderProduct,
-} from '@/src/interfaces/apollo/getOrderData.interfase';
-import { GET_PRODUCTS_BY_IDS_ORDER_CARD } from '@/src/utils/apollo/queriesConst';
-import { IPproductsDataOrder } from '@/src/interfaces/cart.interface';
-import { CartOrderItems } from '@/src/components/order/cartOrderItems';
-import { useRouter } from 'next/router';
+} from "@/src/interfaces/apollo/getOrderData.interfase";
+import { GET_PRODUCTS_BY_IDS_ORDER_CARD } from "@/src/utils/apollo/queriesConst";
+import { IPproductsDataOrder } from "@/src/interfaces/cart.interface";
+import { CartOrderItems } from "@/src/components/order/cartOrderItems";
+import { useRouter } from "next/router";
 import {
   getDatabaseIds,
   getProductsOrderView,
   getTotalCountInStockProducts,
   getTotalSumInStockProducts,
-} from '@/src/utils/helpers';
-import { cartVar } from '@/src/utils/apollo/reactiveVar';
+} from "@/src/utils/helpers";
+import { cartVar } from "@/src/utils/apollo/reactiveVar";
 
 // const inter = Inter({ subsets: ['latin'] });
 
@@ -44,7 +43,7 @@ export default function Order({
   const databaseIds = getDatabaseIds(cart);
 
   let hasNextPage = false;
-  let endCursor = '';
+  let endCursor = "";
   let productsOrder: IOrderProduct[] = [];
 
   const {
