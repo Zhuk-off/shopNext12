@@ -184,7 +184,7 @@ Once that's done, you'll need to access the WordPress filesystem to add the secr
 - [SFTP guide for WP Engine](https://wpengine.com/support/sftp/)
 - [SFTP guide for WordPress.com](https://wordpress.com/support/sftp/)
 
-Once you have SFTP access, open **wp-config.php** and add a secret for your JWT:
+Once you have SFTP access, open `wp-config.php` and add a secret for your JWT:
 
 ```bash
 define( 'GRAPHQL_JWT_AUTH_SECRET_KEY', 'YOUR_STRONG_SECRET' );
@@ -192,7 +192,7 @@ define( 'GRAPHQL_JWT_AUTH_SECRET_KEY', 'YOUR_STRONG_SECRET' );
 
 You can read more about this in the documentation for WPGraphQL JWT Authentication.
 
-Now, you need to get a **refresh token** to make authenticated requests with GraphQL. Make the following GraphQL mutation to your WordPress site from the GraphQL IDE (See notes about WPGraphiQL from earlier). Replace **your_username** with the **username** of a user with the **Administrator** role, and **your_password** with the user's password.
+Now, you need to get a `refresh token` to make authenticated requests with GraphQL. Make the following GraphQL mutation to your WordPress site from the GraphQL IDE (See notes about WPGraphiQL from earlier). Replace **your_username** with the `username` of a user with the **Administrator** role, and `your_password` with the user's password.
 
 ```bash
 mutation Login {
@@ -208,11 +208,11 @@ mutation Login {
 }
 ```
 
-Copy the **refreshToken** returned by the mutation, then open **.env.local**, and make the following changes:
+Copy the `refreshToken` returned by the mutation, then open `.env.local`, and make the following changes:
 
-Uncomment **WORDPRESS_AUTH_REFRESH_TOKEN** and set it to be the **refreshToken** you just received.
-Uncomment **WORDPRESS_PREVIEW_SECRET** and set it to be any random string (ideally URL friendly).
-Your **.env.local** file should look like this:
+Uncomment `WORDPRESS_AUTH_REFRESH_TOKEN` and set it to be the `refreshToken` you just received.
+Uncomment `WORDPRESS_PREVIEW_SECRET` and set it to be any random string (ideally URL friendly).
+Your `.env.local` file should look like this:
 
 ```bash
 WORDPRESS_API_URL=...
