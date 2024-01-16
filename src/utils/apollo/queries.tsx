@@ -12,7 +12,7 @@ import {
 import { GET_PRODUCTS_BY_IDS_TOTAL_COST } from './queriesConst';
 
 const client = new ApolloClient({
-  uri: 'https://sp.zhu.by/graphql',
+  uri: 'https://wpshop.zhukoff.by/graphql',
   cache: new InMemoryCache(),
 });
 

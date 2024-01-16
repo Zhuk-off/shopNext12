@@ -36,7 +36,6 @@ export default function Home({
         <Container>
           <Search />
         </Container>
-        <p>test</p>
         <div className="mb-20 mt-12 rounded-xl ">
           <Slider />
         </div>

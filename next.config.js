@@ -7,7 +7,7 @@ const nextConfig = {
       "via.placeholder.com",
       process.env.NEXT_PUBLIC_WORDPRESS_SITE_URL?.match(
         /(?!(w+)\.)\w*(?:\w+\.)+\w+/
-      )[0] || "sp.zhu.by",
+      )[0] || "wpshop.zhukoff.by",
       "cdn21vek.by",
     ],
   },
