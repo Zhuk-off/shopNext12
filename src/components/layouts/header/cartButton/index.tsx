@@ -37,7 +37,7 @@ export default function CartButton() {
           />
         </svg>
         {/* <CartCounter className='absolute left-24 top-1'/> */}
-        <div className="bg absolute left-24 top-0 rounded-full bg-pink-700 px-1 text-xs text-white">
+        <div className="bg absolute left-24 top-0 rounded-full bg-[#CE041F] px-1 text-xs text-white">
           {cartA.totalQty}
         </div>
         Корзина

@@ -1,45 +1,45 @@
-import { GET_CUSTOMER_DATA } from "@/src/utils/apollo/queriesConst";
+import { GET_CUSTOMER_DATA } from '@/src/utils/apollo/queriesConst';
 import {
   convertedCartToFillMutation,
   sumToStringWithComa,
-} from "@/src/utils/helpers";
-import { useMutation, useQuery } from "@apollo/client";
+} from '@/src/utils/helpers';
+import { useMutation, useQuery } from '@apollo/client';
 import {
   Dispatch,
   SetStateAction,
   useContext,
   useEffect,
   useState,
-} from "react";
-import { Spinner } from "../spinner";
+} from 'react';
+import { Spinner } from '../spinner';
 import {
   getAuthorizationHeaderWithAuthToken,
   getAuthorizationHeaderWithRefreshToken,
   getLocalStorageCartItems,
   getToken,
   setTokensInLocalStorage,
-} from "@/src/utils/helpers/localStorageHelpers";
-import { useSession } from "next-auth/react";
+} from '@/src/utils/helpers/localStorageHelpers';
+import { useSession } from 'next-auth/react';
 import {
   ICustomerData,
   IRefreshJwtAuthToken,
-} from "@/src/interfaces/apollo/login.interface";
-import { SubmitHandler, useForm } from "react-hook-form";
+} from '@/src/interfaces/apollo/login.interface';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import {
   CREATE_ORDER,
   FILL_CART,
   REFRESH_JWT_AUTH_TOKEN,
   REMOVE_CART_ITEMS,
-} from "@/src/utils/apollo/mutationsConst";
-import { clearCartLocal } from "@/src/utils/helpers/serverQueryHelpers";
-import { CartContext } from "@/src/contex/CartContex";
-import { cartVar } from "@/src/utils/apollo/reactiveVar";
+} from '@/src/utils/apollo/mutationsConst';
+import { clearCartLocal } from '@/src/utils/helpers/serverQueryHelpers';
+import { CartContext } from '@/src/contex/CartContex';
+import { cartVar } from '@/src/utils/apollo/reactiveVar';
 import {
   ICheckout,
   IPersonalData,
-} from "@/src/interfaces/apollo/checkout.interface";
-import { IFillCart } from "@/src/interfaces/apollo/getCart.interface";
-import { FillCartMutationData } from "@/src/interfaces/apollo/helpers.interface";
+} from '@/src/interfaces/apollo/checkout.interface';
+import { IFillCart } from '@/src/interfaces/apollo/getCart.interface';
+import { FillCartMutationData } from '@/src/interfaces/apollo/helpers.interface';
 
 type Inputs = {
   username: string;
@@ -71,8 +71,8 @@ export const ChekcoutInfo = ({
       loading: refreshJwtAuthTokenLoading,
     },
   ] = useMutation<IRefreshJwtAuthToken>(REFRESH_JWT_AUTH_TOKEN, {
-    fetchPolicy: "network-only",
-    errorPolicy: "all",
+    fetchPolicy: 'network-only',
+    errorPolicy: 'all',
   });
   const [
     delCartServer,
@@ -82,15 +82,15 @@ export const ChekcoutInfo = ({
       loading: delCartServerLoading,
     },
   ] = useMutation(REMOVE_CART_ITEMS, {
-    fetchPolicy: "network-only",
-    errorPolicy: "all",
+    fetchPolicy: 'network-only',
+    errorPolicy: 'all',
   });
   const [
     fillCart,
     { data: fillCartData, error: fillCartError, loading: fillCartLoading },
   ] = useMutation<IFillCart>(FILL_CART, {
-    fetchPolicy: "network-only",
-    errorPolicy: "all",
+    fetchPolicy: 'network-only',
+    errorPolicy: 'all',
   });
 
   const [loadingCheckout, setLoadingCheckout] = useState(false);
@@ -104,7 +104,7 @@ export const ChekcoutInfo = ({
     data: userDataData,
   } = useQuery<ICustomerData>(GET_CUSTOMER_DATA, {
     variables: {
-      id: session ? session.user.info.id : "",
+      id: session ? session.user.info.id : '',
     },
     context: {
       headers: getAuthorizationHeaderWithRefreshToken(),
@@ -135,8 +135,8 @@ export const ChekcoutInfo = ({
       loading: createOrderLoading,
     },
   ] = useMutation<ICheckout>(CREATE_ORDER, {
-    fetchPolicy: "network-only",
-    errorPolicy: "all",
+    fetchPolicy: 'network-only',
+    errorPolicy: 'all',
   });
 
   useEffect(() => {
@@ -145,8 +145,8 @@ export const ChekcoutInfo = ({
         ...old,
         username: userDataData.customer.firstName
           ? userDataData.customer.firstName
-          : "",
-        email: userDataData.customer.email ? userDataData.customer.email : "",
+          : '',
+        email: userDataData.customer.email ? userDataData.customer.email : '',
         // phone: userDataData.customer.billing.phone
         //   ? userDataData.customer.billing.phone
         //   : '',
@@ -168,7 +168,7 @@ export const ChekcoutInfo = ({
   };
 
   const refreshAuth = async () => {
-    const refreshToken = getToken("refreshToken");
+    const refreshToken = getToken('refreshToken');
     await refreshJwtAuthToken({
       variables: {
         jwtRefreshToken: refreshToken
@@ -214,7 +214,7 @@ export const ChekcoutInfo = ({
         email: personalData.email,
         address1: personalData.address1Billing,
         customerNote: personalData.comments,
-        paymentMethod: "cod",
+        paymentMethod: 'cod',
       },
       context: {
         headers: getAuthorizationHeaderWithRefreshToken(),
@@ -231,8 +231,8 @@ export const ChekcoutInfo = ({
           // orderStatus: data.checkout.result,
           orderNumber: data.checkout.order.orderNumber
             ? data.checkout.order.orderNumber
-            : "",
-          orderStatus: data.checkout.result ? data.checkout.result : "",
+            : '',
+          orderStatus: data.checkout.result ? data.checkout.result : '',
         }));
     });
   };
@@ -267,7 +267,7 @@ export const ChekcoutInfo = ({
           </label>
           <div className="mt-2">
             <input
-              {...register("username", {})}
+              {...register('username', {})}
               id="username"
               name="username"
               // required
@@ -292,7 +292,7 @@ export const ChekcoutInfo = ({
           </label>
           <div className="mt-2">
             <input
-              {...register("email", {})}
+              {...register('email', {})}
               id="email"
               name="email"
               type="email"
@@ -318,12 +318,12 @@ export const ChekcoutInfo = ({
           </label>
           <div className="mt-2">
             <input
-              {...register("phone", {
-                required: "Введите ваш номер телефона",
+              {...register('phone', {
+                required: 'Введите ваш номер телефона',
                 minLength: {
                   value: 7,
                   message:
-                    "Номер телефона должно содержать не менее 7 символов",
+                    'Номер телефона должно содержать не менее 7 символов',
                 },
               })}
               name="phone"
@@ -350,11 +350,11 @@ export const ChekcoutInfo = ({
           </label>
           <div className="mt-2">
             <input
-              {...register("address1Billing", {
-                required: "Введите ваш адрес",
+              {...register('address1Billing', {
+                required: 'Введите ваш адрес',
                 minLength: {
                   value: 5,
-                  message: "Адрес должен содержать не менее 5 символов",
+                  message: 'Адрес должен содержать не менее 5 символов',
                 },
               })}
               id="address1Billing"
@@ -380,13 +380,13 @@ export const ChekcoutInfo = ({
           <div className="col-span-full">
             <div className="mt-2">
               <textarea
-                {...register("comments")}
+                {...register('comments')}
                 id="comments"
                 name="comments"
                 rows={3}
                 onChange={(e) => handleFieldChange(e)}
                 className="block w-full rounded-md border-0 px-3 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 focus-visible:outline-none sm:text-sm sm:leading-6"
-                defaultValue={""}
+                defaultValue={''}
               />
             </div>
           </div>
@@ -396,17 +396,17 @@ export const ChekcoutInfo = ({
           type="submit"
           disabled={totalCount === 0}
           className={`${
-            totalCount === 0 ? "bg-gray-400" : "bg-pink-700 hover:bg-pink-800"
+            totalCount === 0 ? 'bg-gray-400' : 'bg-[#CE041F] hover:bg-[#A41F30]'
           } mt-5 block w-full rounded-md p-3 font-semibold text-white transition`}
         >
           <div className="text-center">
-            {" "}
+            {' '}
             {loadingCheckout ? (
               <div className="pt-1">
                 <Spinner />
               </div>
             ) : (
-              "Подтвердить заказ"
+              'Подтвердить заказ'
             )}
           </div>
         </button>

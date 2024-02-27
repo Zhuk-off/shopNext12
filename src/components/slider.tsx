@@ -40,7 +40,7 @@ export const Slider = () => {
         >
           <SwiperSlide>
             <Image
-              src={'/slider/1.jpg'}
+              src={'/offers/2.jpg'}
               width={1300}
               height={300}
               alt="1"
@@ -49,7 +49,7 @@ export const Slider = () => {
           </SwiperSlide>
           <SwiperSlide>
             <Image
-              src={'/slider/2.jpg'}
+              src={'/offers/3.jpg'}
               width={1300}
               height={300}
               alt="1"
@@ -58,7 +58,16 @@ export const Slider = () => {
           </SwiperSlide>
           <SwiperSlide>
             <Image
-              src={'/slider/3.jpg'}
+              src={'/offers/4.jpg'}
+              width={1300}
+              height={300}
+              alt="1"
+              className="h-96 w-full object-cover"
+            />
+          </SwiperSlide>
+          {/* <SwiperSlide>
+            <Image
+              src={'/offers/2.jpg'}
               width={1300}
               height={300}
               alt="1"
@@ -67,7 +76,7 @@ export const Slider = () => {
           </SwiperSlide>
           <SwiperSlide>
             <Image
-              src={'/slider/4.jpg'}
+              src={'/offers/3.jpg'}
               width={1300}
               height={300}
               alt="1"
@@ -76,22 +85,13 @@ export const Slider = () => {
           </SwiperSlide>
           <SwiperSlide>
             <Image
-              src={'/slider/5.jpg'}
+              src={'/offers/4.jpg'}
               width={1300}
               height={300}
               alt="1"
               className="h-96 w-full object-cover"
             />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Image
-              src={'/slider/6.jpg'}
-              width={1300}
-              height={300}
-              alt="1"
-              className="h-96 w-full object-cover"
-            />
-          </SwiperSlide>
+          </SwiperSlide> */}
         </Swiper>
       </Container>
     </section>

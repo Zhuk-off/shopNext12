@@ -72,7 +72,7 @@ export const FilterPrice = () => {
       </label>
       <button
         type="submit"
-        className="mx-2 rounded-full border bg-pink-700 px-6 py-1 font-medium text-white transition hover:bg-pink-800 hover:text-white focus:outline-none"
+        className="mx-2 rounded-full border bg-[#CE041F] px-6 py-1 font-medium text-white transition hover:bg-[#A41F30] hover:text-white focus:outline-none"
       >
         Применить
       </button>

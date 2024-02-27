@@ -86,7 +86,7 @@ export default function AccountButton() {
             />
           </svg>
           Корзина
-          <div className="order-last ml-auto rounded-full bg-pink-700 px-1 text-xs text-white">
+          <div className="order-last ml-auto rounded-full bg-[#CE041F] px-1 text-xs text-white">
             {cartA.totalQty}
           </div>
         </Link>
@@ -157,7 +157,7 @@ export default function AccountButton() {
                     <Menu.Item>
                       <button
                         onClick={() => handleLogin()}
-                        className="rounded-full border bg-pink-700 px-6 py-1 font-medium text-white transition hover:bg-pink-800 hover:text-white  focus:outline-none"
+                        className="rounded-full border bg-[#CE041F] px-6 py-1 font-medium text-white transition hover:bg-[#A41F30] hover:text-white  focus:outline-none"
                       >
                         Войти
                       </button>

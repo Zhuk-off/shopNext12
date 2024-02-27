@@ -38,7 +38,7 @@ export const CartAddButton = ({
             {
               'font-medium text-pink-700 hover:border-pink-800 hover:text-pink-800':
                 isAddedToCart,
-              'bg-pink-700 text-white hover:border-pink-800 hover:bg-pink-800':
+              'bg-[#CE041F] text-white hover:border-pink-800 hover:bg-[#A41F30]':
                 !isAddedToCart,
             }
           )}

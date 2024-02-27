@@ -30,7 +30,7 @@ export default function MyAccountNavMenu() {
               />
             </svg>
             Корзина
-            <div className="order-last ml-auto rounded-full bg-pink-700 px-1 text-xs text-white">
+            <div className="order-last ml-auto rounded-full bg-[#CE041F] px-1 text-xs text-white">
               {cartA.totalQty}
             </div>
           </Link>

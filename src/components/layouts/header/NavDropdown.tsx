@@ -14,9 +14,9 @@ const NavDropdown = ({
   return (
     <div className="font-medium text-gray-500 ">
       <button
-        className="dropdown-toggle rounded-full border bg-pink-700 px-6 py-1 font-medium text-white 
+        className="dropdown-toggle rounded-full border bg-[#CE041F] px-6 py-1 font-medium text-white 
         transition
-        hover:bg-pink-800 hover:text-white  focus:outline-none"
+        hover:bg-[#A41F30] hover:text-white  focus:outline-none"
         onClick={toggleDropdown}
       >
         Каталог

@@ -40,7 +40,7 @@ export const TotalCard = ({
         disabled={totalCount === 0}
         onClick={() => router.push('/checkout')}
         className={`${
-          totalCount === 0 ? 'bg-gray-400' : 'bg-pink-700 hover:bg-pink-800'
+          totalCount === 0 ? 'bg-gray-400' : 'bg-[#CE041F] hover:bg-[#A41F30]'
         } mt-5 block w-full rounded-md p-3 font-semibold text-white transition`}
       >
         <div className="text-center">Оформить заказ</div>
